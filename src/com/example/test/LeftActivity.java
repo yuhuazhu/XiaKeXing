@@ -11,7 +11,7 @@ public class LeftActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_left);
+		setContentView(R.layout.activity_left); 
 	}
 	
 	public void StartMain(View v){
