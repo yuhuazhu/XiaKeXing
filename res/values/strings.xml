@@ -6,5 +6,17 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_welcome">WelcomeActivity</string>
     <string name="title_activity_left">LeftActivity</string>
-
+<!-- 照片冲印 -->  
+   <string name="contentPH_title">免费体验照片冲印</string>  
+   <string name="contentPH_date">活动日期:2015-5-1~2015年5月30日</string>  
+   <string name="contentPH_detail">活动详情：请用户自行下载APP</string>  
+  <string name="viewPH_title">免费体验照片冲印</string>
+   <string name="viewPhws_title">照片冲印</string>
+    <string name="viewPhws_btn">立即免费体验</string>
+   <string name="contentPHws_title">新用户可以免费体验冲印照片2张</string>
+   
+   <string name="contentPHws_detail">通过app上传照片,在景区、酒店、机场、车站等地的旅游电子信息屏冲印</string>
+   <string name="contentPHws_btnsee">查看离我最近的冲印点</string>
+   <string name="contentPHws_btnsel">相册选择</string>
+   <string name="contentPHws_btnph">拍照</string>
 </resources>

@@ -17,6 +17,13 @@ public class LeftActivity extends Activity {
 	public void StartMain(View v){
     	finish();
     }
+	
+	
+	public void StartPhoto(View v){
+    	Intent intent = new Intent();
+    	intent.setClass(this, PhotoActivity.class);
+    	startActivity(intent);
+    }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
