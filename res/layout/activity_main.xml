@@ -70,7 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/button3"
         android:layout_centerHorizontal="true"
-        android:onClick="StartLeft"
+        android:onClick="StartRoute"
         android:background="@drawable/img_main_btn_luxian" />
 
 </RelativeLayout>
