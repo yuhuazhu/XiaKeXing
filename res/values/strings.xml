@@ -13,11 +13,30 @@
     <string name="viewPH_title">免费体验照片冲印</string>
     <string name="viewPhws_title">照片冲印</string>
     <string name="viewPhws_btn">立即免费体验</string>
+
     <string name="contentPHws_title">新用户可以免费体验冲印照片2张</string>
     <string name="contentPHws_detail">通过app上传照片,在景区、酒店、机场、车站等地的旅游电子信息屏冲印</string>
     <string name="contentPHws_btnsee">查看离我最近的冲印点</string>
     <string name="contentPHws_btnsel">相册选择</string>
     <string name="contentPHws_btnph">拍照</string>
+
+    <!-- 经典线路 -->
+    <string name="R_toptitle">经典线路1</string>
+    <string name="R_maplong">全长三公里</string>
+    <string name="R_title1">鼓浪屿风情博物馆</string>
+    <string name="R_title2">日光岩</string>
+    <string name="R_title3">百鸟岩</string>
+    <string name="R_title4">叔莊花园</string>
+    <string name="R_title5">皓月园</string>
+    <string name="R_time">浏览时长：10分钟</string>
+
+    <string name="R_dis1">100m</string>
+    <string name="R_dis2">150m</string>
+    <string name="R_dis3">200m</string>
+    <string name="R_dis4">500m</string>
+    <string name="R_dis5">670m</string>
+
+    
     <string name="title_activity_reflex">MainActivity</string>
     <string name="title_activity_shopping_guide">ShoppingGuideActivity</string>
     <string name="title_activity_navigation">NavigationActivity</string>
@@ -25,3 +44,4 @@
     <string name="title_activity_activities">ActivitiesActivity</string>
 
 </resources>
+

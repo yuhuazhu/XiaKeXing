@@ -1,26 +1,43 @@
 package com.example.test;
 
+
+
 import java.util.Timer;
 import java.util.TimerTask;
 
 import android.os.Bundle;
+
 import android.app.Activity;
 import android.content.Intent;
+
+import android.os.Bundle;
+
 import android.view.KeyEvent;
+
 import android.view.Menu;
 import android.view.View;
+
+import android.view.View.OnClickListener;
+import android.widget.Button;
+
 import android.widget.Toast;
 
-public class MainActivity extends Activity {
 
+public class MainActivity extends Activity   implements OnClickListener{
+    private Button button5;
     private boolean isExit;
 
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initUI();
     }
-
+    private void initUI() {
+    	button5 = (Button) findViewById(R.id.button5);
+    	button5.setOnClickListener(this);
+		
+	}
     //·µ»Ø
     public void Backs(View v){
     	finish();
@@ -101,6 +118,19 @@ public class MainActivity extends Activity {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+    
+    @Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		switch (v.getId()) {
+		case R.id.button5:
+			Intent intent = new Intent(this, RouteActivity.class);
+			startActivity(intent);
+			break;
+		default:
+			break;
+		}
+	}
     
 }
   

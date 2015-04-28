@@ -6,26 +6,30 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 
-public class PhotoActivity extends Activity implements OnClickListener{
+public class PhotoActivity extends Activity implements OnClickListener {
 	private Button btnty;
+	private Button btnback;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_photo);
-		
+
 		initData();
 		initUI();
 	}
-	
+
 	private void initData() {
 
-		
 	}
 
 	private void initUI() {
-		btnty =(Button)findViewById(R.id.btnty);
+		btnty = (Button) findViewById(R.id.btnty);
 		btnty.setOnClickListener(this);
+		btnback = (Button) findViewById(R.id.btnback);
+		btnback.setOnClickListener(this);
 	}
 
 	@Override
@@ -33,17 +37,18 @@ public class PhotoActivity extends Activity implements OnClickListener{
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.btnty:
-			
+
 			Intent intent = new Intent();
 			intent.setClass(PhotoActivity.this, PhotoWashActivity.class);
-			
+
 			startActivity(intent);
 			break;
+		case R.id.btnback:
 
+			finish();
+			break;
 		default:
 			break;
 		}
 	}
 }
-
-
