@@ -14,4 +14,15 @@
         android:layout_marginTop="61dp"
         android:onClick="StartMain"
 		android:background="@drawable/img_left_btn_left"/>
+    
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="61dp"
+        
+        android:onClick="StartPhoto"/>
+    
 </RelativeLayout>
