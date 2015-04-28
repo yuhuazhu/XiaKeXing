@@ -41,6 +41,12 @@
             android:label="@string/title_activity_left"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
         </activity>
+        <activity
+            android:name="com.example.test.PhotoActivity"> 
+        </activity>
+         <activity
+            android:name="com.example.test.PhotoWashActivity">
+        </activity>
     </application>
 
 </manifest>
