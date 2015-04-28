@@ -41,11 +41,30 @@
             android:label="@string/title_activity_left"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
         </activity>
-        <activity
-            android:name="com.example.test.PhotoActivity"> 
+        <activity android:name="com.example.test.PhotoActivity" >
         </activity>
-         <activity
-            android:name="com.example.test.PhotoWashActivity">
+        <activity android:name="com.example.test.PhotoWashActivity" >
+        </activity>
+        <activity
+            android:name="com.example.test.ReflexActivity"
+            android:label="@string/title_activity_reflex" >
+        </activity>
+        <activity
+            android:name="com.example.test.ShoppingGuideActivity"
+            android:label="@string/title_activity_shopping_guide" >
+        </activity>
+        <activity
+            android:name="com.example.test.NavigationActivity"
+            android:label="@string/title_activity_navigation" >
+        </activity>
+        <activity
+            android:name="com.example.test.GuideActivity"
+            android:label="@string/title_activity_guide" >
+        </activity>
+        <activity
+            android:name="com.example.test.ActivitiesActivity"
+            android:label="@string/title_activity_activities" 
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
     </application>
 

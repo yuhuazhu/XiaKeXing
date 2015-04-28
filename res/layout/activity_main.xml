@@ -13,6 +13,7 @@
         android:layout_alignParentLeft="true"
         android:layout_marginBottom="45dp"
         android:layout_marginLeft="28dp"
+        android:onClick="StartActivities"
         android:background="@drawable/img_main_btn_huodong"/>
 
     <Button
@@ -23,6 +24,7 @@
         android:layout_alignLeft="@+id/button0"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="38dp"
+        android:onClick="StartReflex"
 		android:background="@drawable/img_main_btn_yingxiang"/>
     
     <Button
@@ -31,6 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/button1"
         android:layout_toRightOf="@+id/button1"
+        android:onClick="StartShoppingGuide"
         android:background="@drawable/img_main_btn_daogou"/>
 
     <Button
@@ -39,6 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/button2"
         android:layout_alignRight="@+id/button1"
+        android:onClick="StartNavigation"
         android:background="@drawable/img_main_btn_daohang"/>
 
     <Button
@@ -47,6 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/button5"
         android:layout_toRightOf="@+id/button2"
+        android:onClick="StartGuide"
         android:background="@drawable/img_main_btn_daolan" />
 
     <Button
@@ -65,6 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/button3"
         android:layout_centerHorizontal="true"
+        android:onClick="StartLeft"
         android:background="@drawable/img_main_btn_luxian" />
 
 </RelativeLayout>

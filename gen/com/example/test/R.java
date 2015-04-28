@@ -294,23 +294,29 @@ public final class R {
         public static final int ic_phbtn=0x7f020003;
         public static final int ic_phlist=0x7f020004;
         public static final int ic_phxj=0x7f020005;
-        public static final int img_left_bg=0x7f020006;
-        public static final int img_left_btn_left=0x7f020007;
-        public static final int img_main_bg=0x7f020008;
-        public static final int img_main_btn_daogou=0x7f020009;
-        public static final int img_main_btn_daohang=0x7f02000a;
-        public static final int img_main_btn_daolan=0x7f02000b;
-        public static final int img_main_btn_huodong=0x7f02000c;
-        public static final int img_main_btn_luxian=0x7f02000d;
-        public static final int img_main_btn_right=0x7f02000e;
-        public static final int img_main_btn_yingxiang=0x7f02000f;
-        public static final int img_top=0x7f020010;
-        public static final int img_welcome_bg=0x7f020011;
-        public static final int orderdt=0x7f020012;
-        public static final int popup_bg=0x7f020013;
+        public static final int img_activties_bg=0x7f020006;
+        public static final int img_guide_bg=0x7f020007;
+        public static final int img_left_bg=0x7f020008;
+        public static final int img_left_btn_left=0x7f020009;
+        public static final int img_main_bg=0x7f02000a;
+        public static final int img_main_btn_daogou=0x7f02000b;
+        public static final int img_main_btn_daohang=0x7f02000c;
+        public static final int img_main_btn_daolan=0x7f02000d;
+        public static final int img_main_btn_huodong=0x7f02000e;
+        public static final int img_main_btn_luxian=0x7f02000f;
+        public static final int img_main_btn_right=0x7f020010;
+        public static final int img_main_btn_yingxiang=0x7f020011;
+        public static final int img_navigation_bg=0x7f020012;
+        public static final int img_reflex_bg=0x7f020013;
+        public static final int img_reflex_text=0x7f020014;
+        public static final int img_reflex_title=0x7f020015;
+        public static final int img_top=0x7f020016;
+        public static final int img_welcome_bg=0x7f020017;
+        public static final int orderdt=0x7f020018;
+        public static final int popup_bg=0x7f020019;
     }
     public static final class id {
-        public static final int action_settings=0x7f090016;
+        public static final int action_settings=0x7f090018;
         public static final int btn_main_startleft=0x7f090006;
         public static final int btnback=0x7f09000f;
         public static final int btnty=0x7f09000e;
@@ -330,21 +336,33 @@ public final class R {
         public static final int lay06=0x7f090013;
         public static final int laytop=0x7f090010;
         public static final int line1=0x7f09000b;
+        public static final int linearLayout1=0x7f090016;
+        public static final int scrollView1=0x7f090017;
         public static final int textView1=0x7f09000a;
         public static final int textView2=0x7f090012;
         public static final int textView3=0x7f090015;
     }
     public static final class layout {
-        public static final int activity_left=0x7f030000;
-        public static final int activity_main=0x7f030001;
-        public static final int activity_photo=0x7f030002;
-        public static final int activity_photowash=0x7f030003;
-        public static final int activity_welcome=0x7f030004;
+        public static final int activity_activities=0x7f030000;
+        public static final int activity_guide=0x7f030001;
+        public static final int activity_left=0x7f030002;
+        public static final int activity_main=0x7f030003;
+        public static final int activity_navigation=0x7f030004;
+        public static final int activity_photo=0x7f030005;
+        public static final int activity_photowash=0x7f030006;
+        public static final int activity_reflex=0x7f030007;
+        public static final int activity_shopping_guide=0x7f030008;
+        public static final int activity_welcome=0x7f030009;
     }
     public static final class menu {
-        public static final int left=0x7f080000;
-        public static final int main=0x7f080001;
-        public static final int welcome=0x7f080002;
+        public static final int activities=0x7f080000;
+        public static final int guide=0x7f080001;
+        public static final int left=0x7f080002;
+        public static final int main=0x7f080003;
+        public static final int navigation=0x7f080004;
+        public static final int reflex=0x7f080005;
+        public static final int shopping_guide=0x7f080006;
+        public static final int welcome=0x7f080007;
     }
     public static final class string {
         public static final int action_settings=0x7f060001;
@@ -360,7 +378,12 @@ public final class R {
         public static final int contentPHws_detail=0x7f06000c;
         public static final int contentPHws_title=0x7f06000b;
         public static final int hello_world=0x7f060002;
+        public static final int title_activity_activities=0x7f060014;
+        public static final int title_activity_guide=0x7f060013;
         public static final int title_activity_left=0x7f060004;
+        public static final int title_activity_navigation=0x7f060012;
+        public static final int title_activity_reflex=0x7f060010;
+        public static final int title_activity_shopping_guide=0x7f060011;
         public static final int title_activity_welcome=0x7f060003;
         public static final int viewPH_title=0x7f060008;
         public static final int viewPhws_btn=0x7f06000a;

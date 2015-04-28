@@ -2,34 +2,27 @@ package com.example.test;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
 
-//×ó²à½çÃæ
-public class LeftActivity extends Activity {
+//Ó³Ïñ
+public class ReflexActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_left); 
+		setContentView(R.layout.activity_reflex);
 	}
 	
-	public void StartMain(View v){
+	//·µ»Ø
+    public void Back(View v){
     	finish();
-    }
-	
-	
-	public void StartPhoto(View v){
-    	Intent intent = new Intent();
-    	intent.setClass(this, PhotoActivity.class);
-    	startActivity(intent);
     }
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.left, menu);
+		getMenuInflater().inflate(R.menu.reflex, menu);
 		return true;
 	}
 
