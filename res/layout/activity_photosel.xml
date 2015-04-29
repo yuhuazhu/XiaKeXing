@@ -62,7 +62,6 @@
                 android:layout_gravity="bottom"
                 android:gravity="center_horizontal"
                 android:orientation="horizontal"
-               
                 android:paddingTop="@dimen/content_top_marginlarge" >
 
                 <LinearLayout
@@ -75,47 +74,81 @@
                         android:layout_width="0dp"
                         android:layout_height="@dimen/content_top_marginlarge"
                         android:layout_weight="0.5"
-                        
-                    android:background="@color/orgbtn"
+                        android:background="@color/orgbtn"
                         android:paddingRight="@dimen/margin_small" >
-
-                      
 
                         <TextView
                             android:id="@+id/TextView01"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
                             android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
                             android:text="@string/cancel"
-                            android:textSize="@dimen/text_size_start"
-                            android:textColor="@color/white" />
-
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/text_size_start" />
                     </RelativeLayout>
 
                     <RelativeLayout
-                        android:layout_width="0dp"
                         android:id="@+id/upbtn"
+                        android:layout_width="0dp"
                         android:layout_height="@dimen/content_top_marginlarge"
-                        android:background="@color/orgbtn"
                         android:layout_marginLeft="1dp"
-                        android:layout_weight="0.5" >
+                        android:layout_weight="0.5"
+                        android:background="@color/orgbtn" >
 
                         <TextView
                             android:id="@+id/textView2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
                             android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
                             android:text="@string/upload"
-                            android:textSize="@dimen/text_size_start"
-                            android:textColor="@color/white" />
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/text_size_start" />
                     </RelativeLayout>
                 </LinearLayout>
             </LinearLayout>
-
-            
         </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/progresslay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:background="@color/white"
+        android:gravity="top"
+        android:paddingLeft="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:paddingRight="10dp">
+
+        
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt01"
+            android:text="上传中请稍候..."
+            android:textSize="@dimen/text_size_start" >
+        </TextView>
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:id="@+id/line"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/txt01"
+            android:background="@color/gray"
+            ></View>
+        <ProgressBar
+            android:layout_marginTop="10dp"
+            android:id="@+id/progress_horizontal"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/line"
+            android:max="100" />
     </RelativeLayout>
 
 </FrameLayout>

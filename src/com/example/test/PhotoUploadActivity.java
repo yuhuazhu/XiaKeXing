@@ -18,6 +18,7 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -34,6 +35,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -63,6 +65,8 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 	private String QRCODE = "";
 	private Boolean selflag = false;
 	private Button btnback;
+	private RelativeLayout progresslay;
+	private ProgressBar progress_horizontal;
 	/**
 	 * 存储图片地址
 	 */
@@ -212,6 +216,8 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 
 	private void initUI() {
 		upbtn = (RelativeLayout) findViewById(R.id.upbtn);
+		progresslay = (RelativeLayout) findViewById(R.id.progresslay);
+		progress_horizontal = (ProgressBar) findViewById(R.id.progress_horizontal);
 		upbtn.setOnClickListener(this);
 		btnback = (Button) findViewById(R.id.btnback);
 		btnback.setOnClickListener(this);
@@ -228,6 +234,8 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 				myAdapter.setSelectItem(arg2);
 				if (selflag) {
 					selflag = false;
+					position = "";
+
 				} else {
 					selflag = true;
 				}
@@ -255,7 +263,7 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 		@Override
 		protected void onProgressUpdate(Integer... progresses) {
 			// Log.i(TAG, "onProgressUpdate(Progress... progresses) called");
-			// progressBar.setProgress(progresses[0]);
+			progress_horizontal.setProgress(progresses[0]);
 			// textView.setText("loading..." + progresses[0] + "%");
 
 		}
@@ -300,7 +308,8 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 				e.printStackTrace();
 			}
 			showDialog("上传成功");
-			position = "";
+			progress_horizontal.setProgress(100);
+			progresslay.setVisibility(View.GONE);
 			// showDialog("上传成功" + b.toString().trim()); /* 关闭DataOutputStream
 			// */
 
@@ -455,13 +464,17 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 				.setNegativeButton("确定", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 
-						Intent intent = new Intent();
-						intent.setClass(PhotoUploadActivity.this,
-								PhotoScanning.class);
-						intent.putExtra("QRCODE", QRCODE);
-						QRCODE = "";
-						selflag = false;
-						startActivity(intent);
+						if (!position.equals("")) {
+							Intent intent = new Intent();
+							intent.setClass(PhotoUploadActivity.this,
+									PhotoScanning.class);
+							intent.putExtra("QRCODE", QRCODE);
+							QRCODE = "";
+							position = "";
+							selflag = false;
+							startActivity(intent);
+							
+						}
 					}
 				}).show();
 	}
@@ -474,15 +487,15 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 
 			if (position.equals("")) {
 				showDialog("请选择一个照片!");
-
-			} else {
-
-				HashMap<String, String> params = new HashMap<String, String>();
-				params.put("arg2", position);
-				LocationTask task = new LocationTask();
-
-				task.execute(params);
+				return;
 			}
+			progresslay.setVisibility(View.VISIBLE);
+			HashMap<String, String> params = new HashMap<String, String>();
+			params.put("arg2", position);
+			LocationTask task = new LocationTask();
+
+			task.execute(params);
+
 			break;
 		case R.id.btnback:
 			finish();

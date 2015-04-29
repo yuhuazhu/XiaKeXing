@@ -6,20 +6,24 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.xkx.utils.imgUtils;
 import com.xkx.utils.imgUtils.OnLoadImageListener;
 
-public class PhotoScanning extends Activity implements OnClickListener{
+public class PhotoScanning extends Activity implements OnClickListener {
 	private String url;
 	private ImageView img;
+	private Button btnback;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +37,8 @@ public class PhotoScanning extends Activity implements OnClickListener{
 
 		url = getIntent().getStringExtra("QRCODE");
 	}
+
+	
 
 	/**
 	 * 获取网落图片资源
@@ -73,6 +79,8 @@ public class PhotoScanning extends Activity implements OnClickListener{
 	private void initUI() {
 		// 得到可用的图片
 		img = (ImageView) this.findViewById(R.id.img);
+		btnback = (Button) this.findViewById(R.id.btnback);
+		btnback.setOnClickListener(this);
 		URL l;
 		try {
 			l = new URL(url);
@@ -158,7 +166,7 @@ public class PhotoScanning extends Activity implements OnClickListener{
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
-		
+
 		case R.id.btnback:
 			finish();
 			break;
