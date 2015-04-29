@@ -1,7 +1,5 @@
 package com.baimao.adpater;
 
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 public abstract class BaseListAdapter extends BaseAdapter{

@@ -70,7 +70,8 @@
         </activity>
         <activity
             android:name="com.example.test.GuideActivity"
-            android:label="@string/title_activity_guide" >
+            android:label="@string/title_activity_guide"
+            android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
         <activity
             android:name="com.example.test.ActivitiesActivity"

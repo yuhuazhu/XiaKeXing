@@ -1,5 +1,7 @@
 package com.example.test;
 
+import com.example.test.R;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.app.Activity;
