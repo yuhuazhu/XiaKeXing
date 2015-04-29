@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,9 +21,10 @@ import android.widget.TextView;
 import com.baimao.adpater.BaseListAdapter;
 import com.example.test.R;
 
+//导游路线
 public class RouteActivity extends Activity implements OnClickListener {
 	private Button btnlist;
-	private Button btndlist;
+	private ImageButton btndlist;
 	private Button btnback;
 	private ListView listView1;
 	private List<Map<String, Object>> list;
@@ -46,14 +48,14 @@ public class RouteActivity extends Activity implements OnClickListener {
 		map.put("img", R.drawable.img_left_bg);
 		map.put("title", getResources().getString(R.string.R_title1));
 		map.put("time", getResources().getString(R.string.R_time));
-		map.put("distince", getResources().getString(R.string.R_dis1));
+		map.put("distance", getResources().getString(R.string.R_dis1));
 		list.add(map);
 
 		map = new HashMap<String, Object>();
 		map.put("img", R.drawable.img_left_bg);
 		map.put("title", getResources().getString(R.string.R_title2));
 		map.put("time", getResources().getString(R.string.R_time));
-		map.put("distince", getResources().getString(R.string.R_dis2));
+		map.put("distance", getResources().getString(R.string.R_dis2));
 		list.add(map);
 
 		map = new HashMap<String, Object>();
@@ -61,7 +63,7 @@ public class RouteActivity extends Activity implements OnClickListener {
 		map.put("img", R.drawable.img_left_bg);
 		map.put("title", getResources().getString(R.string.R_title3));
 		map.put("time", getResources().getString(R.string.R_time));
-		map.put("distince", getResources().getString(R.string.R_dis3));
+		map.put("distance", getResources().getString(R.string.R_dis3));
 		list.add(map);
 
 		map = new HashMap<String, Object>();
@@ -69,7 +71,7 @@ public class RouteActivity extends Activity implements OnClickListener {
 		map.put("img", R.drawable.img_left_bg);
 		map.put("title", getResources().getString(R.string.R_title4));
 		map.put("time", getResources().getString(R.string.R_time));
-		map.put("distince", getResources().getString(R.string.R_dis4));
+		map.put("distance", getResources().getString(R.string.R_dis4));
 		list.add(map);
 
 		map = new HashMap<String, Object>();
@@ -77,7 +79,7 @@ public class RouteActivity extends Activity implements OnClickListener {
 		map.put("img", R.drawable.img_left_bg);
 		map.put("title",getResources().getString(R.string.R_title5) );
 		map.put("time", getResources().getString(R.string.R_time));
-		map.put("distince", getResources().getString(R.string.R_dis5));
+		map.put("distance", getResources().getString(R.string.R_dis5));
 		list.add(map);
 		return list;
 	}
@@ -88,7 +90,7 @@ public class RouteActivity extends Activity implements OnClickListener {
 	}
 
 	private void initUI() {
-		btndlist = (Button) findViewById(R.id.btndlist);
+		btndlist = (ImageButton) findViewById(R.id.btndlist);
 		btndlist.setOnClickListener(this);
 		btnback = (Button) findViewById(R.id.btnback);
 		btnback.setOnClickListener(this);
@@ -163,7 +165,9 @@ public class RouteActivity extends Activity implements OnClickListener {
 			holder.imageView1.setBackgroundResource((Integer)list.get(position).get("img"));
 			holder.txttitle.setText((String)list.get(position).get("title"));
 			holder.txttime.setText((String)list.get(position).get("time"));
-			holder.txtdistance.setText((String)list.get(position).get("distance"));
+			Map<String, Object> map = list.get(position);  //distance
+			String object = (String) list.get(position).get("distance");
+			holder.txtdistance.setText(object);
 
 			return convertView;
 		}

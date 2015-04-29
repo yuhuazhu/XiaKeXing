@@ -95,7 +95,7 @@
             android:text="@string/R_toptitle"
               android:textSize="@dimen/text_size_main_num"
             android:textStyle="bold" />
-          <Button
+          <ImageButton
             android:id="@+id/btndlist"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
