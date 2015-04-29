@@ -11,6 +11,7 @@ import com.example.test.R;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.animation.Animation;
@@ -55,6 +56,15 @@ public class LeftActivity extends Activity implements OnItemClickListener{
     	
     	
     }
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if(KeyEvent.KEYCODE_BACK == keyCode){
+			finish();
+			overridePendingTransition(R.anim.anim_main_in, R.anim.anim_main_out); 
+		}
+		return false;
+	}
 	
 	public void StartPhoto(View v){
     	Intent intent = new Intent();
