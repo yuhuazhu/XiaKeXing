@@ -16,7 +16,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.Toast;
 
 //×ó²à½çÃæ
 public class LeftActivity extends Activity implements OnItemClickListener{
