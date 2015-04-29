@@ -26,6 +26,8 @@ public class RouteMapActivity extends Activity {
 	private TextView textView1;
 	private TextView TextView2;
 
+	private boolean isOnRouteActivity = false;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -72,7 +74,7 @@ public class RouteMapActivity extends Activity {
 				// left, top, right, bottom
 				int y = (int) event.getY();
 
-				textView1.setPadding(x-50, y-50, 0, 0);
+				textView1.setPadding(x - 50, y - 50, 0, 0);
 				// LayoutParams lp = new lay
 				// textView1.setLayoutParams())
 				if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -90,6 +92,19 @@ public class RouteMapActivity extends Activity {
 				return true;
 			}
 		});
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		isOnRouteActivity = true;
+		// TODO ×¢²á¹ã²¥
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		// TODO ×¢Ïú¹ã²¥
 	}
 
 	private static Bitmap big(Bitmap bitmap) {
