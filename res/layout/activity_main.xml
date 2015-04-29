@@ -47,12 +47,22 @@
         android:background="@drawable/img_main_btn_right" />
 
     <Button
+        android:id="@+id/button5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/button4"
+        android:layout_alignRight="@+id/button2"
+        android:layout_marginBottom="52dp"
+        android:background="@drawable/img_main_btn_luxian"
+        android:onClick="StartRoute" />
+
+    <Button
         android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/button2"
-        android:layout_alignLeft="@+id/button1"
-        android:layout_marginLeft="28dp"
+        android:layout_alignLeft="@+id/button5"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/img_main_btn_daohang"
         android:onClick="StartNavigation" />
 
@@ -61,17 +71,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/button3"
+        android:layout_marginBottom="19dp"
         android:layout_toRightOf="@+id/button3"
         android:background="@drawable/img_main_btn_daolan"
         android:onClick="StartGuide" />
-
-    <Button
-        android:id="@+id/button5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/button3"
-        android:layout_alignTop="@+id/btn_main_startleft"
-        android:background="@drawable/img_main_btn_luxian"
-        android:onClick="StartRoute" />
 
 </RelativeLayout>
