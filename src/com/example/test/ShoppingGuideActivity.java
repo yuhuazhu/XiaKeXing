@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.Window;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -18,6 +19,8 @@ public class ShoppingGuideActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		//移除ActionBar，在setContent之前调用下面这句，保证没有ActionBar
+		requestWindowFeature(Window.FEATURE_NO_TITLE);  
 		setContentView(R.layout.activity_shopping_guide);
 		webView = (WebView) findViewById(R.id.webView1);
 		// 设置WebView属性，能够执行Javascript脚本 
