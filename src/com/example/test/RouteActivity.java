@@ -7,6 +7,7 @@ import java.util.Map;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,6 +28,7 @@ public class RouteActivity extends Activity implements OnClickListener {
 	private List<Map<String, Object>> list;
 
 	private MyAdapter myAdapter;
+	private ImageView imgmap;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +94,9 @@ public class RouteActivity extends Activity implements OnClickListener {
 		btnback.setOnClickListener(this);
 		btnlist = (Button) findViewById(R.id.btnlist);
 		btnlist.setOnClickListener(this);
+		
+		imgmap= (ImageView) findViewById(R.id.imgmap);
+		imgmap.setOnClickListener(this);
 		listView1 = (ListView) findViewById(R.id.listView1);
 		myAdapter = new MyAdapter();
 		listView1.setAdapter(myAdapter);
@@ -175,6 +180,14 @@ public class RouteActivity extends Activity implements OnClickListener {
 		case R.id.btnback:
 
 			finish();
+			break;
+			
+		case R.id.imgmap:
+			
+			Intent intent = new Intent();
+			intent.setClass(this, RouteMapActivity.class);
+
+			startActivity(intent);
 			break;
 		default:
 			break;

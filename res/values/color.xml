@@ -63,6 +63,7 @@
     <color name="alert_color">#ff8400</color><!-- 白色底提示文字颜色 橙色 --> 
  	<color name="litorg_color">#fcf3e6</color><!-- 浅 橙色 -->
  	<color name="lightorg_color">#fef1e4</color><!-- 浅 橙色 -->
+ 	<color name="orgbtn">#cce86f3f</color>
     <!-- 多张拍照-->
  	<color name="multiphoto_bottom_top_color">#cccccd</color><!-- 多张拍照底部背景前两个像素颜色 灰色 --> 
  	<color name="multiphoto_bottom_bg_color">#d5dded</color><!-- 多张拍照底部背景色 --> 

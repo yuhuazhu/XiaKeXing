@@ -38,11 +38,14 @@ public class PhotoActivity extends Activity implements OnClickListener {
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.btnty:
-
-			Intent intent = new Intent();
-			intent.setClass(PhotoActivity.this, PhotoWashActivity.class);
-
-			startActivity(intent);
+//			Intent i = new Intent(
+//					Intent.ACTION_PICK,
+//					android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);// µ÷ÓÃandroidµÄÍ¼¿â
+//			startActivityForResult(i, 2);
+			 Intent intent = new Intent();
+			 intent.setClass(PhotoActivity.this, PhotoWashActivity.class);
+			
+			 startActivity(intent);
 			break;
 		case R.id.btnback:
 

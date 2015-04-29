@@ -73,8 +73,9 @@
     <!-- winphone风格主界面标题文字大小 -->
     <dimen name="text_size_main_title">25sp</dimen>
     <!-- 主界面宫格右上角数字文字大小 -->
-    <dimen name="text_size_main_num">15sp</dimen>
-
+    <dimen name="text_size_main_num">18sp</dimen>
+<!-- 主界面宫格右上角数字文字大小 -->
+    <dimen name="text_size_main_num1">15sp</dimen>
     <!-- TAB文字大小 -->
     <dimen name="text_size_tab">16sp</dimen>
 
