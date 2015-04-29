@@ -13,39 +13,8 @@ import android.widget.TextView;
 
 import com.example.test.R;
 
-//public class FastAdpater extends BaseAdapter{
-//
-//	public FastAdpater(int count, int id) {
-//		// TODO Auto-generated constructor stub
-//	}
-//	
-//	@Override
-//	public int getCount() {
-//		// TODO Auto-generated method stub
-//		return count;
-//	}
-//
-//	@Override
-//	public Object getItem(int position) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-//
-//	@Override
-//	public long getItemId(int position) {
-//		// TODO Auto-generated method stub
-//		return 0;
-//	}
-//
-//	@Override
-//	public View getView(int position, View convertView, ViewGroup parent) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-//
-//}
 public class FastAdpater extends BaseAdapter {
-	private Context context;
+//	private Context context;
 	private List<Map<String, Object>> listItems;
 	private LayoutInflater listContainer;
 
@@ -56,7 +25,7 @@ public class FastAdpater extends BaseAdapter {
 	}
 
 	public FastAdpater(Context context, List<Map<String, Object>> listItems) {
-		this.context = context;
+//		this.context = context;
 		listContainer = LayoutInflater.from(context);
 		this.listItems = listItems;
 	}
@@ -81,7 +50,6 @@ public class FastAdpater extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		final int selectID = position;
 		ListItemView listItemView = null;
 		if (convertView == null) {
 			listItemView = new ListItemView();
