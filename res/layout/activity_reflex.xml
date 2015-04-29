@@ -11,14 +11,22 @@
         android:layout_height="50dp"
         android:background="#4effffff" >
 
-        <Button
-            android:id="@+id/button1"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:onClick="Back"
-            android:background="@drawable/ic_back" />
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="vertical" >
+
+            <ImageButton
+                android:id="@+id/button1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/ic_back"
+                android:onClick="Back" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/textView1"

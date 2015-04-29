@@ -29,6 +29,7 @@ public class MainActivity extends Activity {
 	public void StartLeft(View v) {
 		Intent intent = new Intent(this, LeftActivity.class);
 		startActivity(intent);
+		overridePendingTransition(R.anim.anim_left_in, R.anim.anim_left_out); 
 	}
 
 	// 跳转到活动资讯

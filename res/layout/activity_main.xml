@@ -60,7 +60,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="41dp"
+        android:layout_marginTop="88dp"
         android:onClick="StartLeft"
         android:background="@drawable/img_main_btn_right" />
 

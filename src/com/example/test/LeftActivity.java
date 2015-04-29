@@ -13,7 +13,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
@@ -31,7 +35,7 @@ public class LeftActivity extends Activity implements OnItemClickListener{
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);   
 		setContentView(R.layout.activity_left); 
 		ListView listView = (ListView) findViewById(R.id.left_listView1);
 		listItems = getListItems();   
@@ -42,6 +46,14 @@ public class LeftActivity extends Activity implements OnItemClickListener{
 	
 	public void StartMain(View v){
     	finish();
+    	overridePendingTransition(R.anim.anim_main_in, R.anim.anim_main_out); 
+//    	AnimationSet animationSet = new AnimationSet(true);
+//    	TranslateAnimation translateAnimation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 1.0f, 
+//    			Animation.RELATIVE_TO_SELF, 0f,Animation.RELATIVE_TO_SELF, 2.0f,Animation.RELATIVE_TO_SELF, 0f);
+//    	translateAnimation.setDuration(2000);
+//    	animationSet.addAnimation(translateAnimation);
+    	
+    	
     }
 	
 	public void StartPhoto(View v){
@@ -49,6 +61,17 @@ public class LeftActivity extends Activity implements OnItemClickListener{
     	intent.setClass(this, PhotoActivity.class);
     	startActivity(intent);
     }
+	
+	public void Start(View v){
+		// 通过包名获取要跳转的app，创建intent对象
+		 
+		Intent intent = getPackageManager().getLaunchIntentForPackage("com.example.test");
+//		Intent intent = new Intent();
+//		intent.setAction("xkx");
+//		intent.setComponent("com.example.test");
+		 
+		
+	}
 	
 	private List<Map<String, Object>> getListItems() {
 		List<Map<String, Object>> listItems = new ArrayList<Map<String, Object>>();
@@ -75,16 +98,37 @@ public class LeftActivity extends Activity implements OnItemClickListener{
 //		Toast.makeText(getApplication(), ""+position, Toast.LENGTH_SHORT).show();
 		if(position == 1)
 		{
+			//跳转到照片界面
 			intent.setClass(getApplication(), PhotoActivity.class);
 			startActivity(intent);
 		}
+		
 		else if(position == 2)
 		{
-			intent.setClass(getApplication(), MassageActivity.class);
-			startActivity(intent);
+			//跳转到按摩界面
+			// 通过包名获取要跳转的app，创建intent对象
+			intent = getPackageManager().getLaunchIntentForPackage("com.example.tests");
+			// 这里如果intent为空，就说名没有安装要跳转的应用嘛
+			if (intent != null) 
+			{
+			    // 这里跟Activity传递参数一样的嘛，不要担心怎么传递参数，还有接收参数也是跟Activity和Activity传参数一样
+			    intent.putExtra("name", "XiaKeXing");
+			    intent.putExtra("app", "123456");
+			    startActivity(intent);
+			} 
+			else 
+			{
+			    // 没有安装要跳转的app应用，提醒一下
+			    Toast.makeText(getApplicationContext(), "哟，赶紧下载安装这个APP吧", Toast.LENGTH_LONG).show();
+			}
+//			intent.setAction("")
+//			intent.setClass(getApplication(), MassageActivity.class);
+//			startActivity(intent);
 		}
+		
 		else if(position == 3)
 		{
+			//跳转到SOS界面
 			intent.setClass(getApplication(), GuideActivity.class);
 			startActivity(intent);
 		}
