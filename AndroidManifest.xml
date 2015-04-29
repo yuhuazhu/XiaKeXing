@@ -41,28 +41,21 @@
             android:label="@string/title_activity_left"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
         </activity>
-
-        
-         <activity
+        <activity
             android:name="com.example.test.MainActivity"
-            android:label="@string/title_activity_left" 
+            android:label="@string/title_activity_left"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
         </activity>
-        
-          <activity
+        <activity
             android:name="com.example.test.PhotoWashActivity"
-            android:label="@string/title_activity_left" 
+            android:label="@string/title_activity_left"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
         </activity>
-        
-          <activity
+        <activity
             android:name="com.example.test.RouteActivity"
-            android:label="@string/title_activity_left" 
+            android:label="@string/title_activity_left"
             android:theme="@android:style/Theme.Light.NoTitleBar" >
         </activity>
-
-        
-        
         <activity
             android:name="com.example.test.ReflexActivity"
             android:label="@string/title_activity_reflex" >
@@ -81,10 +74,13 @@
         </activity>
         <activity
             android:name="com.example.test.ActivitiesActivity"
-            android:label="@string/title_activity_activities" 
+            android:label="@string/title_activity_activities"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
-
+        <activity
+            android:name="com.example.test.MassageActivity"
+            android:label="@string/title_activity_massage" >
+        </activity>
     </application>
 
 </manifest>
