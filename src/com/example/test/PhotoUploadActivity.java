@@ -18,7 +18,6 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -30,10 +29,12 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -61,12 +62,14 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 	private Button mButton;
 	private StringBuffer b;
 	private RelativeLayout upbtn;
+	private RelativeLayout cancel;
 	private String position = "";
 	private String QRCODE = "";
 	private Boolean selflag = false;
-	private Button btnback;
+	private ImageButton btnback;
 	private RelativeLayout progresslay;
 	private ProgressBar progress_horizontal;
+
 	/**
 	 * 存储图片地址
 	 */
@@ -77,6 +80,8 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		// 移除ActionBar，在setContent之前调用下面这句，保证没有ActionBar
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_photosel);
 		initData();
 		initUI();
@@ -216,10 +221,12 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 
 	private void initUI() {
 		upbtn = (RelativeLayout) findViewById(R.id.upbtn);
+		cancel = (RelativeLayout) findViewById(R.id.cancel);
+		cancel.setOnClickListener(this);
 		progresslay = (RelativeLayout) findViewById(R.id.progresslay);
 		progress_horizontal = (ProgressBar) findViewById(R.id.progress_horizontal);
 		upbtn.setOnClickListener(this);
-		btnback = (Button) findViewById(R.id.btnback);
+		btnback = (ImageButton) findViewById(R.id.btnback);
 		btnback.setOnClickListener(this);
 		gridphoto = (GridView) findViewById(R.id.gridphoto);
 		myAdapter = new MyAdapter();
@@ -248,15 +255,16 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 	}
 
 	private class LocationTask extends
-			AsyncTask<HashMap<String, String>, Integer, JSONObject> {
+			AsyncTask<HashMap<String, String>, Integer, String> {
 
 		// doInBackground方法内部执行后台任务,不可在此方法内修改UI
 		@Override
-		protected JSONObject doInBackground(HashMap<String, String>... params) {
+		protected String doInBackground(HashMap<String, String>... params) {
 			// TODO Auto-generated method stub
 
-			uploadFile(imageUriArray[Integer.valueOf(params[0].get("arg2"))]);
-			return null;
+			String str = uploadFile(imageUriArray[Integer.valueOf(params[0]
+					.get("arg2"))]);
+			return str;
 		}
 
 		// onProgressUpdate方法用于更新进度信息
@@ -286,12 +294,12 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 
 		// onPostExecute方法用于在执行完后台任务后更新UI,显示结果
 		@Override
-		protected void onPostExecute(JSONObject Signinfo) {
+		protected void onPostExecute(String Signinfo) {
 
 			//
 
 			try {
-				JSONObject jsonObject = new JSONObject(b.toString());
+				JSONObject jsonObject = new JSONObject(Signinfo);
 				if (jsonObject != null) {
 
 					if (jsonObject.getString("code").equals("0000")) {
@@ -300,6 +308,13 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 						if (QRCODE.equals("")) {
 							return;
 						}
+						else
+						{
+							showDialog("上传成功");
+							progress_horizontal.setProgress(100);
+							progresslay.setVisibility(View.GONE);
+							
+						}
 					}
 
 				}
@@ -307,9 +322,7 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			showDialog("上传成功");
-			progress_horizontal.setProgress(100);
-			progresslay.setVisibility(View.GONE);
+			
 			// showDialog("上传成功" + b.toString().trim()); /* 关闭DataOutputStream
 			// */
 
@@ -407,9 +420,9 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 		}
 
 	}
-	
+
 	/* 上传文件至Server的方法 */
-	private void uploadFile(String str) {
+	private String uploadFile(String str) {
 		String end = "\r\n";
 		String twoHyphens = "--";
 		String boundary = "*****";
@@ -443,7 +456,8 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 																	 * streams
 																	 */
 			fStream.close();
-			ds.flush(); /* 取得Response内容 */
+			ds.flush();
+			/* 取得Response内容 */
 			InputStream is = con.getInputStream();
 			int ch;
 			b = new StringBuffer();
@@ -456,6 +470,7 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 		} catch (Exception e) {
 			// showDialog("上传失败" + e);
 		}
+		return b.toString();
 	}
 
 	/* 显示Dialog的method */private void showDialog(String mess) {
@@ -464,7 +479,6 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 				.setNegativeButton("确定", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 
-						
 						if (!position.equals("")) {
 							Intent intent = new Intent();
 							intent.setClass(PhotoUploadActivity.this,
@@ -475,13 +489,12 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 							selflag = false;
 							myAdapter.notifyDataSetChanged();
 							startActivity(intent);
-							
+
 						}
 					}
 				}).show();
 	}
 
-	
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
@@ -500,6 +513,7 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 			task.execute(params);
 
 			break;
+		case R.id.cancel:
 		case R.id.btnback:
 			finish();
 			break;

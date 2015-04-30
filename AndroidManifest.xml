@@ -18,7 +18,8 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
- 
+ 
+    <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -36,44 +37,40 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.example.test.PhotoActivity"
-            android:label="@string/app_name"
-            android:theme="@android:style/Theme.Light.NoTitleBar" >
+            android:label="@string/app_name" >
         </activity>
         <activity
             android:name="com.example.test.WelcomeActivity"
-            android:label="@style/AppTheme"
+
+            android:label="@string/title_activity_welcome" 
             android:theme="@android:style/Theme.NoTitleBar" >
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-				
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            
-            
         </activity>
         <activity
             android:name="com.example.test.LeftActivity"
-            android:label="@string/title_activity_left"
-            android:theme="@android:style/Theme.Light.NoTitleBar" >
+            android:label="@string/title_activity_left" >
         </activity>
         <activity
             android:name="com.example.test.MainActivity"
-            android:label="@string/title_activity_left"
-            android:theme="@android:style/Theme.Light.NoTitleBar" >
-            <intent-filter >
-                <action android:name="xkx"/>
-                <category android:name="android.intent.category.DEFAULT"/>
+            android:label="@string/title_activity_left" >
+            <intent-filter>
+                <action android:name="xkx" />
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
             android:name="com.example.test.PhotoWashActivity"
-            android:label="@string/title_activity_left"
-            android:theme="@android:style/Theme.Light.NoTitleBar" >
+            android:label="@string/title_activity_left" >
         </activity>
         <activity
             android:name="com.example.test.RouteActivity"
-            android:label="@string/title_activity_left"
-            android:theme="@android:style/Theme.Light.NoTitleBar" >
+            android:label="@string/title_activity_left" >
         </activity>
         <activity
             android:name="com.example.test.ReflexActivity"
@@ -89,38 +86,38 @@
         </activity>
         <activity
             android:name="com.example.test.GuideActivity"
-            android:label="@string/title_activity_guide"
-            android:theme="@android:style/Theme.NoTitleBar" >
+            android:label="@string/title_activity_guide" >
         </activity>
         <activity
             android:name="com.example.test.ActivitiesActivity"
-            android:label="@string/title_activity_activities"
-            android:theme="@android:style/Theme.NoTitleBar" >
+            android:label="@string/title_activity_activities" >
         </activity>
-
         <activity
             android:name="com.example.test.RouteMapActivity"
             android:label="@string/title_activity_activities"
-            android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.NoTitleBar" >
+             >
         </activity>
         <activity
             android:name="com.example.test.PhotoUploadActivity"
-            android:label="@string/title_activity_activities"
-            android:theme="@android:style/Theme.NoTitleBar" >
+            android:label="@string/title_activity_activities" >
         </activity>
-        
-         <activity
+        <activity
             android:name="com.example.test.PhotoScanning"
-            android:label="@string/title_activity_activities"
-            android:theme="@android:style/Theme.NoTitleBar" >
+            android:label="@string/title_activity_activities" >
         </activity>
-
         <activity
             android:name="com.example.test.MassageActivity"
             android:label="@string/title_activity_massage" >
         </activity>
-
+        <activity
+            android:name="com.example.test.PhotoTakeActivity"
+            android:label="@string/title_activity_massage" >
+        </activity>
+        
+        <activity
+            android:name="com.example.test.TestSensorActivity"
+            android:label="@string/title_activity_massage" >
+        </activity>
     </application>
 
 </manifest>

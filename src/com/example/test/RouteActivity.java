@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -25,7 +26,7 @@ import com.example.test.R;
 public class RouteActivity extends Activity implements OnClickListener {
 	private Button btnlist;
 	private ImageButton btndlist;
-	private Button btnback;
+	private ImageButton btnback;
 	private ListView listView1;
 	private List<Map<String, Object>> list;
 
@@ -35,6 +36,8 @@ public class RouteActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		// 移除ActionBar，在setContent之前调用下面这句，保证没有ActionBar
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_route);
 
 		initData();
@@ -77,7 +80,7 @@ public class RouteActivity extends Activity implements OnClickListener {
 		map = new HashMap<String, Object>();
 
 		map.put("img", R.drawable.img_left_bg);
-		map.put("title",getResources().getString(R.string.R_title5) );
+		map.put("title", getResources().getString(R.string.R_title5));
 		map.put("time", getResources().getString(R.string.R_time));
 		map.put("distance", getResources().getString(R.string.R_dis5));
 		list.add(map);
@@ -92,12 +95,12 @@ public class RouteActivity extends Activity implements OnClickListener {
 	private void initUI() {
 		btndlist = (ImageButton) findViewById(R.id.btndlist);
 		btndlist.setOnClickListener(this);
-		btnback = (Button) findViewById(R.id.btnback);
+		btnback = (ImageButton) findViewById(R.id.btnback);
 		btnback.setOnClickListener(this);
 		btnlist = (Button) findViewById(R.id.btnlist);
 		btnlist.setOnClickListener(this);
-		
-		imgmap= (ImageView) findViewById(R.id.imgmap);
+
+		imgmap = (ImageView) findViewById(R.id.imgmap);
 		imgmap.setOnClickListener(this);
 		listView1 = (ListView) findViewById(R.id.listView1);
 		myAdapter = new MyAdapter();
@@ -162,10 +165,11 @@ public class RouteActivity extends Activity implements OnClickListener {
 				holder = (ViewHolder) convertView.getTag();
 			}
 
-			holder.imageView1.setBackgroundResource((Integer)list.get(position).get("img"));
-			holder.txttitle.setText((String)list.get(position).get("title"));
-			holder.txttime.setText((String)list.get(position).get("time"));
-			Map<String, Object> map = list.get(position);  //distance
+			holder.imageView1.setBackgroundResource((Integer) list
+					.get(position).get("img"));
+			holder.txttitle.setText((String) list.get(position).get("title"));
+			holder.txttime.setText((String) list.get(position).get("time"));
+			Map<String, Object> map = list.get(position); // distance
 			String object = (String) list.get(position).get("distance");
 			holder.txtdistance.setText(object);
 
@@ -182,12 +186,11 @@ public class RouteActivity extends Activity implements OnClickListener {
 
 			break;
 		case R.id.btnback:
-
 			finish();
 			break;
-			
+
 		case R.id.imgmap:
-			
+
 			Intent intent = new Intent();
 			intent.setClass(this, RouteMapActivity.class);
 

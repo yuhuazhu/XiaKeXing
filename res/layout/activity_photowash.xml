@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,11 +17,13 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/margin_smallest" >
 
-        <Button
+        <ImageButton
             android:id="@+id/btnback"
-             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
             android:background="@drawable/ic_back" />
 
         <TextView
@@ -142,6 +144,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
+                    android:textSize="@dimen/text_size_start"
                     android:text="@string/contentPHws_btnsel"
                     android:textColor="@color/white" />
             </RelativeLayout>
@@ -160,11 +163,11 @@
         android:paddingRight="@dimen/activity_horizontal_margin" >
 
         <LinearLayout
+            android:id="@+id/laybtn02"
             android:layout_width="match_parent"
             android:layout_height="@dimen/btn_height"
             android:background="@drawable/ic_phbtn"
             android:gravity="center_horizontal"
-            android:id="@+id/laybtn02"
             android:orientation="horizontal" >
 
             <RelativeLayout
@@ -192,6 +195,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
+                    android:textSize="@dimen/text_size_start"
                     android:text="@string/contentPHws_btnph"
                     android:textColor="@color/white" />
             </RelativeLayout>
