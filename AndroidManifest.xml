@@ -53,11 +53,12 @@
         </activity>
         <activity
             android:name="com.example.test.LeftActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
             android:label="@string/title_activity_left" >
         </activity>
         <activity
             android:name="com.example.test.MainActivity"
-            android:label="@string/title_activity_left" >
+            android:theme="@android:style/Theme.Light.NoTitleBar" >
             <intent-filter>
                 <action android:name="xkx" />
 
