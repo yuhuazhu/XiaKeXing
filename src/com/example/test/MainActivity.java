@@ -2,29 +2,36 @@ package com.example.test;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import com.example.test.R;
-import android.os.Bundle;
+
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
+import android.widget.RelativeLayout.LayoutParams;
 
 public class MainActivity extends Activity {
 	private boolean isExit;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		StartPaoPao();
 	}
 
 	// 返回
 	public void Backs(View v) {
 		finish();
 	}
-
+	
 	// 跳转到左侧界面
 	public void StartLeft(View v) {
 		Intent intent = new Intent(this, LeftActivity.class);
@@ -68,6 +75,52 @@ public class MainActivity extends Activity {
 		startActivity(intent);
 	}
 
+	// 泡泡动画
+	public void StartPaoPao() {
+		final ImageView spaceshipImage = (ImageView)findViewById(R.id.img_paopao);
+		Animation hyperspaceJumpAnimation=AnimationUtils.loadAnimation(this, R.anim.anim_paopao);
+		hyperspaceJumpAnimation.setFillAfter(true);
+		hyperspaceJumpAnimation.setAnimationListener(new AnimationListener() {
+			
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+				// TODO Auto-generated method stub
+				  
+			}
+			
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				spaceshipImage.clearAnimation();
+				spaceshipImage.setBackgroundResource(R.drawable.ic_paopaos);
+				int left = spaceshipImage.getLeft();
+				left += 200;
+				int top = spaceshipImage.getTop();
+				top -= 1000;
+				RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				param.setMargins(left, top, 0, 0);
+				spaceshipImage.setLayoutParams(param);
+				spaceshipImage.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						spaceshipImage.setVisibility(View.INVISIBLE);
+						
+					}
+				});
+			}
+		});
+		spaceshipImage.startAnimation(hyperspaceJumpAnimation);
+		
+//		AnimationSet
+	}
+	
 	private void exitBy2Click() {
 		Timer tExit = null;
 		if (isExit == false) {

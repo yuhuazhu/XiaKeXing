@@ -76,4 +76,14 @@
         android:background="@drawable/img_main_btn_daolan"
         android:onClick="StartGuide" />
 
+        <ImageView
+        android:id="@+id/img_paopao"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/ic_paopao" />
+    
+
 </RelativeLayout>
