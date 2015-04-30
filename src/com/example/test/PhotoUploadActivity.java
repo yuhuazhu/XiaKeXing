@@ -407,7 +407,7 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 		}
 
 	}
-
+	
 	/* 上传文件至Server的方法 */
 	private void uploadFile(String str) {
 		String end = "\r\n";
@@ -464,6 +464,7 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 				.setNegativeButton("确定", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int which) {
 
+						
 						if (!position.equals("")) {
 							Intent intent = new Intent();
 							intent.setClass(PhotoUploadActivity.this,
@@ -472,6 +473,7 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 							QRCODE = "";
 							position = "";
 							selflag = false;
+							myAdapter.notifyDataSetChanged();
 							startActivity(intent);
 							
 						}
@@ -479,6 +481,7 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 				}).show();
 	}
 
+	
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
