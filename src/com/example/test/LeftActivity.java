@@ -113,7 +113,7 @@ public class LeftActivity extends Activity implements OnItemClickListener {
 		// Toast.LENGTH_SHORT).show();
 		if (position == 1) {
 			// 跳转到照片界面
-			intent.setClass(getApplication(), PhotoActivity.class);
+			intent.setClass(getApplication(), PhotoWashActivity.class);
 			startActivity(intent);
 		}
 

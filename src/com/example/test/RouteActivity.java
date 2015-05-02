@@ -24,7 +24,7 @@ import com.example.test.R;
 
 //导游路线
 public class RouteActivity extends Activity implements OnClickListener {
-	private Button btnlist;
+	private ImageButton btnlist;
 	private ImageButton btndlist;
 	private ImageButton btnback;
 	private ListView listView1;
@@ -97,7 +97,7 @@ public class RouteActivity extends Activity implements OnClickListener {
 		btndlist.setOnClickListener(this);
 		btnback = (ImageButton) findViewById(R.id.btnback);
 		btnback.setOnClickListener(this);
-		btnlist = (Button) findViewById(R.id.btnlist);
+		btnlist = (ImageButton) findViewById(R.id.btnlist);
 		btnlist.setOnClickListener(this);
 
 		imgmap = (ImageView) findViewById(R.id.imgmap);
