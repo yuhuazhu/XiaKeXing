@@ -1,6 +1,6 @@
 package com.xkx.yjxm.activity;
 
-import com.example.test.R;
+import com.xkx.yjxm.R;
 
 import android.app.Activity;
 import android.os.Bundle;

@@ -12,7 +12,7 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.test.R;
+import com.xkx.yjxm.R;
 
 public class TestSensorActivity extends Activity {
 	private SensorManager sensorManager; 

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.bean.FastAdpater;
-import com.example.test.R;
+import com.xkx.yjxm.R;
 
 import android.os.Bundle;
 import android.app.Activity;

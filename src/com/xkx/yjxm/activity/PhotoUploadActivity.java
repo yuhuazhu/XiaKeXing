@@ -41,7 +41,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.baimao.adpater.BaseListAdapter;
-import com.example.test.R;
+import com.xkx.yjxm.R;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;

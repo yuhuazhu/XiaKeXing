@@ -25,7 +25,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
-import com.example.test.R;
+import com.xkx.yjxm.R;
 
 public class PhotoTakeActivity extends Activity implements OnClickListener {
 	private RelativeLayout upbtn;

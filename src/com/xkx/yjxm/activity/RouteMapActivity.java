@@ -35,7 +35,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.example.test.R;
+import com.xkx.yjxm.R;
 
 public class RouteMapActivity extends Activity implements OnClickListener {
 	// private Bitmap bitmap;

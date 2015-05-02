@@ -21,7 +21,7 @@ import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
-import com.example.test.R;
+import com.xkx.yjxm.R;
 
 public class PhotoWashActivity extends Activity implements OnClickListener {
 	private ImageButton btnback;

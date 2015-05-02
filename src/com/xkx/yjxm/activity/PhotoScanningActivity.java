@@ -18,7 +18,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import com.example.test.R;
+import com.xkx.yjxm.R;
 import com.xkx.utils.imgUtils;
 import com.xkx.utils.imgUtils.OnLoadImageListener;
 

@@ -3,7 +3,7 @@ package com.xkx.yjxm.activity;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.example.test.R;
+import com.xkx.yjxm.R;
 
 import android.app.Activity;
 import android.content.Intent;

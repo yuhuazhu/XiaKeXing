@@ -20,7 +20,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.baimao.adpater.BaseListAdapter;
-import com.example.test.R;
+import com.xkx.yjxm.R;
 
 //导游路线
 public class RouteActivity extends Activity implements OnClickListener {
