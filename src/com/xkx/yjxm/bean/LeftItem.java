@@ -1,4 +1,4 @@
-package com.example.bean;
+package com.xkx.yjxm.bean;
 
 import android.widget.ImageView;
 import android.widget.TextView;

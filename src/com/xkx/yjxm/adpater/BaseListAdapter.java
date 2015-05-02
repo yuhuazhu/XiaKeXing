@@ -1,4 +1,4 @@
-package com.baimao.adpater;
+package com.xkx.yjxm.adpater;
 
 import android.widget.BaseAdapter;
 

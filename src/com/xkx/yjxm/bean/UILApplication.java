@@ -25,7 +25,7 @@ import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
-import com.xkx.base.Constants.Config;
+import com.xkx.yjxm.base.Constants.Config;
 
 /**
  * @author Sergey Tarasevich (nostra13[at]gmail[dot]com)

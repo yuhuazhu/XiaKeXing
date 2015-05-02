@@ -19,8 +19,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.xkx.yjxm.R;
-import com.xkx.utils.imgUtils;
-import com.xkx.utils.imgUtils.OnLoadImageListener;
+import com.xkx.yjxm.utils.imgUtils;
+import com.xkx.yjxm.utils.imgUtils.OnLoadImageListener;
 
 public class PhotoScanningActivity extends Activity implements OnClickListener {
 	private String url;

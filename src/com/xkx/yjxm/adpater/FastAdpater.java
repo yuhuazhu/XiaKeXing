@@ -1,4 +1,4 @@
-package com.example.bean;
+package com.xkx.yjxm.adpater;
 
 import java.util.List;
 import java.util.Map;

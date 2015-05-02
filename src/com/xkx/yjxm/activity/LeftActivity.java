@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.example.bean.FastAdpater;
 import com.xkx.yjxm.R;
+import com.xkx.yjxm.adpater.FastAdpater;
 
 import android.os.Bundle;
 import android.app.Activity;

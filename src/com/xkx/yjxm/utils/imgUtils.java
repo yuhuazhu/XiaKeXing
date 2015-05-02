@@ -1,4 +1,4 @@
-package com.xkx.utils;
+package com.xkx.yjxm.utils;
 
 import java.io.IOException;
 import java.io.InputStream;

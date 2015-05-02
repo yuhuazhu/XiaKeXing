@@ -19,8 +19,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.baimao.adpater.BaseListAdapter;
 import com.xkx.yjxm.R;
+import com.xkx.yjxm.adpater.BaseListAdapter;
 
 //导游路线
 public class RouteActivity extends Activity implements OnClickListener {
