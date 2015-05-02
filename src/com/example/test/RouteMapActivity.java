@@ -132,8 +132,21 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 		initUI();
 		mSoundPool= new SoundPool(10, AudioManager.STREAM_SYSTEM, 5);
-		
-				soundID = mSoundPool.load(RouteMapActivity.this, R.raw.windows, 1);
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				//try {
+					soundID = mSoundPool.load(RouteMapActivity.this, R.raw.yindao, 1);
+					//Thread.sleep(10000);
+//				} catch (InterruptedException e) {
+//					e.printStackTrace();
+//				}
+				// TODO Auto-generated method stub
+				
+			}
+		}).start();
+				
 				// TODO Auto-generated method stub
 				
 			
@@ -368,20 +381,8 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 				// 播放语音
 				imgplay.setBackgroundResource(R.drawable.ic_pause);
 				
-				new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-						try {
-							Thread.sleep(500);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-						// TODO Auto-generated method stub
-						int streamID1 = mSoundPool.play(soundID, 1, 1, 1, 0, 1.0f);
-					}
-				}).start();
 				
+				streamID1 = mSoundPool.play(soundID, 1, 1, 1, 0, 1.0f);
 //				Intent it = new Intent(Intent.ACTION_VIEW);
 //				File file = new File("file:///android_asset/1yindao.m4a");
 //				//获取文件file的MIME类型 
