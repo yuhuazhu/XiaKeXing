@@ -143,7 +143,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 				soundMap.put(2,
 						mSoundPool.load(RouteMapActivity.this, R.raw.zizhu, 1));
 				soundMap.put(3, mSoundPool.load(RouteMapActivity.this,
-						R.raw.tiyan3D, 1));
+						R.raw.tiyan3d, 1));
 				soundMap.put(4,
 						mSoundPool.load(RouteMapActivity.this, R.raw.yyzs, 1));
 				soundMap.put(5,
