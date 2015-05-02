@@ -51,7 +51,7 @@
             android:layout_marginTop="40dp"
             android:background="@drawable/corners_bg"
             android:text="150m"
-            android:textSize="@dimen/text_size_start" />
+            android:textColor="@color/gray"  />
     </RelativeLayout>
 
     <ImageView
