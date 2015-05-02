@@ -11,7 +11,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.test.R;
+import com.xkx.yjxm.R;
 
 public class FastAdpater extends BaseAdapter {
 //	private Context context;
