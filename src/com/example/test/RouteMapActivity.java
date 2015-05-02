@@ -176,30 +176,38 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 				System.out.println("setOnLoadCompleteListener");
 			}
 		});
-
 		soundMap = new HashMap<Integer, Integer>();
+		new Thread(new Runnable() {
 
-		soundMap.put(1, mSoundPool.load(RouteMapActivity.this, R.raw.yindao, 1));
-		soundMap.put(2, mSoundPool.load(RouteMapActivity.this, R.raw.zizhu, 1));
-		soundMap.put(3,
-				mSoundPool.load(RouteMapActivity.this, R.raw.tiyan3d, 1));
-		soundMap.put(4, mSoundPool.load(RouteMapActivity.this, R.raw.yyzs, 1));
-		soundMap.put(5, mSoundPool.load(RouteMapActivity.this, R.raw.jiedai, 1));
-		soundMap.put(6, mSoundPool.load(RouteMapActivity.this, R.raw.anmo, 1));
-		soundMap.put(7,
-				mSoundPool.load(RouteMapActivity.this, R.raw.playscreen, 1));
-		soundMap.put(8,
-				mSoundPool.load(RouteMapActivity.this, R.raw.xinglijicun, 1));
-		soundMap.put(9, mSoundPool.load(RouteMapActivity.this, R.raw.yiwu, 1));
-		soundMap.put(10,
-				mSoundPool.load(RouteMapActivity.this, R.raw.banshouli, 1));
-		soundMap.put(11,
-				mSoundPool.load(RouteMapActivity.this, R.raw.duogongneng, 1));
-		soundMap.put(12,
-				mSoundPool.load(RouteMapActivity.this, R.raw.jifang, 1));
-		soundMap.put(13, mSoundPool.load(RouteMapActivity.this, R.raw.yjzh, 1));
-		soundMap.put(14,
-				mSoundPool.load(RouteMapActivity.this, R.raw.bangongqu, 1));
+			@Override
+			public void run() {
+				soundMap.put(1, mSoundPool.load(RouteMapActivity.this, R.raw.yindao, 1));
+				soundMap.put(2, mSoundPool.load(RouteMapActivity.this, R.raw.zizhu, 1));
+				soundMap.put(3,
+						mSoundPool.load(RouteMapActivity.this, R.raw.tiyan3d, 1));
+				soundMap.put(4, mSoundPool.load(RouteMapActivity.this, R.raw.yyzs, 1));
+				soundMap.put(5, mSoundPool.load(RouteMapActivity.this, R.raw.jiedai, 1));
+				soundMap.put(6, mSoundPool.load(RouteMapActivity.this, R.raw.anmo, 1));
+				soundMap.put(7,
+						mSoundPool.load(RouteMapActivity.this, R.raw.playscreen, 1));
+				soundMap.put(8,
+						mSoundPool.load(RouteMapActivity.this, R.raw.xinglijicun, 1));
+				soundMap.put(9, mSoundPool.load(RouteMapActivity.this, R.raw.yiwu, 1));
+				soundMap.put(10,
+						mSoundPool.load(RouteMapActivity.this, R.raw.banshouli, 1));
+				soundMap.put(11,
+						mSoundPool.load(RouteMapActivity.this, R.raw.duogongneng, 1));
+				soundMap.put(12,
+						mSoundPool.load(RouteMapActivity.this, R.raw.jifang, 1));
+				soundMap.put(13, mSoundPool.load(RouteMapActivity.this, R.raw.yjzh, 1));
+				soundMap.put(14,
+						mSoundPool.load(RouteMapActivity.this, R.raw.bangongqu, 1));
+			}
+			}).start();
+			
+		
+
+		
 
 		// Thread.sleep(10000);
 		// } catch (InterruptedException e) {
