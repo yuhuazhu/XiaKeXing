@@ -41,8 +41,7 @@
         </activity>
         <activity
             android:name="com.example.test.WelcomeActivity"
-
-            android:label="@string/title_activity_welcome" 
+            android:label="@string/app_name" 
             android:theme="@android:style/Theme.NoTitleBar" >
 
             <intent-filter>
