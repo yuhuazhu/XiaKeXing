@@ -23,7 +23,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.example.test.R;
-import com.example.test.RouteMapActivity;
+import com.xkx.yjxm.activity.RouteMapActivity;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
