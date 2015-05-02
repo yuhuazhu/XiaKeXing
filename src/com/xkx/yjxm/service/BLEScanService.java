@@ -22,7 +22,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.example.test.R;
+import com.xkx.yjxm.R;
 import com.xkx.yjxm.activity.RouteMapActivity;
 
 /**
