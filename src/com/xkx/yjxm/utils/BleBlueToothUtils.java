@@ -18,8 +18,7 @@ import android.os.Build;
  */
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class BleBlueToothUtils {
-	public static BluetoothDevice scan(int interval, int count, boolean dense,
-			final int rssiFilter) {
+	public static BluetoothDevice scan(int interval, int count) {
 		final HashMap<BluetoothDevice, Integer> scannedCountMap = new HashMap<BluetoothDevice, Integer>();
 		final HashMap<BluetoothDevice, Integer> sumRssiMap = new HashMap<BluetoothDevice, Integer>();
 		LeScanCallback callback = new LeScanCallback() {
