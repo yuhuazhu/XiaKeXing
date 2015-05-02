@@ -18,7 +18,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
- 
+ 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -41,9 +41,8 @@
         </activity>
         <activity
             android:name="com.xkx.yjxm.activity.WelcomeActivity"
-            android:label="@string/app_name" 
+            android:label="@string/app_name"
             android:theme="@android:style/Theme.NoTitleBar" >
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -52,8 +51,8 @@
         </activity>
         <activity
             android:name="com.xkx.yjxm.activity.LeftActivity"
-            android:theme="@android:style/Theme.Light.NoTitleBar"
-            android:label="@string/title_activity_left" >
+            android:label="@string/title_activity_left"
+            android:theme="@android:style/Theme.Light.NoTitleBar" >
         </activity>
         <activity
             android:name="com.xkx.yjxm.activity.MainActivity"
@@ -94,8 +93,7 @@
         </activity>
         <activity
             android:name="com.xkx.yjxm.activity.RouteMapActivity"
-            android:label="@string/title_activity_activities"
-             >
+            android:label="@string/title_activity_activities" >
         </activity>
         <activity
             android:name="com.xkx.yjxm.activity.PhotoUploadActivity"
@@ -113,10 +111,13 @@
             android:name="com.xkx.yjxm.activity.PhotoTakeActivity"
             android:label="@string/title_activity_massage" >
         </activity>
-        
         <activity
             android:name="com.xkx.yjxm.activity.TestSensorActivity"
             android:label="@string/title_activity_massage" >
+        </activity>
+        <activity
+            android:name="com.xkx.yjxm.activity.SearchActivity"
+            android:label="@string/title_activity_search" >
         </activity>
     </application>
 

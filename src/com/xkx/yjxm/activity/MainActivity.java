@@ -62,9 +62,9 @@ public class MainActivity extends Activity {
 		startActivity(intent);
 	}
 
-	// 跳转到导航
-	public void StartNavigation(View v) {
-		Intent intent = new Intent(this, NavigationActivity.class);
+	// 跳转到导航的搜索界面
+	public void StartSearch(View v) {
+		Intent intent = new Intent(this, SearchActivity.class);
 		startActivity(intent);
 	}
 

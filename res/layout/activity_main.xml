@@ -64,7 +64,7 @@
         android:layout_alignLeft="@+id/button5"
         android:layout_marginBottom="20dp"
         android:background="@drawable/img_main_btn_daohang"
-        android:onClick="StartNavigation" />
+        android:onClick="StartSearch" />
 
     <Button
         android:id="@+id/button4"

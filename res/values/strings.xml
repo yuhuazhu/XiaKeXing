@@ -13,10 +13,8 @@
     <string name="viewPH_title">免费体验照片冲印</string>
     <string name="viewPhws_title">照片冲印</string>
     <string name="viewPhws_btn">立即免费体验</string>
-
     <string name="photo_sel">选择照片</string>
     <string name="photo_scan">扫描照片</string>
-
     <string name="contentPHws_title">新用户可以免费体验冲印照片2张</string>
     <string name="contentPHws_detail">通过app上传照片,在景区、酒店、机场、车站等地的旅游电子信息屏冲印</string>
     <string name="contentPHws_btnsee">查看离我最近的冲印点</string>
@@ -44,7 +42,6 @@
     <string name="title_activity_guide">GuideActivity</string>
     <string name="title_activity_activities">ActivitiesActivity</string>
     <string name="title_activity_massage">MassageActivity</string>
-
-
+    <string name="title_activity_search">SearchActivity</string>
 
 </resources>

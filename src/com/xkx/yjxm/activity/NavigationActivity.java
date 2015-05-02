@@ -21,15 +21,15 @@ public class NavigationActivity extends Activity {
 		//移除ActionBar，在setContent之前调用下面这句，保证没有ActionBar
 		requestWindowFeature(Window.FEATURE_NO_TITLE);  
 		setContentView(R.layout.activity_navigation);
-		ImageButton button = (ImageButton) findViewById(R.id.imageButton1);
-		button.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				finish();
-				
-			}
-		});
+//		ImageButton button = (ImageButton) findViewById(R.id.imageButton1);
+//		button.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				finish();
+//				
+//			}
+//		});
 	}
 
 	@Override
