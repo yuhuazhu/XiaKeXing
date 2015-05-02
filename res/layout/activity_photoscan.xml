@@ -30,9 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_marginTop="@dimen/space_content_listview_vertical"
-            android:text="@string/photo_scan"
-            android:textSize="@dimen/text_size_main_num"
-            android:textStyle="bold" />
+            android:text="@string/photo_scan" />
     </RelativeLayout>
 
     <ImageView

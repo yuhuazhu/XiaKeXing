@@ -40,8 +40,7 @@
             android:layout_below="@+id/line2"
             android:layout_marginLeft="42dp"
             android:layout_toRightOf="@+id/line1"
-            android:text="123"
-            android:textSize="@dimen/text_size_main_num" />
+            android:text="123"  />
 
         <TextView
             android:id="@+id/txtdistance"
@@ -49,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="42dp"
+            android:layout_marginTop="40dp"
             android:background="@drawable/corners_bg"
             android:text="150m"
             android:textSize="@dimen/text_size_start" />

@@ -32,9 +32,8 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_marginTop="@dimen/space_content_listview_vertical"
-            android:text="@string/viewPhws_title"
-            android:textSize="@dimen/text_size_main_num"
-            android:textStyle="bold" />
+            android:text="@string/viewPhws_title" 
+             />
     </RelativeLayout>
 
     <LinearLayout
@@ -54,18 +53,14 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_smallest"
             android:text="@string/contentPHws_title"
-            android:textColor="@color/orgph_title"
-            android:textSize="@dimen/text_size_main_num"
-            android:textStyle="bold" />
+            android:textColor="@color/orgph_title" />
 
         <TextView
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_content"
-            android:text="@string/contentPHws_detail"
-            android:textSize="@dimen/text_size_main_num"
-            android:textStyle="bold" />
+            android:text="@string/contentPHws_detail"  />
     </LinearLayout>
 
     <LinearLayout
@@ -87,8 +82,7 @@
             android:layout_height="@dimen/content_top_margint"
             android:background="@drawable/washbutton"
             android:text="@string/contentPHws_btnsee"
-            android:textColor="@color/orgph_title"
-            android:textSize="@dimen/text_size_main_num" />
+            android:textColor="@color/orgph_title"  />
     </LinearLayout>
 
     <View

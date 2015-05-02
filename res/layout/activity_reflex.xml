@@ -5,38 +5,33 @@
     android:background="@drawable/img_reflex_bg"
     tools:context=".ReflexActivity" >
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/margin_smallest"
+        android:paddingBottom="@dimen/margin_smallest"
         android:background="#4effffff" >
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="vertical" >
-
-            <ImageButton
+        <ImageButton
                 android:id="@+id/button1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
                 android:background="@drawable/ic_back"
                 android:onClick="Back" />
 
-        </LinearLayout>
-
         <TextView
             android:id="@+id/textView1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center|center_horizontal"
-            android:paddingRight="100dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
             android:text="映像"
             android:textColor="#ae000000" />
-    </LinearLayout>
+    </RelativeLayout>
 
     <ScrollView
         android:id="@+id/scrollView1"

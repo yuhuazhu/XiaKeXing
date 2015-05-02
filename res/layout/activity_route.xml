@@ -44,26 +44,6 @@
        
     </LinearLayout>
  
-    <LinearLayout
-        android:id="@+id/lay03"
-        android:layout_width="match_parent"
-         android:paddingTop="@dimen/margin_smallest"
-        android:paddingBottom="@dimen/margin_smallest"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/line1"
-        android:orientation="vertical"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin" >
-
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_content_listview_vertical"
-            android:text="@string/contentPH_detail"
-              android:textSize="@dimen/text_size_main_num"
-            android:textStyle="bold" />
-    </LinearLayout>
 
     
 
@@ -92,9 +72,7 @@
             android:layout_centerInParent="true"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/space_content_listview_vertical"
-            android:text="@string/R_toptitle"
-              android:textSize="@dimen/text_size_main_num"
-            android:textStyle="bold" />
+            android:text="@string/R_toptitle"  />
           <ImageButton
             android:id="@+id/btndlist"
             android:layout_centerVertical="true"
@@ -103,7 +81,7 @@
             android:layout_toRightOf="@+id/textView1"
             android:background="@drawable/ic_dlist" />
           
-          <Button
+          <ImageButton
             android:id="@+id/btnlist"
             android:layout_centerVertical="true"
             android:layout_width="wrap_content"
