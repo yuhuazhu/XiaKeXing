@@ -119,6 +119,12 @@
             android:name="com.xkx.yjxm.activity.SearchActivity"
             android:label="@string/title_activity_search" >
         </activity>
+
+        <service
+            android:name="com.xkx.yjxm.service.BLEService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
     </application>
 
 </manifest>
