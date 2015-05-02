@@ -5,7 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.hardware.Sensor;
@@ -18,6 +23,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,6 +35,7 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.test.R;
+
 public class RouteMapActivity extends Activity implements OnClickListener {
 	// private Bitmap bitmap;
 	int mBitmapWidth = 0;
@@ -45,7 +52,8 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private ImageButton imgplay;
 	private ImageButton imgdownmouth;
 	private static final int SENSOR_SHAKE = 10;
-	private boolean isOnRouteActivity = false;
+	private final String ACTION_NOTIFY = "com.yjxm.notify";
+	private BroadcastReceiver receiver;
 	private boolean down = false;
 	private boolean playstate = false;
 	private boolean openstate = false;
@@ -117,6 +125,9 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 			{ ".zip", "application/x-zip-compressed" }, { "", "*/*" } };
 
 	SoundPool mSoundPool = null;
+
+	private boolean isOnRouteActivity = false;
+
 	private Map<Integer, Integer> soundMap;
 
 	@Override
@@ -125,6 +136,42 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		// 移除ActionBar，在setContent之前调用下面这句，保证没有ActionBar
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_routemap);
+		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+		vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+
+		initUI();
+		mSoundPool = new SoundPool(10, AudioManager.STREAM_SYSTEM, 5);
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				// try {
+				soundID = mSoundPool.load(RouteMapActivity.this, R.raw.yindao,
+						1);
+				// Thread.sleep(10000);
+				// } catch (InterruptedException e) {
+				// e.printStackTrace();
+				// }
+				// TODO Auto-generated method stub
+
+			}
+		}).start();
+
+		// TODO Auto-generated method stub
+
+		// 设置最多可容纳10个音频流，音频的品质为5
+
+	}
+
+	private void initUI() {
+
+		imgplay = (ImageButton) findViewById(R.id.imgplay);
+		imgplay.setOnClickListener(this);
+		imgmouth = (ImageButton) findViewById(R.id.imgmouth);
+		imgmouth.setOnClickListener(this);
+		imgdownmouth = (ImageButton) findViewById(R.id.imgdown);
+		imgswitch = (ImageButton) findViewById(R.id.imgswitch);
+		imgswitch.setOnClickListener(this);
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 		vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
@@ -182,50 +229,69 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 	}
 
-	private void initUI() {
-
-		imgplay = (ImageButton) findViewById(R.id.imgplay);
-		imgplay.setOnClickListener(this);
-		imgmouth = (ImageButton) findViewById(R.id.imgmouth);
-		imgmouth.setOnClickListener(this);
-		imgdownmouth = (ImageButton) findViewById(R.id.imgdown);
-		imgswitch = (ImageButton) findViewById(R.id.imgswitch);
-		imgswitch.setOnClickListener(this);
-		imageView = (ImageView) findViewById(R.id.imageView1);
-		textView1 = new TextView(this);
-		txtdetail = (TextView) findViewById(R.id.txtdetail);
-
-		// BitmapDrawable db = (BitmapDrawable) getResources().getDrawable(
-		// R.drawable.ic_left_about);
-		// bitmap = big(db.getBitmap());
-
-		LinearLayout l = new LinearLayout(this);
-		LayoutParams params = new LayoutParams(LayoutParams.FILL_PARENT,
-				LayoutParams.FILL_PARENT);
-		l.addView(textView1);
-		addContentView(l, params);
-
-		// imageView.setImageBitmap(bitmap);
-		// http://xys289187120.blog.51cto.com/3361352/657590
-		// mBitmapWidth = bitmap.getWidth();
-		// mBitmapHeight = bitmap.getHeight();
-		mArrayColorLengh = mBitmapWidth * mBitmapHeight;
-		mArrayColor = new int[mArrayColorLengh];
-
-		// Log.i(TAG, "图片大小：mBitmapWidth=" + mBitmapWidth + ",mBitmapHeight="
-		// + mBitmapHeight + ",mArrayColorLengh=" + mArrayColorLengh);
-		// int count = 0;
-		// for (int i = 0; i < mBitmapHeight; i++) {
-		// for (int j = 0; j < mBitmapWidth; j++) {
-		// // 获得Bitmap 图片中每一个点的color颜色值
-		// int color = bitmap.getPixel(j, i);
-		// // 将颜色值存在一个数组中 方便后面修改
-		// mArrayColor[count] = color;
-		//
-		// count++;
-		// }
-		// }
-
+	@Override
+	protected void onStart() {
+		super.onStart();
+		saveIsOnRouteMapActivity(true);
+		receiver = new BroadcastReceiver() {
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				String action = intent.getAction();
+				if (action.equals(ACTION_NOTIFY)) {
+					String address = intent.getStringExtra("address");
+					Toast.makeText(RouteMapActivity.this, "弹出",
+							Toast.LENGTH_LONG).show();
+					if (address.equalsIgnoreCase("CF:01:01:00:02:F0")) {
+						// 智慧导览
+						Toast.makeText(RouteMapActivity.this, "智慧导览",
+								Toast.LENGTH_LONG).show();
+					} else if (address.equalsIgnoreCase("CF:01:01:00:02:F1")) {
+						Toast.makeText(RouteMapActivity.this, "柜子",
+								Toast.LENGTH_LONG).show();
+						// 柜子
+					} else if (address.equalsIgnoreCase("CF:01:01:00:02:F2")) {
+						Toast.makeText(RouteMapActivity.this, "柜子",
+								Toast.LENGTH_LONG).show();
+						// 3D 互动区
+					} else if (address.equalsIgnoreCase("CF:01:01:00:02:F3")) {
+						// 智慧旅游应用展示
+					} else if (address.equalsIgnoreCase("CF:01:01:00:02:F4")) {
+						// 引导台
+					} else if (address.equalsIgnoreCase("CF:01:01:00:02:F5")) {
+						// 旅客上车处
+					} else if (address.equalsIgnoreCase("CF:01:01:00:02:F6")) {
+						// 智慧旅游视屏
+					} else if (address.equalsIgnoreCase("CF:01:01:00:02:F7")) {
+						// 单车租赁
+					} else if (address.equalsIgnoreCase("CF:01:01:00:02:F8")) {
+						// 休闲自助区
+					} else if (address.equalsIgnoreCase("CF:01:01:00:02:FC")) {
+						// 超市
+					} else if (address.equalsIgnoreCase("CF:01:01:00:02:E1")) {
+						// 多功能厅
+					} else if (address.equalsIgnoreCase("CF:01:01:00:02:E2")) {
+						// 综合服务区
+					} else if (address.equalsIgnoreCase("CF:01:01:00:02:E3")) {
+						// 呼叫中心
+					} else if (address.equalsIgnoreCase("CF:01:01:00:02:E4")) {
+						// 预警指挥中心
+					} else if (address.equalsIgnoreCase("CF:01:01:00:02:E5")) {
+						// 办公区
+					} else if (address.equalsIgnoreCase("CF:01:01:00:02:E6")) {
+						// 婚纱摄影区
+					} else if (address.equalsIgnoreCase("CF:01:01:00:02:E7")) {
+						// 信息视屏
+					} else if (address.equalsIgnoreCase("CF:01:01:00:02:E8")) {
+						// 机房
+					}
+				}
+			}
+		};
+		IntentFilter filter = new IntentFilter();
+		filter.addAction(ACTION_NOTIFY);
+		LocalBroadcastManager localBroaMgr = LocalBroadcastManager
+				.getInstance(this);
+		localBroaMgr.registerReceiver(receiver, filter);
 		// imageView.setOnTouchListener(new OnTouchListener() {
 		//
 		// @Override
@@ -254,11 +320,11 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		// });
 	}
 
-	@Override
-	protected void onStart() {
-		super.onStart();
-		isOnRouteActivity = true;
-		// TODO 注册广播
+	private void saveIsOnRouteMapActivity(boolean isOnRouteMapActivity) {
+		SharedPreferences sp = getSharedPreferences("prefs", MODE_PRIVATE);
+		Editor editor = sp.edit();
+		editor.putBoolean("isOnRouteMapActivity", isOnRouteMapActivity);
+		editor.commit();
 	}
 
 	@Override
@@ -267,12 +333,17 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		if (sensorManager != null) {// 取消监听器
 			sensorManager.unregisterListener(sensorEventListener);
 		}
+		saveIsOnRouteMapActivity(false);
+		LocalBroadcastManager localBroadMgr = LocalBroadcastManager
+				.getInstance(this);
+		localBroadMgr.unregisterReceiver(receiver);
+
+		if (sensorManager != null) {// 取消监听器
+			sensorManager.unregisterListener(sensorEventListener);
+		}
 		for (int i = 0; i < soundMap.size(); i++) {
 			mSoundPool.unload(soundMap.get(i + 1));
-
 		}
-
-		// TODO 注销广播
 	}
 
 	@Override
@@ -303,55 +374,6 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 				bitmap.getHeight(), matrix, true);
 		return resizeBmp;
 	}
-
-	/**
-	 * 重力感应监听
-	 */
-	private SensorEventListener sensorEventListener = new SensorEventListener() {
-
-		@Override
-		public void onSensorChanged(SensorEvent event) {
-			// 传感器信息改变时执行该方法
-			float[] values = event.values;
-			float x = values[0]; // x轴方向的重力加速度，向右为正
-			float y = values[1]; // y轴方向的重力加速度，向前为正
-			float z = values[2]; // z轴方向的重力加速度，向上为正
-			Log.i(TAG, "x轴方向的重力加速度" + x + "；y轴方向的重力加速度" + y + "；z轴方向的重力加速度" + z);
-			// 一般在这三个方向的重力加速度达到40就达到了摇晃手机的状态。
-			int medumValue = 19;// 三星 i9250怎么晃都不会超过20，没办法，只设置19了
-			if (Math.abs(x) > medumValue || Math.abs(y) > medumValue
-					|| Math.abs(z) > medumValue) {
-				vibrator.vibrate(200);
-				Message msg = new Message();
-				msg.what = SENSOR_SHAKE;
-				handler.sendMessage(msg);
-			}
-		}
-
-		@Override
-		public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-		}
-	};
-
-	/**
-	 * 动作执行
-	 */
-	Handler handler = new Handler() {
-
-		@Override
-		public void handleMessage(Message msg) {
-			super.handleMessage(msg);
-			switch (msg.what) {
-			case SENSOR_SHAKE:
-				Toast.makeText(RouteMapActivity.this, "检测到摇晃，执行操作！",
-						Toast.LENGTH_SHORT).show();
-				Log.i(TAG, "检测到摇晃，执行操作！");
-				break;
-			}
-		}
-
-	};
 
 	@Override
 	public void onClick(View v) {
@@ -410,14 +432,14 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 			if (playstate) {
 				// 暂停语音
 				imgplay.setBackgroundResource(R.drawable.ic_play);
-
-				mSoundPool.pause(streamID1);
+				// mSoundPool.unload(soundID);
+				mSoundPool.pause(soundID);
 				playstate = false;
 			} else {
 				// 播放语音
 				imgplay.setBackgroundResource(R.drawable.ic_pause);
 
-				streamID1 = mSoundPool.play(soundMap.get(1), 1, 1, 1, 0, 1.0f);
+				streamID1 = mSoundPool.play(soundID, 1, 1, 1, 0, 1.0f);
 				// Intent it = new Intent(Intent.ACTION_VIEW);
 				// File file = new File("file:///android_asset/1yindao.m4a");
 				// //获取文件file的MIME类型
@@ -459,4 +481,54 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		}
 		return type;
 	}
+
+	/**
+	 * 重力感应监听
+	 */
+	private SensorEventListener sensorEventListener = new SensorEventListener() {
+
+		@Override
+		public void onSensorChanged(SensorEvent event) {
+			// 传感器信息改变时执行该方法
+			float[] values = event.values;
+			float x = values[0]; // x轴方向的重力加速度，向右为正
+			float y = values[1]; // y轴方向的重力加速度，向前为正
+			float z = values[2]; // z轴方向的重力加速度，向上为正
+			Log.i(TAG, "x轴方向的重力加速度" + x + "；y轴方向的重力加速度" + y + "；z轴方向的重力加速度" + z);
+			// 一般在这三个方向的重力加速度达到40就达到了摇晃手机的状态。
+			int medumValue = 19;// 三星 i9250怎么晃都不会超过20，没办法，只设置19了
+			if (Math.abs(x) > medumValue || Math.abs(y) > medumValue
+					|| Math.abs(z) > medumValue) {
+				vibrator.vibrate(200);
+				Message msg = new Message();
+				msg.what = SENSOR_SHAKE;
+				handler.sendMessage(msg);
+			}
+		}
+
+		@Override
+		public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+		}
+	};
+
+	/**
+	 * 动作执行
+	 */
+	Handler handler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			switch (msg.what) {
+			case SENSOR_SHAKE:
+				Toast.makeText(RouteMapActivity.this, "检测到摇晃，执行操作！",
+						Toast.LENGTH_SHORT).show();
+				Log.i(TAG, "检测到摇晃，执行操作！");
+				break;
+			}
+		}
+
+	};
+
 }
