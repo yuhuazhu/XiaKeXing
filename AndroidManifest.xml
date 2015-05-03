@@ -133,8 +133,6 @@
         
         <activity android:name="com.xkx.yjxm.activity.BRTBeaconManagerListBeaconsActivity"
             android:label="@string/title_activity_choice" >
-            
-            
         </activity>
     </application>
 
