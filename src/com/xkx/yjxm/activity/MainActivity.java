@@ -68,15 +68,20 @@ public class MainActivity extends Activity {
 		startActivity(intent);
 	}
 
-	// 跳转到导览
+	// 跳转到导览(选择界面)
 	public void StartGuide(View v) {
-		Intent intent = new Intent(this, GuideActivity.class);
+		
+		Intent intent = new Intent(this, ChoiceActivity.class);
+		intent.putExtra("列表", false);
+//		Intent intent = new Intent(this, GuideActivity.class);
 		startActivity(intent);
 	}
 
-	// 跳转到路线推荐
+	// 跳转到路线推荐(选择界面)
 	public void StartRoute(View v) {
-		Intent intent = new Intent(this, RouteActivity.class);
+		Intent intent = new Intent(this, ChoiceActivity.class);
+		intent.putExtra("列表", true);
+//		Intent intent = new Intent(this, RouteActivity.class);
 		startActivity(intent);
 	}
 
@@ -124,8 +129,8 @@ public class MainActivity extends Activity {
 		spaceshipImage.startAnimation(hyperspaceJumpAnimation);
 		
 //		AnimationSet
-	}
-	
+	} 
+	   
 	private void exitBy2Click() {
 		Timer tExit = null;
 		if (isExit == false) {
