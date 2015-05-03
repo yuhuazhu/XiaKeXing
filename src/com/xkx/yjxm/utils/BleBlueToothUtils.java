@@ -18,7 +18,12 @@ import android.os.Build;
  */
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class BleBlueToothUtils {
-	public static BluetoothDevice scan(int interval, int count) {
+	static long startScan;
+	public static BluetoothDevice scan(int intervalMillis, int count) {
+		if (System.currentTimeMillis() - startScan < 1000) {
+			return null;
+		}
+		enableIfClosed();
 		final HashMap<BluetoothDevice, Integer> scannedCountMap = new HashMap<BluetoothDevice, Integer>();
 		final HashMap<BluetoothDevice, Integer> sumRssiMap = new HashMap<BluetoothDevice, Integer>();
 		LeScanCallback callback = new LeScanCallback() {
@@ -37,11 +42,12 @@ public class BleBlueToothUtils {
 			}
 		};
 		BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-		interval = (interval < 100 || interval > 2000) ? 1000 : interval;
+		intervalMillis = (intervalMillis < 100 || intervalMillis > 2000) ? 1000
+				: intervalMillis;
 		for (int i = 0; i < count; i++) {
 			adapter.startLeScan(callback);
 			try {
-				Thread.sleep(interval);
+				Thread.sleep(intervalMillis);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -57,12 +63,18 @@ public class BleBlueToothUtils {
 			int cnt = scannedCountMap.get(device);
 			int sum = sumRssiMap.get(device);
 			float temp = sum / cnt;
-			max = (max > temp) ? max : temp;
 			if (max < temp) {
 				max = temp;
 				result = device;
 			}
 		}
 		return result;
+	}
+
+	private static void enableIfClosed() {
+		BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+		if (!adapter.isEnabled()) {
+			adapter.enable();
+		}
 	}
 }
