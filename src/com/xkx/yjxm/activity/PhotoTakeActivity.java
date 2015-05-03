@@ -15,6 +15,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -37,7 +38,8 @@ public class PhotoTakeActivity extends Activity implements OnClickListener {
 	private ImageButton btnback;
 	private String newName = "image.jpg";
 	private ProgressBar progress_horizontal;
-	private String fileName = "";
+	private String fileName;
+	private Uri selectedImage;
 	private String actionUrl = "http://www.xmlyt.cn/ajax/Statistics.ashx?sn=addUserPic";
 
 	@Override
@@ -52,9 +54,9 @@ public class PhotoTakeActivity extends Activity implements OnClickListener {
 	}
     private void initData()
     {
-    	bitmap = (Bitmap) getIntent().getExtras().get("bitmap");
+    	selectedImage = (Uri) getIntent().getExtras().get("Uri");
     	fileName = (String) getIntent().getExtras().get("fileName");
-    	((ImageView) findViewById(R.id.imageView1)).setImageBitmap(bitmap);// 将图片显示在ImageView里
+    	((ImageView) findViewById(R.id.imageView1)).setImageURI(selectedImage);// 将图片显示在ImageView里
     	
     }
 	private void initUI() {
@@ -145,7 +147,7 @@ public class PhotoTakeActivity extends Activity implements OnClickListener {
 
 			ds.close();
 		} catch (Exception e) {
-			// showDialog("上传失败" + e);
+			 showDialog("上传失败" + e);
 		}
 		return b.toString();
 	}
