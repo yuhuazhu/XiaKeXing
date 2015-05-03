@@ -8,11 +8,13 @@ import com.xkx.yjxm.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -87,6 +89,14 @@ public class MainActivity extends Activity {
 
 	// ÅÝÅÝ¶¯»­
 	public void StartPaoPao() {
+		DisplayMetrics dm = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(dm);
+		int iWidth  = dm.widthPixels;
+		int iHeight = dm.heightPixels;
+		final int runW;
+		final int runH;
+		runW = iWidth * 20 / 100 ;
+		runH = iHeight * 55 / 100 - 50;
 		final ImageView spaceshipImage = (ImageView)findViewById(R.id.img_paopao);
 		Animation hyperspaceJumpAnimation=AnimationUtils.loadAnimation(this, R.anim.anim_paopao);
 		hyperspaceJumpAnimation.setFillAfter(true);
@@ -110,9 +120,9 @@ public class MainActivity extends Activity {
 				spaceshipImage.clearAnimation();
 				spaceshipImage.setBackgroundResource(R.drawable.ic_paopaos);
 				int left = spaceshipImage.getLeft();
-				left += 200;
+				left += runW;
 				int top = spaceshipImage.getTop();
-				top -= 1000;
+				top -= runH;
 				RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 				param.setMargins(left, top, 0, 0);
 				spaceshipImage.setLayoutParams(param);
