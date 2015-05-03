@@ -1,17 +1,15 @@
 package com.xkx.yjxm.activity;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
+import android.bluetooth.BluetoothDevice;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.hardware.Sensor;
@@ -19,26 +17,25 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
-import android.media.MediaMuxer;
-import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.media.SoundPool.OnLoadCompleteListener;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.os.Vibrator;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.xkx.yjxm.R;
+import com.xkx.yjxm.service.BLEService;
+import com.xkx.yjxm.service.BLEService.BleBinder;
 
 public class RouteMapActivity extends Activity implements OnClickListener {
 	// private Bitmap bitmap;
@@ -56,8 +53,6 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private ImageButton imgplay;
 	private ImageButton imgdownmouth;
 	private static final int SENSOR_SHAKE = 10;
-	private final String ACTION_NOTIFY = "com.yjxm.notify";
-	private BroadcastReceiver receiver;
 	private boolean down = false;
 	private boolean playstate = false;
 	private boolean openstate = false;
@@ -66,6 +61,8 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private int currentStreamId;
 	private boolean isFinishedLoad = false;
 	private boolean isPausePlay = false;
+	private BLEService bleService;
+
 	private final String[][] MIME_MapTable = {
 			// {后缀名，MIME类型}
 			{ ".3gp", "video/3gpp" },
@@ -147,11 +144,15 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
 		initUI();
-
-		// TODO Auto-generated method stub
+		bindBleScanService();
 
 		// 设置最多可容纳10个音频流，音频的品质为5
 
+	}
+
+	private void bindBleScanService() {
+		Intent service = new Intent(RouteMapActivity.this, BLEService.class);
+		bindService(service, conn, BIND_AUTO_CREATE);
 	}
 
 	private void initUI() {
@@ -228,69 +229,73 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 	}
 
+	/**
+	 * 根据基站地址播放声音
+	 * 
+	 * @param address
+	 */
+	private void playSound(String address) {
+		if (address.equalsIgnoreCase("CF:01:01:00:02:F0")) {
+			// 智慧导览 ???
+			playSound(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F1")) {
+			// 行李寄存 ok
+			playSound(8);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F2")) {
+			// 3D 互动区 ok ???
+			playSound(3);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F3")) {
+			// 智慧旅游应用展示 ok ???
+			playSound(4);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F4")) {
+			// 引导台 ok
+			playSound(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F5")) {
+			// 旅客上车处 ???
+			playSound(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F6")) {
+			// 智慧旅游视屏 ???
+			playSound(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F7")) {
+			// 单车租赁 ???
+			playSound(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F8")) {
+			// 休闲自助区???
+			playSound(6);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:FC")) {
+			// 伴手礼超市 ok
+			playSound(10);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E1")) {
+			// 多功能厅 ok
+			playSound(11);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E2")) {
+			// 综合服务区 ???
+			playSound(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E3")) {
+			// 呼叫中心 ???
+			playSound(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E4")) {
+			// 预警指挥中心 ok
+			playSound(13);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E5")) {
+			// 办公区 ok
+			playSound(14);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E6")) {
+			// 婚纱摄影区 no auido
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E7")) {
+			// 信息视屏 ??
+			playSound(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E8")) {
+			// 机房 ok
+			playSound(12);
+		} else {
+			// TODO
+		}
+	}
+
 	@Override
 	protected void onStart() {
 		super.onStart();
-		saveIsOnRouteMapActivity(true);
-		receiver = new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				String action = intent.getAction();
-				if (action.equals(ACTION_NOTIFY)) {
-					String address = intent.getStringExtra("address");
-					Toast.makeText(RouteMapActivity.this, "弹出",
-							Toast.LENGTH_LONG).show();
-					if (address.equalsIgnoreCase("CF:01:01:00:02:F0")) {
-						// 智慧导览
-						Toast.makeText(RouteMapActivity.this, "智慧导览",
-								Toast.LENGTH_LONG).show();
-					} else if (address.equalsIgnoreCase("CF:01:01:00:02:F1")) {
-						Toast.makeText(RouteMapActivity.this, "柜子",
-								Toast.LENGTH_LONG).show();
-						// 柜子
-					} else if (address.equalsIgnoreCase("CF:01:01:00:02:F2")) {
-						Toast.makeText(RouteMapActivity.this, "柜子",
-								Toast.LENGTH_LONG).show();
-						// 3D 互动区
-					} else if (address.equalsIgnoreCase("CF:01:01:00:02:F3")) {
-						// 智慧旅游应用展示
-					} else if (address.equalsIgnoreCase("CF:01:01:00:02:F4")) {
-						// 引导台
-					} else if (address.equalsIgnoreCase("CF:01:01:00:02:F5")) {
-						// 旅客上车处
-					} else if (address.equalsIgnoreCase("CF:01:01:00:02:F6")) {
-						// 智慧旅游视屏
-					} else if (address.equalsIgnoreCase("CF:01:01:00:02:F7")) {
-						// 单车租赁
-					} else if (address.equalsIgnoreCase("CF:01:01:00:02:F8")) {
-						// 休闲自助区
-					} else if (address.equalsIgnoreCase("CF:01:01:00:02:FC")) {
-						// 超市
-					} else if (address.equalsIgnoreCase("CF:01:01:00:02:E1")) {
-						// 多功能厅
-					} else if (address.equalsIgnoreCase("CF:01:01:00:02:E2")) {
-						// 综合服务区
-					} else if (address.equalsIgnoreCase("CF:01:01:00:02:E3")) {
-						// 呼叫中心
-					} else if (address.equalsIgnoreCase("CF:01:01:00:02:E4")) {
-						// 预警指挥中心
-					} else if (address.equalsIgnoreCase("CF:01:01:00:02:E5")) {
-						// 办公区
-					} else if (address.equalsIgnoreCase("CF:01:01:00:02:E6")) {
-						// 婚纱摄影区
-					} else if (address.equalsIgnoreCase("CF:01:01:00:02:E7")) {
-						// 信息视屏
-					} else if (address.equalsIgnoreCase("CF:01:01:00:02:E8")) {
-						// 机房
-					}
-				}
-			}
-		};
-		IntentFilter filter = new IntentFilter();
-		filter.addAction(ACTION_NOTIFY);
-		LocalBroadcastManager localBroaMgr = LocalBroadcastManager
-				.getInstance(this);
-		localBroaMgr.registerReceiver(receiver, filter);
 		// imageView.setOnTouchListener(new OnTouchListener() {
 		//
 		// @Override
@@ -319,24 +324,12 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		// });
 	}
 
-	private void saveIsOnRouteMapActivity(boolean isOnRouteMapActivity) {
-		SharedPreferences sp = getSharedPreferences("prefs", MODE_PRIVATE);
-		Editor editor = sp.edit();
-		editor.putBoolean("isOnRouteMapActivity", isOnRouteMapActivity);
-		editor.commit();
-	}
-
 	@Override
 	protected void onStop() {
 		super.onStop();
 		if (sensorManager != null) {// 取消监听器
 			sensorManager.unregisterListener(sensorEventListener);
 		}
-
-		saveIsOnRouteMapActivity(false);
-		LocalBroadcastManager localBroadMgr = LocalBroadcastManager
-				.getInstance(this);
-		localBroadMgr.unregisterReceiver(receiver);
 
 		if (sensorManager != null) {// 取消监听器
 			sensorManager.unregisterListener(sensorEventListener);
@@ -347,16 +340,13 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
+	protected void onDestroy() {
+		super.onDestroy();
+		unbindBleScanService();
+	}
 
-		// if (sensorManager != null) {// 注册监听器
-		// sensorManager.registerListener(sensorEventListener,
-		// sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-		// SensorManager.SENSOR_DELAY_NORMAL);
-		// // 第一个参数是Listener，第二个参数是所得传感器类型，第三个参数值获取传感器信息的频率
-		// }
-
+	private void unbindBleScanService() {
+		unbindService(conn);
 	}
 
 	private static Bitmap big(Bitmap bitmap) {
@@ -377,7 +367,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 	// sound hm中的第几个歌曲
 	// loop 是否循环 0不循环 -1循环
-	public void playSound(int sound, int loop) {
+	public void playSound(int sound) {
 		String log;
 		if (!isPausePlay) {
 			AudioManager mgr = (AudioManager) this
@@ -484,7 +474,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 		imgplay.setBackgroundResource(R.drawable.ic_pause);
 		// 播放语音
-		playSound(1, 0);// 播放dudu，dudu文件被解码为16位的PCM数据后超过了SoundPool的1M缓冲区了，循环不了，而且不能播完整个歌曲
+		playSound(1);// 播放dudu，dudu文件被解码为16位的PCM数据后超过了SoundPool的1M缓冲区了，循环不了，而且不能播完整个歌曲
 
 		// Intent it = new Intent(Intent.ACTION_VIEW);
 		// File file = new File("file:///android_asset/1yindao.m4a");
@@ -586,7 +576,28 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 				break;
 			}
 		}
+	};
+	private ServiceConnection conn = new ServiceConnection() {
 
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+			Log.e("scan", "onServiceDisconnected()");
+		}
+
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			Log.e("scan", "onServiceConnected()");
+			BleBinder binder = (BleBinder) service;
+			bleService = binder.getService();
+			bleService
+					.setOnProximityBleChangedListener(new BLEService.OnProximityBleChangedListener() {
+						@Override
+						public void onProximityBleChanged(BluetoothDevice device) {
+							playSound(device.getAddress().trim());
+						}
+					});
+			bleService.startScanBLE();
+		}
 	};
 
 }
