@@ -43,5 +43,6 @@
     <string name="title_activity_activities">ActivitiesActivity</string>
     <string name="title_activity_massage">MassageActivity</string>
     <string name="title_activity_search">SearchActivity</string>
+    <string name="title_activity_choice">ChoiceActivity</string>
 
 </resources>
