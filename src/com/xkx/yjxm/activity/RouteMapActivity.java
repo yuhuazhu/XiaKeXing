@@ -147,8 +147,6 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
 		initUI();
-		
-
 
 		// TODO Auto-generated method stub
 
@@ -165,14 +163,13 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		imgdownmouth = (ImageButton) findViewById(R.id.imgdown);
 		imgswitch = (ImageButton) findViewById(R.id.imgswitch);
 		imgswitch.setOnClickListener(this);
-		txtdetail = (TextView) findViewById(R.id.txtdetail); 
-		
-		
+		txtdetail = (TextView) findViewById(R.id.txtdetail);
+
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 		vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
 		mSoundPool = new SoundPool(10, AudioManager.STREAM_SYSTEM, 5);
-		
+
 		mSoundPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
 
 			@Override
@@ -450,37 +447,54 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		case R.id.imgplay:
 			// disableViewForSeconds(imgplay);
 			if (playstate) {
-				// 暂停语音
-				imgplay.setBackgroundResource(R.drawable.ic_play);
-
-				isPausePlay = true;
-				mSoundPool.pause(currentStreamId);
-				isPausePlay = false;
-
-				// mSoundPool.unload(soundID);
-				mSoundPool.pause(soundID);
-
-				playstate = false;
+				stopprocess();
 			} else {
-				// 播放语音
-				imgplay.setBackgroundResource(R.drawable.ic_pause);
-
-				playSound(1, 0);// 播放dudu，dudu文件被解码为16位的PCM数据后超过了SoundPool的1M缓冲区了，循环不了，而且不能播完整个歌曲
-
-				// Intent it = new Intent(Intent.ACTION_VIEW);
-				// File file = new File("file:///android_asset/1yindao.m4a");
-				// //获取文件file的MIME类型
-				// String type = getMIMEType(file);
-				// it.setDataAndType(
-				// Uri.fromFile(file),
-				// type);
-				// startActivity(it);
-				playstate = true;
+				int mapID = 0;
+				process(mapID);
 			}
 			break;
 		default:
 			break;
 		}
+	}
+
+	// 切换下个音频
+	private void stopprocess() {
+		// tupian
+		imgplay.setBackgroundResource(R.drawable.ic_play);
+
+		isPausePlay = true;
+		// 暂停语音
+		mSoundPool.pause(currentStreamId);
+		isPausePlay = false;
+
+		// mSoundPool.unload(soundID);
+		mSoundPool.pause(soundID);
+
+		playstate = false;
+
+	}
+
+	// 播放
+	private void process(int mapID) {
+
+		// bofang
+		//
+		// tupian
+
+		imgplay.setBackgroundResource(R.drawable.ic_pause);
+		// 播放语音
+		playSound(1, 0);// 播放dudu，dudu文件被解码为16位的PCM数据后超过了SoundPool的1M缓冲区了，循环不了，而且不能播完整个歌曲
+
+		// Intent it = new Intent(Intent.ACTION_VIEW);
+		// File file = new File("file:///android_asset/1yindao.m4a");
+		// //获取文件file的MIME类型
+		// String type = getMIMEType(file);
+		// it.setDataAndType(
+		// Uri.fromFile(file),
+		// type);
+		// startActivity(it);
+		playstate = true;
 	}
 
 	public void disableViewForSeconds(final View v) {
