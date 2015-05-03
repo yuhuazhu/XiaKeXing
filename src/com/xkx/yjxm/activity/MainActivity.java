@@ -96,7 +96,7 @@ public class MainActivity extends Activity {
 		final int runW;
 		final int runH;
 		runW = iWidth * 20 / 100 ;
-		runH = iHeight * 55 / 100 - 50;
+		runH = iHeight * 55 / 100 - 40;
 		final ImageView spaceshipImage = (ImageView)findViewById(R.id.img_paopao);
 		Animation hyperspaceJumpAnimation=AnimationUtils.loadAnimation(this, R.anim.anim_paopao);
 		hyperspaceJumpAnimation.setFillAfter(true);
