@@ -9,7 +9,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.AssetFileDescriptor;
@@ -20,11 +19,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
-import android.media.SoundPool;
-import android.media.SoundPool.OnLoadCompleteListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -151,8 +147,12 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
 		initUI();
-		bindBleScanService();
+		// bindBleScanService();
 
+	}
+
+	public void play(View v) {
+		process(1);
 	}
 
 	private void bindBleScanService() {
@@ -188,6 +188,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		});
 
 		soundMap = new HashMap<Integer, String>();
+		textMap = new HashMap<Integer, String>();
 		new Thread(new Runnable() {
 
 			@Override
@@ -392,7 +393,6 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private void playprocess(int mapID) {
 		// tupian
 		if (mediaPlayer.isPlaying()) {
-
 			// 暂停语音
 			mediaPlayer.pause(); // 调用暂停方法
 			imgplay.setBackgroundResource(R.drawable.ic_play);
@@ -403,21 +403,20 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 				imgplay.setBackgroundResource(R.drawable.ic_pause);
 				isPausePlay = false;
 			} else {
-				
 				process(mapID);
-
 			}
 		}
-
 	}
 
 	// 播放
 	private void process(int mapID) {
-		
+		if (mediaPlayer.isPlaying()) {
+			return;
+		}
 		playSound(mapID);// 播放dudu，dudu文件被解码为16位的PCM数据后超过了SoundPool的1M缓冲区了，循环不了，而且不能播完整个歌曲
 		imgplay.setBackgroundResource(R.drawable.ic_pause);
+		// TODO 地图更改
 		txtdetail.setText(textMap.get(mapID));
-
 	}
 
 	private void trigger(BluetoothDevice device) {
@@ -602,15 +601,11 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 						public void onProximityBleChanged(
 								BluetoothDevice original,
 								BluetoothDevice current) {
-							final BluetoothDevice oriTemp = original;
 							final BluetoothDevice curTemp = current;
 							runOnUiThread(new Runnable() {
 								public void run() {
-									Toast.makeText(
-											RouteMapActivity.this,
-											"ori:" + oriTemp.getAddress()
-													+ "cur"
-													+ curTemp.getAddress(),
+									Toast.makeText(RouteMapActivity.this,
+											"cur" + curTemp.getAddress(),
 											Toast.LENGTH_LONG).show();
 								}
 							});
