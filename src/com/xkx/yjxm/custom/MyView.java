@@ -89,6 +89,9 @@ public class MyView extends SurfaceView implements Callback, Runnable {
 		float y = event.getY();
 		switch (action) {
 		case MotionEvent.ACTION_DOWN:
+			mPosX = x;
+			mPosY = y;
+			mPath.quadTo(mPosX, mPosY, x, y);
 			mPath.moveTo(x, y);
 			break;
 		case MotionEvent.ACTION_MOVE:
@@ -96,7 +99,7 @@ public class MyView extends SurfaceView implements Callback, Runnable {
 			break;
 		case MotionEvent.ACTION_UP:
 			// mPath.reset();
-			mPath.quadTo(mPosX, mPosY, x, y);
+//			mPath.quadTo(mPosX, mPosY, x, y);
 			break;
 		}
 		// 记录当前触摸点得当前得坐标
@@ -139,7 +142,7 @@ public class MyView extends SurfaceView implements Callback, Runnable {
 		}
 	}
 	
-	public void Set(int x,int y, int toX, int toY)
+	public void QuadTo(int x,int y, int toX, int toY)
 	{
 		mPath.quadTo(x, y, toX, toY);
 	}
@@ -147,6 +150,12 @@ public class MyView extends SurfaceView implements Callback, Runnable {
 	public void MoveTo(int x,int y)
 	{
 		mPath.moveTo(x, y);
+	}
+	
+	public void SetPoint(int x,int y)
+	{
+		mPosX = x;
+		mPosY = y;
 	}
 
 	@Override
