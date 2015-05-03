@@ -41,6 +41,7 @@ import com.xkx.yjxm.R;
 import com.xkx.yjxm.adpater.BaseListAdapter;
 import com.xkx.yjxm.service.BLEService;
 import com.xkx.yjxm.service.BLEService.BleBinder;
+import com.xkx.yjxm.utils.CommonUtils;
 
 @SuppressLint("HandlerLeak")
 public class RouteMapActivity extends Activity implements OnClickListener {
@@ -60,6 +61,9 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private ImageButton imgdownmouth;
 	private static final int SENSOR_SHAKE = 10;
 	private boolean down = false;
+	/**
+	 * 自动讲解是否开着
+	 */
 	private boolean openstate = false;
 	private ImageButton imgswitch;
 	private int soundID;
@@ -68,6 +72,12 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	// private boolean isFinishedLoad = false;
 	private boolean isPausePlay = false;
 	private BLEService bleService;
+	private int mapID;
+
+	/**
+	 * 是否已经处理过
+	 */
+	private HashMap<Integer, Boolean> hasProcessedMap = new HashMap<Integer, Boolean>();
 
 	private final String[][] MIME_MapTable = {
 			// {后缀名，MIME类型}
@@ -139,9 +149,11 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private boolean isOnRouteActivity = false;
 
 	private Map<Integer, String> soundMap;
-	private Map<Integer, String> listmap;
+	private Map<Integer, String> listmap = new HashMap<Integer, String>();
+	private Map<Integer, Integer> mapBgMap = new HashMap<Integer, Integer>();
 	private Map<Integer, String> textMap;
 	private ListView listView1;
+	private TextView txt_ti;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -151,32 +163,8 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.activity_routemap);
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 		vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-		initData();
 		initUI();
-		// bindBleScanService();
-
-	}
-
-	public void play(View v) {
-		process(1);
-	}
-
-	private void initData() {
-		listmap.put(1, "引导台");
-		listmap.put(2, "旅游自助服务区");
-		listmap.put(3, "体感互动3D景区推介区");
-		listmap.put(4, "智慧旅游应用展示区");
-		listmap.put(5, "游客接待服务区");
-		listmap.put(6, "按摩免费体验区");
-		listmap.put(7, "产品信息播放屏幕");
-		listmap.put(8, "自助行李寄存柜");
-		listmap.put(9, "医务室");
-		listmap.put(10, "伴手礼超市");
-		listmap.put(11, "多功能会议厅");
-		listmap.put(12, "机房");
-		listmap.put(13, "预警指挥中心");
-		listmap.put(14, "办公区");
-
+		bindBleScanService();
 	}
 
 	private void bindBleScanService() {
@@ -195,82 +183,184 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		imgswitch.setOnClickListener(this);
 		txtdetail = (TextView) findViewById(R.id.txtdetail);
 		listView1 = (ListView) findViewById(R.id.listView1);
+		txt_ti = (TextView) findViewById(R.id.txt_ti);
+		ivMap = (ImageView) findViewById(R.id.iv_map);
+
 		myAdapter = new MyAdapter();
 		listView1.setAdapter(myAdapter);
 
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 		vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
+		if (mediaPlayer != null) {
+			mediaPlayer.reset();
+			mediaPlayer.release();
+			mediaPlayer = null;
+		}
+
 		mediaPlayer = new MediaPlayer();
 		mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
 
 			@Override
 			public void onCompletion(MediaPlayer mp) {
-				// TODO Auto-generated method stub
 				/*
 				 * 解除资源与MediaPlayer的赋值关系 103. * 让资源可以为其它程序利用
 				 */
-				mp.release();
+				// mp.release();
+				imgplay.setBackgroundResource(R.drawable.ic_play);
+				isPausePlay = true;
 			}
 		});
 
 		soundMap = new HashMap<Integer, String>();
 		textMap = new HashMap<Integer, String>();
+
 		new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				soundMap.put(1, "yindao.m4a");
 				textMap.put(1, getResources().getString(R.string.txt_yin_dao));
+				mapBgMap.put(1, R.drawable.img_map_yin_dao_tai);
 				soundMap.put(2, "zi_zhu_fu_wu.m4a");
 				textMap.put(2, getResources()
 						.getString(R.string.txt_bo_fang_qu));
+				// mapBgMap.put(2, R.drawable.img_map)
 				soundMap.put(3, "tiyan3d.m4a");
 				textMap.put(3, getResources().getString(R.string.txt_tiyan_3d));
+				mapBgMap.put(3, R.drawable.img_map_ti_yan_3d);
 				soundMap.put(4, "ying_yong_zhan_shi.m4a");
+				mapBgMap.put(4, R.drawable.img_map_ying_yong_zhan_shi);
 				textMap.put(4,
 						getResources().getString(R.string.txt_lv_you_zhan_shi));
 				soundMap.put(5, "you_ke_jie_dai.m4a");
+				mapBgMap.put(5, R.drawable.img_map_you_ke_jie_dai);
 				textMap.put(5,
 						getResources().getString(R.string.txt_jie_dai_fu_wu));
 				soundMap.put(6, "anmo.m4a");
 				textMap.put(6, getResources().getString(R.string.txt_anmo));
+				mapBgMap.put(6, R.drawable.img_map_an_mo_qu);
 				soundMap.put(7, "bo_fang_ping_mu.m4a");
 				textMap.put(7,
 						getResources().getString(R.string.txt_lv_you_shi_ping));
+				// mapBgMap.put(7, R.drawable.img_map);
 				soundMap.put(8, "xinglijicun.m4a");
 				textMap.put(8,
 						getResources().getString(R.string.txt_xing_li_ji_cun));
+				mapBgMap.put(8, R.drawable.img_map_xing_li_ji_cun_gui);
 				soundMap.put(9, "yi_wu_shi.m4a");
 				textMap.put(9, getResources().getString(R.string.txt_yiwu_shi));
+				mapBgMap.put(9, R.drawable.img_map_yi_wu_shi);
 				soundMap.put(10, "banshouli.m4a");
 				textMap.put(10,
 						getResources().getString(R.string.txt_ban_shou_li));
+				mapBgMap.put(10, R.drawable.img_map_ban_shou_li_chao_shi);
 				soundMap.put(11, "duo_gong_neng.m4a");
 				textMap.put(11,
 						getResources().getString(R.string.txt_duo_gong_neng));
+				mapBgMap.put(11, R.drawable.img_map_duo_gong_neng_ting);
 				soundMap.put(12, "ji_fang.m4a");
 				textMap.put(12, getResources().getString(R.string.txt_hu_jiao));
+				mapBgMap.put(12, R.drawable.img_map_hu_jiao_zhong_xin);
 				soundMap.put(13, "yu_jing_zhi_hui.m4a");
 				textMap.put(13, getResources().getString(R.string.txt_yu_jin));
+				mapBgMap.put(12, R.drawable.img_map_yu_jing_zhi_hui);
 				soundMap.put(14, "bangongqu.m4a");
 				textMap.put(14,
 						getResources().getString(R.string.txt_ban_gong_qu));
+				mapBgMap.put(12, R.drawable.img_map_ban_gong_qu);
 			}
 		}).start();
 
-		// Thread.sleep(10000);
-		// } catch (InterruptedException e) {
-		// e.printStackTrace();
-		// }
-		// TODO Auto-generated method stub
-
-		// TODO Auto-generated method stub
-
-		// 设置最多可容纳10个音频流，音频的品质为5
-
 	}
 
+	private void trigger(BluetoothDevice device) {
+		final String address = device.getAddress();
+		final String name = device.getName();
+		String title = "";
+		boolean noAudio = false;
+		if (address.equalsIgnoreCase("CF:01:01:00:02:F0")) {
+			// 智慧导览
+			noAudio = true;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F1")) {
+			mapID = 8;
+			title = "自助行李寄存柜";
+
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F2")) {
+			mapID = 3;
+			title = "感互动3D景区推介区";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F3")) {
+			mapID = 4;
+			title = "智慧旅游应用展示区";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F4")) {
+			mapID = 1;
+			title = "引导台";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F5")) {
+			// 旅客上车处
+			noAudio = true;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F6")) {
+			// 智慧旅游视屏
+			noAudio = true;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F7")) {
+			// 单车租赁 no
+			noAudio = true;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F8")) {
+			mapID = 6;
+			title = "按摩免费体验区";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:FC")) {
+			mapID = 10;
+			title = "伴手礼超市";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E1")) {
+			mapID = 11;
+			title = "多功能会议厅";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E2")) {
+			mapID = 5;
+			title = "综合服务区";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E3")) {
+			// 呼叫中心
+			noAudio = true;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E4")) {
+			mapID = 13;
+			title = "预警指挥中心";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E5")) {
+			mapID = 14;
+			title = "办公区";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E6")) {
+			mapID = 9;
+			title = "医务室";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E7")) {
+			mapID = 7;
+			title = "产品信息播放屏幕";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E8")) {
+			mapID = 12;
+			title = "机房";
+		} else {
+			noAudio = true;
+		}
+		if (noAudio) {
+			// process(1, "测试");
+			// runOnUiThread(new Runnable() {
+			// public void run() {
+			// Toast.makeText(RouteMapActivity.this,
+			// "无声音设备" + name + "  " + address,
+			// Toast.LENGTH_LONG).show();
+			// }
+			// });
+		} else {
+			if (hasProcessedMap.get(mapID) == null
+					|| !hasProcessedMap.get(mapID)) {
+				process(mapID, title);
+				hasProcessedMap.put(mapID, true);
+			}
+		}
+		final String t = title;
+		runOnUiThread(new Runnable() {
+			public void run() {
+				txt_ti.setText(t);
+			}
+		});
+
+	}
 
 	private class MyAdapter extends BaseListAdapter {
 		/**
@@ -292,14 +382,13 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 		@Override
 		public int getCount() {
-			// TODO Auto-generated method stub
 			return listmap.size();
 		}
 
 		@SuppressLint("NewApi")
 		@Override
-		public View getView(final int position, View convertView, ViewGroup parent) {
-			// TODO Auto-generated method stub
+		public View getView(final int position, View convertView,
+				ViewGroup parent) {
 
 			ViewHolder holder = null;
 			if (convertView == null) {
@@ -338,15 +427,12 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 				@Override
 				public void onClick(View v) {
-					// TODO Auto-generated method stub
-
+					process2(position, listmap.get(position));
 				}
 			});
 			holder.img_btndel.setOnClickListener(new OnClickListener() {
-
 				@Override
 				public void onClick(View v) {
-					// TODO Auto-generated method stub
 					listmap.remove(position);
 					myAdapter.notifyDataSetChanged();
 				}
@@ -372,71 +458,6 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 	}
 
-	/**
-	 * 根据基站地址播放声音
-	 * 
-	 * @param address
-	 */
-	private void playSound(String address) {
-		if (address.equalsIgnoreCase("CF:01:01:00:02:F0")) {
-			// 智慧导览 ???
-			playSound(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F1")) {
-			// 行李寄存 ok
-			playSound(8);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F2")) {
-			// 3D 互动区 ok ???
-			playSound(3);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F3")) {
-			// 智慧旅游应用展示 ok ???
-			playSound(4);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F4")) {
-			// 引导台 ok
-			playSound(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F5")) {
-			// 旅客上车处 ???
-			playSound(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F6")) {
-			// 智慧旅游视屏 ???
-			playSound(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F7")) {
-			// 单车租赁 ???
-			playSound(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F8")) {
-			// 休闲自助区???
-			playSound(6);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:FC")) {
-			// 伴手礼超市 ok
-			playSound(10);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E1")) {
-			// 多功能厅 ok
-			playSound(11);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E2")) {
-			// 综合服务区 ???
-			playSound(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E3")) {
-			// 呼叫中心 ???
-			playSound(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E4")) {
-			// 预警指挥中心 ok
-			playSound(13);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E5")) {
-			// 办公区 ok
-			playSound(14);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E6")) {
-			// 婚纱摄影区 no auido
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E7")) {
-			// 信息视屏 ??
-			playSound(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E8")) {
-			// 机房 ok
-			playSound(12);
-		} else {
-			// TODO
-		}
-	}
-
-
 	@Override
 	protected void onStart() {
 		super.onStart();
@@ -459,6 +480,12 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	protected void onDestroy() {
 		super.onDestroy();
 		unbindBleScanService();
+
+		if (mediaPlayer != null) {
+			mediaPlayer.stop();
+			mediaPlayer.release();
+			mediaPlayer = null;
+		}
 	}
 
 	private void unbindBleScanService() {
@@ -501,6 +528,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 				AssetManager assetMg = getApplicationContext().getAssets();
 				AssetFileDescriptor fileDescriptor = null;
 				try {
+					mediaPlayer.reset();
 					fileDescriptor = assetMg.openFd(soundMap.get(sound));
 					mediaPlayer.setDataSource(
 							fileDescriptor.getFileDescriptor(),
@@ -510,11 +538,9 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 					play();// 开始或恢复播放
 
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
-				// // TODO Auto-generated method stub
 				// try {
 				// Thread.sleep(10000);
 				// } catch (InterruptedException e) {
@@ -530,7 +556,6 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 
-		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.imgswitch:
 			if (openstate) {
@@ -574,8 +599,9 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		case R.id.imgplay:
 			// disableViewForSeconds(imgplay);
 			// 如果是在播放态
-			int mapID = 0;
-			playprocess(mapID);
+			if (!CommonUtils.isFastDoubleClick()) {
+				playprocess();
+			}
 			break;
 		default:
 			break;
@@ -583,7 +609,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	}
 
 	// 暂停播放
-	private void playprocess(int mapID) {
+	private void playprocess() {
 		// tupian
 		if (mediaPlayer.isPlaying()) {
 			// 暂停语音
@@ -595,89 +621,61 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 				mediaPlayer.start(); // 播放
 				imgplay.setBackgroundResource(R.drawable.ic_pause);
 				isPausePlay = false;
-			} else {
-
-				process(mapID);
 			}
+			// else {
+			//
+			// process(mapID);
+			// }
 		}
+	}
+
+	private void addToList(int mapId, String title) {
+		listmap.put(mapId, title);
+		runOnUiThread(new Runnable() {
+			public void run() {
+				myAdapter.notifyDataSetChanged();
+			}
+		});
 	}
 
 	// 播放
-	private void process(int mapID) {
+	private void process2(final int mapID, String title) {
+		runOnUiThread(new Runnable() {
+			public void run() {
+
+				txtdetail.setText(textMap.get(mapID));
+			}
+		});
+
+		playSound(mapID);// 播放dudu，dudu文件被解码为16位的PCM数据后超过了SoundPool的1M缓冲区了，循环不了，而且不能播完整个歌曲
+		runOnUiThread(new Runnable() {
+			public void run() {
+				imgplay.setBackgroundResource(R.drawable.ic_pause);
+			}
+		});
+	}
+
+	// 播放
+	private void process(final int mapID, String title) {
+		runOnUiThread(new Runnable() {
+			public void run() {
+				int resId = mapBgMap.get(mapID);
+				ivMap.setBackgroundResource(resId);
+				txtdetail.setText(textMap.get(mapID));
+			}
+		});
 		if (mediaPlayer.isPlaying()) {
+			if (listmap.size() < 3) {
+				addToList(mapID, title);
+			}
 			return;
 		}
 		playSound(mapID);// 播放dudu，dudu文件被解码为16位的PCM数据后超过了SoundPool的1M缓冲区了，循环不了，而且不能播完整个歌曲
-		imgplay.setBackgroundResource(R.drawable.ic_pause);
-		// TODO 地图更改
-		txtdetail.setText(textMap.get(mapID));
-	}
-
-	private void trigger(BluetoothDevice device) {
-		String address = device.getAddress();
-		if (address.equalsIgnoreCase("CF:01:01:00:02:F0")) {
-			// 智慧导览 ???
-			process(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F1")) {
-			// 行李寄存 ok
-			process(8);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F2")) {
-			// 3D 互动区 ok ???
-			process(3);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F3")) {
-			// 智慧旅游应用展示 ok ???
-			process(4);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F4")) {
-			// 引导台 ok
-			process(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F5")) {
-			// 旅客上车处 ???
-			process(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F6")) {
-			// 智慧旅游视屏 ???
-			process(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F7")) {
-			// 单车租赁 ???
-			process(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F8")) {
-			// 休闲自助区???
-			process(6);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:FC")) {
-			// 伴手礼超市 ok
-			process(10);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E1")) {
-			// 多功能厅 ok
-			process(11);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E2")) {
-			// 综合服务区 ???
-			process(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E3")) {
-			// 呼叫中心 ???
-			process(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E4")) {
-			// 预警指挥中心 ok
-			process(13);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E5")) {
-			// 办公区 ok
-			process(14);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E6")) {
-			// TODO 婚纱摄影区 no auido
-			process(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E7")) {
-			// 信息视屏 ??
-			process(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E8")) {
-			// 机房 ok
-			process(12);
-		} else {
-			// TODO
-			runOnUiThread(new Runnable() {
-				public void run() {
-					Toast.makeText(RouteMapActivity.this, "扫描到其他设备",
-							Toast.LENGTH_LONG).show();
-				}
-			});
-		}
+		runOnUiThread(new Runnable() {
+			public void run() {
+				imgplay.setBackgroundResource(R.drawable.ic_pause);
+			}
+		});
 	}
 
 	public void disableViewForSeconds(final View v) {
@@ -769,11 +767,15 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		}
 
 		private void processAfterShake() {
-			Toast.makeText(RouteMapActivity.this, "检测到摇晃，执行操作！",
-					Toast.LENGTH_SHORT).show();
 			BluetoothDevice device = bleService.getProximityBleDevice();
 			if (device != null) {
-				trigger(device);
+				if (openstate) {
+					trigger(device);
+					Log.e("toast", "yaoyiyao");
+				}
+			} else {
+				Toast.makeText(RouteMapActivity.this, "刚才没有检测到基站噢~~~",
+						Toast.LENGTH_SHORT).show();
 			}
 		}
 	};
@@ -794,35 +796,22 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 						public void onProximityBleChanged(
 								BluetoothDevice original,
 								BluetoothDevice current) {
-							final BluetoothDevice curTemp = current;
-							runOnUiThread(new Runnable() {
-								public void run() {
-									Toast.makeText(RouteMapActivity.this,
-											"cur" + curTemp.getAddress(),
-											Toast.LENGTH_LONG).show();
-								}
-							});
 						}
 
 						public void onConditionTriggerFailed(
 								BluetoothDevice device) {
-							final BluetoothDevice temp = device;
-							runOnUiThread(new Runnable() {
-								public void run() {
-									Toast.makeText(RouteMapActivity.this,
-											"信号强度不够,无法触发" + temp.getAddress(),
-											Toast.LENGTH_LONG).show();
-								}
-							});
 						}
 
 						public void onConditionTriggerSuccess(
 								BluetoothDevice device) {
-							trigger(device);
+							if (!openstate) {
+								trigger(device);
+							}
 						}
-						
 					});
 			bleService.startScanBLE();
 		}
 	};
+	private ImageView ivMap;
+
 }
