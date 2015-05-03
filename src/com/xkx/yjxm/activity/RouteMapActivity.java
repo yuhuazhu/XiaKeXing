@@ -29,13 +29,16 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.xkx.yjxm.R;
+import com.xkx.yjxm.adpater.BaseListAdapter;
 import com.xkx.yjxm.service.BLEService;
 import com.xkx.yjxm.service.BLEService.BleBinder;
 
@@ -61,6 +64,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private ImageButton imgswitch;
 	private int soundID;
 	private int currentStreamId;
+	private MyAdapter myAdapter;
 	// private boolean isFinishedLoad = false;
 	private boolean isPausePlay = false;
 	private BLEService bleService;
@@ -135,7 +139,9 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private boolean isOnRouteActivity = false;
 
 	private Map<Integer, String> soundMap;
+	private Map<Integer, String> listmap;
 	private Map<Integer, String> textMap;
+	private ListView listView1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -145,7 +151,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.activity_routemap);
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 		vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-
+		initData();
 		initUI();
 		// bindBleScanService();
 
@@ -153,6 +159,24 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 	public void play(View v) {
 		process(1);
+	}
+
+	private void initData() {
+		listmap.put(1, "引导台");
+		listmap.put(2, "旅游自助服务区");
+		listmap.put(3, "体感互动3D景区推介区");
+		listmap.put(4, "智慧旅游应用展示区");
+		listmap.put(5, "游客接待服务区");
+		listmap.put(6, "按摩免费体验区");
+		listmap.put(7, "产品信息播放屏幕");
+		listmap.put(8, "自助行李寄存柜");
+		listmap.put(9, "医务室");
+		listmap.put(10, "伴手礼超市");
+		listmap.put(11, "多功能会议厅");
+		listmap.put(12, "机房");
+		listmap.put(13, "预警指挥中心");
+		listmap.put(14, "办公区");
+
 	}
 
 	private void bindBleScanService() {
@@ -170,6 +194,9 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		imgswitch = (ImageButton) findViewById(R.id.imgswitch);
 		imgswitch.setOnClickListener(this);
 		txtdetail = (TextView) findViewById(R.id.txtdetail);
+		listView1 = (ListView) findViewById(R.id.listView1);
+		myAdapter = new MyAdapter();
+		listView1.setAdapter(myAdapter);
 
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 		vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
@@ -243,6 +270,172 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		// 设置最多可容纳10个音频流，音频的品质为5
 
 	}
+
+
+	private class MyAdapter extends BaseListAdapter {
+		/**
+		 * 适配器
+		 */
+		private class ViewHolder {
+
+			private ImageButton img_btnplay;
+			private ImageButton img_btndel;
+			private TextView txtname;
+
+		}
+
+		private int selectItem = -1;
+
+		public void setSelectItem(int selectItem) {
+			this.selectItem = selectItem;
+		}
+
+		@Override
+		public int getCount() {
+			// TODO Auto-generated method stub
+			return listmap.size();
+		}
+
+		@SuppressLint("NewApi")
+		@Override
+		public View getView(final int position, View convertView, ViewGroup parent) {
+			// TODO Auto-generated method stub
+
+			ViewHolder holder = null;
+			if (convertView == null) {
+
+				convertView = getLayoutInflater().inflate(
+						R.layout.activity_sounditem, null);
+
+				holder = new ViewHolder();
+
+				holder.img_btnplay = (ImageButton) convertView
+						.findViewById(R.id.img_btnplay);
+				holder.img_btndel = (ImageButton) convertView
+						.findViewById(R.id.img_btndel);
+				holder.txtname = (TextView) convertView
+						.findViewById(R.id.txtname);
+
+				// 设置交错颜色
+				// int[] arrayOfInt = mColors;
+				// int colorLength = mColors.length;
+				// int selected = arrayOfInt[position % colorLength];
+				//
+				// convertView.setBackgroundResource(selected);
+				convertView.setTag(holder);
+			} else {
+				holder = (ViewHolder) convertView.getTag();
+			}
+			holder.txtname.setText(listmap.get(position));
+			// if (position == selectItem) { // 选中状态 高亮
+			// convertView.setBackgroundResource(R.drawable.img_sounditem);
+			//
+			// } else { // 正常状态
+			// convertView.setBackgroundResource(R.drawable.tabli);
+			// }
+
+			holder.img_btnplay.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+
+				}
+			});
+			holder.img_btndel.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					listmap.remove(position);
+					myAdapter.notifyDataSetChanged();
+				}
+			});
+			// holder.imageView1.setBackgroundResource((Integer)
+			// list.get(position).get("img"));
+			// // Bitmap image =
+			// Bitmap.createBitmap(((BitmapDrawable)holder.imageView1.getDrawable()).getBitmap());
+			// // imgUtils.getRoundedCornerBitmap(image, 90);
+			// // imageLoader.displayImage(
+			// // "drawable://" + (Integer) list.get(position).get("img"),
+			// // holder.imageView1, options);
+			//
+			// holder.txttitle.setText((String)
+			// list.get(position).get("title"));
+			// holder.txttime.setText((String) list.get(position).get("time"));
+			// Map<String, Object> map = list.get(position); // distance
+			// String object = (String) list.get(position).get("distance");
+			// holder.txtdistance.setText(object);
+
+			return convertView;
+		}
+
+	}
+
+	/**
+	 * 根据基站地址播放声音
+	 * 
+	 * @param address
+	 */
+	private void playSound(String address) {
+		if (address.equalsIgnoreCase("CF:01:01:00:02:F0")) {
+			// 智慧导览 ???
+			playSound(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F1")) {
+			// 行李寄存 ok
+			playSound(8);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F2")) {
+			// 3D 互动区 ok ???
+			playSound(3);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F3")) {
+			// 智慧旅游应用展示 ok ???
+			playSound(4);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F4")) {
+			// 引导台 ok
+			playSound(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F5")) {
+			// 旅客上车处 ???
+			playSound(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F6")) {
+			// 智慧旅游视屏 ???
+			playSound(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F7")) {
+			// 单车租赁 ???
+			playSound(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F8")) {
+			// 休闲自助区???
+			playSound(6);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:FC")) {
+			// 伴手礼超市 ok
+			playSound(10);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E1")) {
+			// 多功能厅 ok
+			playSound(11);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E2")) {
+			// 综合服务区 ???
+			playSound(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E3")) {
+			// 呼叫中心 ???
+			playSound(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E4")) {
+			// 预警指挥中心 ok
+			playSound(13);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E5")) {
+			// 办公区 ok
+			playSound(14);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E6")) {
+			// 婚纱摄影区 no auido
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E7")) {
+			// 信息视屏 ??
+			playSound(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E8")) {
+			// 机房 ok
+			playSound(12);
+		} else {
+			// TODO
+		}
+	}
+
 
 	@Override
 	protected void onStart() {
@@ -403,6 +596,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 				imgplay.setBackgroundResource(R.drawable.ic_pause);
 				isPausePlay = false;
 			} else {
+
 				process(mapID);
 			}
 		}
