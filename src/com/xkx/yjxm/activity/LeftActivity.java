@@ -8,6 +8,7 @@ import java.util.Map;
 import com.xkx.yjxm.R;
 import com.xkx.yjxm.adpater.FastAdpater;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -117,21 +118,31 @@ public class LeftActivity extends Activity implements OnItemClickListener {
 			startActivity(intent);
 		}
 
-		else if (position == 2) {
+		else if (position == 2) 
+		{
 			// 跳转到按摩界面
 			// 通过包名获取要跳转的app，创建intent对象
 			intent = getPackageManager().getLaunchIntentForPackage(
-					"com.example.tests");
+					"com.ebwing.mass");
 			// 这里如果intent为空，就说名没有安装要跳转的应用嘛
-			if (intent != null) {
+			if (intent != null) 
+			{
 				// 这里跟Activity传递参数一样的嘛，不要担心怎么传递参数，还有接收参数也是跟Activity和Activity传参数一样
 				intent.putExtra("name", "XiaKeXing");
 				intent.putExtra("app", "123456");
 				startActivity(intent);
-			} else {
+			} 
+			else 
+			{
 				// 没有安装要跳转的app应用，提醒一下
-				Toast.makeText(getApplicationContext(), "哟，赶紧下载安装这个APP吧",
-						Toast.LENGTH_LONG).show();
+//				Toast.makeText(getApplicationContext(), "哟，赶紧下载安装这个APP吧",
+//						Toast.LENGTH_LONG).show();
+				intent = new Intent();      
+				intent.setAction("android.intent.action.VIEW");    
+	            Uri content_url = Uri.parse("http://www.ebwing.com/download/appindex.do#");   
+	            intent.setData(content_url);  
+	            startActivity(intent);
+
 			}
 			// intent.setAction("")
 			// intent.setClass(getApplication(), MassageActivity.class);
