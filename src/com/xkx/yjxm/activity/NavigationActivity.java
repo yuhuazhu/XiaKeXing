@@ -1,6 +1,7 @@
 package com.xkx.yjxm.activity;
 
 import com.xkx.yjxm.R;
+import com.xkx.yjxm.custom.MyView;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -10,10 +11,14 @@ import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.RelativeLayout.LayoutParams;
 
 //导航
 public class NavigationActivity extends Activity {
+
+	private MyView myView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +26,9 @@ public class NavigationActivity extends Activity {
 		//移除ActionBar，在setContent之前调用下面这句，保证没有ActionBar
 		requestWindowFeature(Window.FEATURE_NO_TITLE);  
 		setContentView(R.layout.activity_navigation);
+		myView = new MyView(this);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		addContentView(myView, params);
 //		ImageButton button = (ImageButton) findViewById(R.id.imageButton1);
 //		button.setOnClickListener(new OnClickListener() {
 //			
