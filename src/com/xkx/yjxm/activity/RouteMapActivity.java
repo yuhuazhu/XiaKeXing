@@ -487,6 +487,73 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		playstate = true;
 	}
 
+	private void trigger(BluetoothDevice device) {
+		String address = device.getAddress();
+		if (address.equalsIgnoreCase("CF:01:01:00:02:F0")) {
+			// 智慧导览 ???
+			process(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F1")) {
+			// 行李寄存 ok
+			process(8);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F2")) {
+			// 3D 互动区 ok ???
+			process(3);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F3")) {
+			// 智慧旅游应用展示 ok ???
+			process(4);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F4")) {
+			// 引导台 ok
+			process(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F5")) {
+			// 旅客上车处 ???
+			process(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F6")) {
+			// 智慧旅游视屏 ???
+			process(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F7")) {
+			// 单车租赁 ???
+			process(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F8")) {
+			// 休闲自助区???
+			process(6);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:FC")) {
+			// 伴手礼超市 ok
+			process(10);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E1")) {
+			// 多功能厅 ok
+			process(11);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E2")) {
+			// 综合服务区 ???
+			process(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E3")) {
+			// 呼叫中心 ???
+			process(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E4")) {
+			// 预警指挥中心 ok
+			process(13);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E5")) {
+			// 办公区 ok
+			process(14);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E6")) {
+			// TODO 婚纱摄影区 no auido
+			process(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E7")) {
+			// 信息视屏 ??
+			process(1);
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E8")) {
+			// 机房 ok
+			process(12);
+		} else {
+			// TODO
+			runOnUiThread(new Runnable() {
+				public void run() {
+					Toast.makeText(RouteMapActivity.this, "扫描到其他设备",
+							Toast.LENGTH_LONG).show();
+				}
+			});
+		}
+	}
+
 	public void disableViewForSeconds(final View v) {
 
 		v.setClickable(false);
@@ -593,7 +660,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 					.setOnProximityBleChangedListener(new BLEService.OnProximityBleChangedListener() {
 						@Override
 						public void onProximityBleChanged(BluetoothDevice device) {
-							playSound(device.getAddress().trim());
+							trigger(device);
 						}
 					});
 			bleService.startScanBLE();
