@@ -30,7 +30,7 @@ public class BLEService extends Service {
 
 	private static final int COUNT_NOT_SCANNED = 10;
 
-	private static final float RSSI_TO_TRIGGER = -70f;
+	private static final float RSSI_TO_TRIGGER = -75f;
 
 	private BleBinder bleBinder = new BleBinder();
 
@@ -51,6 +51,8 @@ public class BLEService extends Service {
 
 	private int scannedCount;
 
+	private int maxRssi = -1000;
+
 	public BLEService() {
 	}
 
@@ -58,6 +60,7 @@ public class BLEService extends Service {
 	public void onCreate() {
 		super.onCreate();
 		Log.e("scan", "onCreate()");
+		enableBlueToothIfClosed();
 	}
 
 	@Override
@@ -72,7 +75,6 @@ public class BLEService extends Service {
 
 	public void startScanBLE() {
 		exitScan = false;
-		enableBlueToothIfClosed();
 		new Thread() {
 			public void run() {
 				continualLeScan();
@@ -91,11 +93,23 @@ public class BLEService extends Service {
 			if (exitScan) {
 				break;
 			}
-			singleLeScan();
+			// averLeScan();
+			maxLeScan();
 		}
-	};
+	}
 
-	private void singleLeScan() {
+	private void maxLeScan() {
+		adapter.startLeScan(callback);
+		scannedCount++;
+		try {
+			Thread.sleep(PERIOD_TO_SCAN);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		adapter.stopLeScan(callback);
+	}
+
+	private void averLeScan() {
 		adapter.startLeScan(callback);
 		scannedCount++;
 		try {
@@ -132,6 +146,8 @@ public class BLEService extends Service {
 			Entry<BluetoothDevice, Float> entry = sortedDeviceRssiList.get(0);
 			if (scannedCount >= COUNT_SCANNED_TO_RSP) {
 				if (proximityBleDevice != entry.getKey()) {
+					listener.onProximityBleChanged(proximityBleDevice,
+							entry.getKey());
 					proximityBleDevice = entry.getKey();
 					Float averRssi = averRssiMap.get(proximityBleDevice);
 					if (bleFilter != null) {
@@ -139,10 +155,16 @@ public class BLEService extends Service {
 								.contains(bleFilter.nameFilter);
 						boolean rssiStronger = averRssi >= bleFilter.rssiFilter;
 						if (!nameIncluded && rssiStronger) {
-							listener.onProximityBleChanged(proximityBleDevice);
+							listener.onConditionTriggerSuccess(proximityBleDevice);
+						} else {
+							listener.onConditionTriggerFailed(proximityBleDevice);
 						}
 					} else {
-						listener.onProximityBleChanged(proximityBleDevice);
+						if (averRssi >= RSSI_TO_TRIGGER) {
+							listener.onConditionTriggerSuccess(proximityBleDevice);
+						} else {
+							listener.onConditionTriggerFailed(proximityBleDevice);
+						}
 					}
 				}
 			}
@@ -198,13 +220,14 @@ public class BLEService extends Service {
 	public BluetoothDevice getProximityBleDevice() {
 		return proximityBleDevice;
 	}
-	
+
 	public void setBleFilter(BleFilter filter) {
 		this.bleFilter = filter;
 	}
 
 	public void stopScanBLE() {
 		exitScan = true;
+		adapter.stopLeScan(callback);
 	}
 
 	public void setOnProximityBleChangedListener(
@@ -217,6 +240,27 @@ public class BLEService extends Service {
 		@Override
 		public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
 			Log.e("scan", device.getAddress() + "rssi:" + rssi);
+			// averProcess(device, rssi);
+			maxProcess(device, rssi);
+		}
+
+		private void maxProcess(BluetoothDevice device, int rssi) {
+			if (maxRssi < rssi) {
+				maxRssi = rssi;
+				proximityBleDevice = device;
+			}
+			if (scannedCount % 3 == 0) {
+				if (maxRssi >= RSSI_TO_TRIGGER) {
+					listener.onConditionTriggerSuccess(device);
+				}else{
+					listener.onConditionTriggerFailed(device);
+				}
+				maxRssi = -1000;
+				proximityBleDevice = null;
+			}
+		}
+
+		private void averProcess(BluetoothDevice device, int rssi) {
 			if (scannedCountMap.get(device) == null) {
 				scannedCountMap.put(device, 1);
 				sumRssiMap.put(device, (long) rssi);
@@ -229,10 +273,11 @@ public class BLEService extends Service {
 			recentScannedMap.put(device, scannedCount);
 		}
 	};
-	
+
 	public void onDestroy() {
 		exitScan = true;
-	};
+		adapter.disable();
+	}
 
 	public class BleBinder extends Binder {
 		public BLEService getService() {
@@ -271,6 +316,10 @@ public class BLEService extends Service {
 
 	public interface OnProximityBleChangedListener {
 
-		void onProximityBleChanged(BluetoothDevice device);
+		void onProximityBleChanged(BluetoothDevice ori, BluetoothDevice current);
+
+		void onConditionTriggerSuccess(BluetoothDevice device);
+
+		void onConditionTriggerFailed(BluetoothDevice device);
 	}
 }
