@@ -3,9 +3,9 @@
     <!-- 移动 -->
     <translate 
         android:fromXDelta="0"
-        android:toXDelta="200" 
+        android:toXDelta="20%p" 
         android:fromYDelta="0"
-        android:toYDelta="-1000" 
+        android:toYDelta="-55%p" 
         android:duration="4000" >   
 	</translate>
 	
@@ -25,5 +25,4 @@
 		android:duration="4000" >
 	</scale>
     
-
 </set>
