@@ -41,6 +41,7 @@ public class RouteActivity extends Activity implements OnClickListener {
 	DisplayImageOptions options; // 配置图片加载及显示选项
 	private MyAdapter myAdapter;
 	private ImageView imgmap;
+	private String stringExtra;
 	protected ImageLoader imageLoader = ImageLoader.getInstance();
 
 	@Override
@@ -49,7 +50,9 @@ public class RouteActivity extends Activity implements OnClickListener {
 		// 移除ActionBar，在setContent之前调用下面这句，保证没有ActionBar
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_route);
-
+		Intent intent = getIntent();
+		//stringExtra 得到的是（观音山or胡力山or鼓浪屿）
+		stringExtra = intent.getStringExtra("name");
 		initData();
 		initUI();
 	}
