@@ -505,9 +505,9 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private void process(int mapID) {
 
 		// 播放语音
-		playSound(1);// 播放dudu，dudu文件被解码为16位的PCM数据后超过了SoundPool的1M缓冲区了，循环不了，而且不能播完整个歌曲
+		playSound(mapID);// 播放dudu，dudu文件被解码为16位的PCM数据后超过了SoundPool的1M缓冲区了，循环不了，而且不能播完整个歌曲
 		imgplay.setBackgroundResource(R.drawable.ic_pause);
-		txtdetail.setText(textMap.get(1));
+		txtdetail.setText(textMap.get(mapID));
 
 	}
 
