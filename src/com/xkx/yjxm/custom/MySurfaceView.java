@@ -105,7 +105,7 @@ public class MySurfaceView extends SurfaceView implements Callback, Runnable {
 		// 记录当前触摸点得当前得坐标
 		mPosX = x;
 		mPosY = y;
-		return true;
+		return super.onTouchEvent(event);
 	}
 
 	private void onDraw() {
@@ -142,12 +142,22 @@ public class MySurfaceView extends SurfaceView implements Callback, Runnable {
 		}
 	}
 	
-	public void QuadTo(int x,int y, int toX, int toY)
+	public float GetX()
+	{ 
+		return mPosX;
+	}
+	
+	public float GetY()
+	{ 
+		return mPosY;
+	}
+	
+	public void QuadTo(float x,float y, float toX, float toY)
 	{
 		mPath.quadTo(x, y, toX, toY);
 	}
 	
-	public void MoveTo(int x,int y)
+	public void MoveTo(float x,float y)
 	{
 		mPath.moveTo(x, y);
 	}
