@@ -133,6 +133,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private boolean isOnRouteActivity = false;
 
 	private Map<Integer, Integer> soundMap;
+	private Map<Integer, String> textMap;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -188,32 +189,54 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 			public void run() {
 				soundMap.put(1,
 						mSoundPool.load(RouteMapActivity.this, R.raw.yindao, 1));
+				textMap.put(1, getResources().getString(R.string.txt_yin_dao));
 				soundMap.put(2, mSoundPool.load(RouteMapActivity.this,
 						R.raw.zi_zhu_fu_wu, 1));
+				textMap.put(2, getResources()
+						.getString(R.string.txt_bo_fang_qu));
 				soundMap.put(3, mSoundPool.load(RouteMapActivity.this,
 						R.raw.tiyan3d, 1));
+				textMap.put(3, getResources().getString(R.string.txt_tiyan_3d));
 				soundMap.put(4, mSoundPool.load(RouteMapActivity.this,
 						R.raw.ying_yong_zhan_shi, 1));
+				textMap.put(4,
+						getResources().getString(R.string.txt_lv_you_zhan_shi));
 				soundMap.put(5, mSoundPool.load(RouteMapActivity.this,
 						R.raw.you_ke_jie_dai, 1));
+				textMap.put(5,
+						getResources().getString(R.string.txt_jie_dai_fu_wu));
 				soundMap.put(6,
 						mSoundPool.load(RouteMapActivity.this, R.raw.anmo, 1));
+				textMap.put(6, getResources().getString(R.string.txt_anmo));
 				soundMap.put(7, mSoundPool.load(RouteMapActivity.this,
 						R.raw.bo_fang_ping_mu, 1));
+				textMap.put(7,
+						getResources().getString(R.string.txt_lv_you_shi_ping));
 				soundMap.put(8, mSoundPool.load(RouteMapActivity.this,
 						R.raw.xinglijicun, 1));
+				textMap.put(8,
+						getResources().getString(R.string.txt_xing_li_ji_cun));
 				soundMap.put(9, mSoundPool.load(RouteMapActivity.this,
 						R.raw.yi_wu_shi, 1));
+				textMap.put(9, getResources().getString(R.string.txt_yiwu_shi));
 				soundMap.put(10, mSoundPool.load(RouteMapActivity.this,
 						R.raw.banshouli, 1));
+				textMap.put(10,
+						getResources().getString(R.string.txt_ban_shou_li));
 				soundMap.put(11, mSoundPool.load(RouteMapActivity.this,
 						R.raw.duo_gong_neng, 1));
+				textMap.put(11,
+						getResources().getString(R.string.txt_duo_gong_neng));
 				soundMap.put(12, mSoundPool.load(RouteMapActivity.this,
 						R.raw.ji_fang, 1));
+				textMap.put(12, getResources().getString(R.string.txt_hu_jiao));
 				soundMap.put(13, mSoundPool.load(RouteMapActivity.this,
 						R.raw.yu_jing_zhi_hui, 1));
+				textMap.put(13, getResources().getString(R.string.txt_yu_jin));
 				soundMap.put(14, mSoundPool.load(RouteMapActivity.this,
 						R.raw.bangongqu, 1));
+				textMap.put(14,
+						getResources().getString(R.string.txt_ban_gong_qu));
 			}
 		}).start();
 
@@ -475,7 +498,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		imgplay.setBackgroundResource(R.drawable.ic_pause);
 		// 播放语音
 		playSound(1);// 播放dudu，dudu文件被解码为16位的PCM数据后超过了SoundPool的1M缓冲区了，循环不了，而且不能播完整个歌曲
-
+		txtdetail.setText(textMap.get(1));
 		// Intent it = new Intent(Intent.ACTION_VIEW);
 		// File file = new File("file:///android_asset/1yindao.m4a");
 		// //获取文件file的MIME类型
