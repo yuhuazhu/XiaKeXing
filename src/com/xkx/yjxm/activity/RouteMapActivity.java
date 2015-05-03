@@ -820,12 +820,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 								BluetoothDevice device) {
 							trigger(device);
 						}
-
-						@Override
-						public void onProximityBleChanged(BluetoothDevice device) {
-							// TODO Auto-generated method stub
-							
-						}
+						
 					});
 			bleService.startScanBLE();
 		}
