@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
@@ -42,6 +43,7 @@ import com.xkx.yjxm.R;
 import com.xkx.yjxm.service.BLEService;
 import com.xkx.yjxm.service.BLEService.BleBinder;
 
+@SuppressLint("HandlerLeak")
 public class RouteMapActivity extends Activity implements OnClickListener {
 	// private Bitmap bitmap;
 	int mBitmapWidth = 0;
@@ -151,8 +153,6 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		initUI();
 		bindBleScanService();
 
-		// 设置最多可容纳10个音频流，音频的品质为5
-
 	}
 
 	private void bindBleScanService() {
@@ -243,99 +243,9 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 	}
 
-	/**
-	 * 根据基站地址播放声音
-	 * 
-	 * @param address
-	 */
-	private void playSound(String address) {
-		if (address.equalsIgnoreCase("CF:01:01:00:02:F0")) {
-			// 智慧导览 ???
-			playSound(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F1")) {
-			// 行李寄存 ok
-			playSound(8);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F2")) {
-			// 3D 互动区 ok ???
-			playSound(3);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F3")) {
-			// 智慧旅游应用展示 ok ???
-			playSound(4);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F4")) {
-			// 引导台 ok
-			playSound(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F5")) {
-			// 旅客上车处 ???
-			playSound(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F6")) {
-			// 智慧旅游视屏 ???
-			playSound(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F7")) {
-			// 单车租赁 ???
-			playSound(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F8")) {
-			// 休闲自助区???
-			playSound(6);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:FC")) {
-			// 伴手礼超市 ok
-			playSound(10);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E1")) {
-			// 多功能厅 ok
-			playSound(11);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E2")) {
-			// 综合服务区 ???
-			playSound(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E3")) {
-			// 呼叫中心 ???
-			playSound(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E4")) {
-			// 预警指挥中心 ok
-			playSound(13);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E5")) {
-			// 办公区 ok
-			playSound(14);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E6")) {
-			// 婚纱摄影区 no auido
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E7")) {
-			// 信息视屏 ??
-			playSound(1);
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E8")) {
-			// 机房 ok
-			playSound(12);
-		} else {
-			// TODO
-		}
-	}
-
 	@Override
 	protected void onStart() {
 		super.onStart();
-		// imageView.setOnTouchListener(new OnTouchListener() {
-		//
-		// @Override
-		// public boolean onTouch(View v, MotionEvent event) {
-		// int x = (int) event.getX();
-		// // left, top, right, bottom
-		// int y = (int) event.getY();
-		//
-		// textView1.setPadding(x - 50, y - 50, 0, 0);
-		// // LayoutParams lp = new lay
-		// // textView1.setLayoutParams())
-		// if (event.getAction() == MotionEvent.ACTION_UP) {
-		// textView1.setText("x=" + x + ",y=" + y);
-		// int color = bitmap.getPixel(x, y);
-		// mArrayColor[x] = color;
-		// // 如果你想做的更细致的话 可以把颜色值的R G B 拿到做响应的处理 笔者在这里就不做更多解释
-		// int r = Color.red(color);
-		// int g = Color.green(color);
-		// int b = Color.blue(color);
-		// int a = Color.alpha(color);
-		// Log.i(TAG, "r=" + r + ",g=" + g + ",b=" + b);
-		//
-		// }
-		// return true;
-		// }
-		// });
 	}
 
 	@Override
@@ -503,8 +413,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 	// 播放
 	private void process(int mapID) {
-
-		// 播放语音
+		
 		playSound(mapID);// 播放dudu，dudu文件被解码为16位的PCM数据后超过了SoundPool的1M缓冲区了，循环不了，而且不能播完整个歌曲
 		imgplay.setBackgroundResource(R.drawable.ic_pause);
 		txtdetail.setText(textMap.get(mapID));
@@ -661,10 +570,17 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 			super.handleMessage(msg);
 			switch (msg.what) {
 			case SENSOR_SHAKE:
-				Toast.makeText(RouteMapActivity.this, "检测到摇晃，执行操作！",
-						Toast.LENGTH_SHORT).show();
-				Log.i(TAG, "检测到摇晃，执行操作！");
+				processAfterShake();
 				break;
+			}
+		}
+
+		private void processAfterShake() {
+			Toast.makeText(RouteMapActivity.this, "检测到摇晃，执行操作！",
+					Toast.LENGTH_SHORT).show();
+			BluetoothDevice device = bleService.getProximityBleDevice();
+			if (device != null) {
+				trigger(device);
 			}
 		}
 	};
@@ -683,12 +599,41 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 			bleService
 					.setOnProximityBleChangedListener(new BLEService.OnProximityBleChangedListener() {
 						@Override
-						public void onProximityBleChanged(BluetoothDevice device) {
+						public void onProximityBleChanged(
+								BluetoothDevice original,
+								BluetoothDevice current) {
+							final BluetoothDevice oriTemp = original;
+							final BluetoothDevice curTemp = current;
+							runOnUiThread(new Runnable() {
+								public void run() {
+									Toast.makeText(
+											RouteMapActivity.this,
+											"ori:" + oriTemp.getAddress()
+													+ "cur"
+													+ curTemp.getAddress(),
+											Toast.LENGTH_LONG).show();
+								}
+							});
+						}
+
+						public void onConditionTriggerFailed(
+								BluetoothDevice device) {
+							final BluetoothDevice temp = device;
+							runOnUiThread(new Runnable() {
+								public void run() {
+									Toast.makeText(RouteMapActivity.this,
+											"信号强度不够,无法触发" + temp.getAddress(),
+											Toast.LENGTH_LONG).show();
+								}
+							});
+						}
+
+						public void onConditionTriggerSuccess(
+								BluetoothDevice device) {
 							trigger(device);
 						}
 					});
 			bleService.startScanBLE();
 		}
 	};
-
 }
