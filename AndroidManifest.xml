@@ -18,7 +18,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
- 
+ 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -125,6 +125,11 @@
             android:enabled="true"
             android:exported="true" >
         </service>
+
+        <activity
+            android:name="com.xkx.yjxm.activity.ChoiceActivity"
+            android:label="@string/title_activity_choice" >
+        </activity>
     </application>
 
 </manifest>
