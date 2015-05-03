@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:text="映像琴海"
+            android:text="景点映像"
             android:textColor="#ae000000" />
     </RelativeLayout>
 
