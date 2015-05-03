@@ -1,18 +1,24 @@
 package com.xkx.yjxm.activity;
 
 import com.xkx.yjxm.R;
-import com.xkx.yjxm.custom.MyView;
+import com.xkx.yjxm.custom.MySurfaceView;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -23,8 +29,11 @@ import android.widget.RelativeLayout.LayoutParams;
 //导航
 public class NavigationActivity extends Activity {
 
-	private MyView myView;
-
+	private MySurfaceView mySurfaceView;
+	private ImageView imageView;
+	private int lefts;
+	private int tops;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -35,22 +44,25 @@ public class NavigationActivity extends Activity {
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		int iWidth  = dm.widthPixels;
 		int iHeight = dm.heightPixels;
-		myView = new MyView(this);
+		mySurfaceView = new MySurfaceView(this);
 		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		addContentView(myView, params);
+		addContentView(mySurfaceView, params);
 		RelativeLayout layout = new RelativeLayout(this);
-		ImageView imageView = new ImageView(this);
+		imageView = new ImageView(this);
 		imageView.setBackgroundResource(R.drawable.ic_navigation_mine);
 		layout.addView(imageView);
 //		layout.setBackgroundResource(R.drawable.y);
-		myView.MoveTo(iWidth / 2, iHeight / 2);
-		params.setMargins(iWidth / 2, iHeight / 2, 0, 0);
+		Bitmap b = ((BitmapDrawable)imageView.getBackground()).getBitmap();
+		int width = b.getWidth();
+		int height = b.getHeight();
+		mySurfaceView.MoveTo(iWidth / 2, iHeight / 2);
+		params.setMargins(iWidth / 2 - width / 2, iHeight / 2 - height, 0, 0);
 		imageView.setLayoutParams(params);
 		addContentView(layout, params);
 	}
 	
-	// 泡泡动画
-	public void StartPaoPao() {
+	// 人物动画
+	public void StartPaoPao(int x, int y) {
 		DisplayMetrics dm = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		int iWidth  = dm.widthPixels;
@@ -59,15 +71,54 @@ public class NavigationActivity extends Activity {
 		final int runH;
 		runW = iWidth * 20 / 100 ;
 		runH = iHeight * 55 / 100 - 50;
-		final ImageView spaceshipImage = (ImageView)findViewById(R.id.img_paopao);
-		Animation hyperspaceJumpAnimation=AnimationUtils.loadAnimation(this, R.anim.anim_paopao);
-		hyperspaceJumpAnimation.setFillAfter(true);
-		hyperspaceJumpAnimation.setAnimationListener(new AnimationListener() {
+		
+		 // 创建一个AnimationSet对象   
+        AnimationSet animationSet = new AnimationSet(true);  
+        // j加速播放   
+//        animationSet.setInterpolator(new AccelerateInterpolator());  
+        // //创建一个AnimationSet对象淡出旋转二合一   
+        TranslateAnimation translateAnimation = new TranslateAnimation(
+                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, -1.0f);
+
+        // 将alphaAnimation对象添加到animationSet中   
+        animationSet.addAnimation(translateAnimation);  
+        // 显示的时间为1s   
+        translateAnimation.setDuration(1000);  
+        // 开始执行动画   
+        imageView.startAnimation(animationSet);  
+        // 设置重复的次数   
+//        animationSet.setRepeatCount(4);  
+
+		Animation animation = AnimationUtils.loadAnimation(this, R.anim.anim_paopao);
+		animation.setFillAfter(true);
+		animation.setAnimationListener(new AnimationListener() {
 			
 
 			@Override
 			public void onAnimationStart(Animation animation) {
-				// TODO Auto-generated method stub
+				final int left = imageView.getLeft();
+				final int top = imageView.getTop();
+				imageView.postDelayed(new Runnable() {
+					
+
+					public void run() {
+						if(lefts == 0)
+						{
+							mySurfaceView.MoveTo(left, top);
+							lefts = left;
+							tops = top;
+							Log.e("0lefts="+ lefts, "0tops="+tops);
+						}
+						lefts += 5;
+						tops -= 25;
+						mySurfaceView.QuadTo(left, top, lefts, tops);
+						Log.e("lefts="+ lefts, "tops="+tops);
+						if(lefts < left + 200)
+							imageView.postDelayed(this, 100);
+						
+					}
+				},100);
 				  
 			}
 			
@@ -79,28 +130,25 @@ public class NavigationActivity extends Activity {
 			
 			@Override
 			public void onAnimationEnd(Animation animation) {
-				spaceshipImage.clearAnimation();
-				spaceshipImage.setBackgroundResource(R.drawable.ic_paopaos);
-				int left = spaceshipImage.getLeft();
-				left += runW;
-				int top = spaceshipImage.getTop();
-				top -= runH;
+				imageView.clearAnimation();
+//				spaceshipImage.setBackgroundResource(R.drawable.ic_paopaos);
+				int left = imageView.getLeft();
+				left += 200;
+				int top = imageView.getTop();
+				top -= 1000;
 				RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 				param.setMargins(left, top, 0, 0);
-				spaceshipImage.setLayoutParams(param);
-				spaceshipImage.setOnClickListener(new OnClickListener() {
+				imageView.setLayoutParams(param);
+				imageView.setOnClickListener(new OnClickListener() {
 					
 					@Override
 					public void onClick(View v) {
-						spaceshipImage.setVisibility(View.INVISIBLE);
+						imageView.setVisibility(View.INVISIBLE);
 						
 					}
 				});
 			}
 		});
-		spaceshipImage.startAnimation(hyperspaceJumpAnimation);
-		
-//			AnimationSet
 	} 
 
 	@Override
