@@ -26,7 +26,7 @@ import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
 import android.widget.ImageView;
 
-public class MyView extends SurfaceView implements Callback, Runnable {
+public class MySurfaceView extends SurfaceView implements Callback, Runnable {
 
 	public static final int TIME_IN_FRAME = 50;
 
@@ -48,7 +48,7 @@ public class MyView extends SurfaceView implements Callback, Runnable {
 
 	private Bitmap bitmap;
 
-	public MyView(Context context) {
+	public MySurfaceView(Context context) {
 		super(context);
 		this.setFocusable(true);
 		this.setFocusableInTouchMode(true);
