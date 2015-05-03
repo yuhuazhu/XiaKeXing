@@ -1,15 +1,5 @@
 package com.xkx.yjxm.service;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import android.annotation.TargetApi;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
@@ -24,13 +14,7 @@ import android.util.Log;
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class BLEService extends Service {
 
-	private static final int COUNT_SCANNED_TO_RSP = 5;
-
-	private static final long PERIOD_TO_SCAN = 400;
-
-	private static final int COUNT_NOT_SCANNED = 10;
-
-	private static final float RSSI_TO_TRIGGER = -75f;
+	private static final float RSSI_TO_TRIGGER = -70f;
 
 	private BleBinder bleBinder = new BleBinder();
 
@@ -41,11 +25,6 @@ public class BLEService extends Service {
 	private boolean exitScan = false;
 
 	private BluetoothDevice proximityBleDevice = null;
-
-	private final HashMap<BluetoothDevice, Integer> scannedCountMap = new HashMap<BluetoothDevice, Integer>();
-	private final HashMap<BluetoothDevice, Long> sumRssiMap = new HashMap<BluetoothDevice, Long>();
-	private final HashMap<BluetoothDevice, Float> averRssiMap = new HashMap<BluetoothDevice, Float>();
-	private final HashMap<BluetoothDevice, Integer> recentScannedMap = new HashMap<BluetoothDevice, Integer>();
 
 	private BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -93,127 +72,39 @@ public class BLEService extends Service {
 			if (exitScan) {
 				break;
 			}
-			// averLeScan();
 			maxLeScan();
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	private void maxLeScan() {
-		adapter.startLeScan(callback);
-		scannedCount++;
-		try {
-			Thread.sleep(PERIOD_TO_SCAN);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		adapter.stopLeScan(callback);
-	}
-
-	private void averLeScan() {
-		adapter.startLeScan(callback);
-		scannedCount++;
-		try {
-			Thread.sleep(PERIOD_TO_SCAN);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		adapter.stopLeScan(callback);
-		processScannedResult();
-	}
-
-	/**
-	 * 处理扫描结果
-	 */
-	private void processScannedResult() {
-		try {
-			Set<BluetoothDevice> keySet = recentScannedMap.keySet();
-			Iterator<BluetoothDevice> iterator = keySet.iterator();
-			BluetoothDevice device;
-			// 超过10次没有被扫描到的设备则移除之
-			while (iterator.hasNext()) {
-				device = iterator.next();
-				int recentScanned = recentScannedMap.get(device);
-				if (scannedCount - recentScanned >= COUNT_NOT_SCANNED) {
-					Log.e("process", device.getAddress() + "is removed");
-					iterator.remove();
-					scannedCountMap.remove(device);
-					sumRssiMap.remove(device);
-					averRssiMap.remove(device);
-				}
+		for (int i = 0; i < 4; i++) {
+			adapter.startLeScan(callback);
+			scannedCount++;
+			try {
+				Thread.sleep(400);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
-			averRssi();
-			List<Map.Entry<BluetoothDevice, Float>> sortedDeviceRssiList = sortAverRssiMapByRssi();
-			Entry<BluetoothDevice, Float> entry = sortedDeviceRssiList.get(0);
-			if (scannedCount >= COUNT_SCANNED_TO_RSP) {
-				if (proximityBleDevice != entry.getKey()) {
-					listener.onProximityBleChanged(proximityBleDevice,
-							entry.getKey());
-					proximityBleDevice = entry.getKey();
-					Float averRssi = averRssiMap.get(proximityBleDevice);
-					if (bleFilter != null) {
-						boolean nameIncluded = proximityBleDevice.getName()
-								.contains(bleFilter.nameFilter);
-						boolean rssiStronger = averRssi >= bleFilter.rssiFilter;
-						if (!nameIncluded && rssiStronger) {
-							listener.onConditionTriggerSuccess(proximityBleDevice);
-						} else {
-							listener.onConditionTriggerFailed(proximityBleDevice);
-						}
-					} else {
-						if (averRssi >= RSSI_TO_TRIGGER) {
-							listener.onConditionTriggerSuccess(proximityBleDevice);
-						} else {
-							listener.onConditionTriggerFailed(proximityBleDevice);
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-			Log.e("process", e.toString());
+			adapter.stopLeScan(callback);
 		}
-	}
-
-	/**
-	 * 各ble设备信号强度求平均值
-	 */
-	private void averRssi() {
-		Set<BluetoothDevice> keySet;
-		Iterator<BluetoothDevice> iterator;
-		BluetoothDevice device;
-		keySet = scannedCountMap.keySet();
-		iterator = keySet.iterator();
-		while (iterator.hasNext()) {
-			device = iterator.next();
-			Long sum = sumRssiMap.get(device);
-			int count = scannedCountMap.get(device);
-			averRssiMap.put(device, (float) ((float) sum / count));
+		if (maxRssi >= RSSI_TO_TRIGGER) {
+			listener.onConditionTriggerSuccess(proximityBleDevice);
+		} else {
+			listener.onConditionTriggerFailed(proximityBleDevice);
 		}
-	}
-
-	private List<Map.Entry<BluetoothDevice, Float>> sortAverRssiMapByRssi() {
-		List<Map.Entry<BluetoothDevice, Float>> list = new LinkedList<Map.Entry<BluetoothDevice, Float>>();
-		list.addAll(averRssiMap.entrySet());
-		Collections.sort(list,
-				new Comparator<Map.Entry<BluetoothDevice, Float>>() {
-					public int compare(Map.Entry<BluetoothDevice, Float> obj1,
-							Map.Entry<BluetoothDevice, Float> obj2) {
-						// 从高往低排序
-						float f1 = (Float) obj1.getValue();
-						float f2 = (Float) obj2.getValue();
-						if (f1 < f2) {
-							return 1;
-						} else if (f1 == f2) {
-							return 0;
-						} else {
-							return -1;
-						}
-					}
-				});
-		return list;
+		maxRssi = -1000;
+		proximityBleDevice = null;
+//		if (scannedCount % 4 == 0) {
+//		}
 	}
 
 	public BluetoothDevice getProximityBleDevice(int rssiFilter) {
-		// TODO 过滤待实现
+		// TODO
 		return proximityBleDevice;
 	}
 
@@ -240,37 +131,10 @@ public class BLEService extends Service {
 		@Override
 		public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
 			Log.e("scan", device.getAddress() + "rssi:" + rssi);
-			// averProcess(device, rssi);
-			maxProcess(device, rssi);
-		}
-
-		private void maxProcess(BluetoothDevice device, int rssi) {
 			if (maxRssi < rssi) {
 				maxRssi = rssi;
 				proximityBleDevice = device;
 			}
-			if (scannedCount % 3 == 0) {
-				if (maxRssi >= RSSI_TO_TRIGGER) {
-					listener.onConditionTriggerSuccess(device);
-				}else{
-					listener.onConditionTriggerFailed(device);
-				}
-				maxRssi = -1000;
-				proximityBleDevice = null;
-			}
-		}
-
-		private void averProcess(BluetoothDevice device, int rssi) {
-			if (scannedCountMap.get(device) == null) {
-				scannedCountMap.put(device, 1);
-				sumRssiMap.put(device, (long) rssi);
-			} else {
-				int count = scannedCountMap.get(device);
-				long sum = sumRssiMap.get(device);
-				scannedCountMap.put(device, ++count);
-				sumRssiMap.put(device, sum + rssi);
-			}
-			recentScannedMap.put(device, scannedCount);
 		}
 	};
 
