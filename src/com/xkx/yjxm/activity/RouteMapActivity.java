@@ -1,6 +1,7 @@
 package com.xkx.yjxm.activity;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +19,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
+import android.media.MediaMuxer;
+import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.media.SoundPool.OnLoadCompleteListener;
 import android.os.Bundle;
@@ -162,10 +165,14 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		imgdownmouth = (ImageButton) findViewById(R.id.imgdown);
 		imgswitch = (ImageButton) findViewById(R.id.imgswitch);
 		imgswitch.setOnClickListener(this);
+		txtdetail = (TextView) findViewById(R.id.txtdetail); 
+		
+		
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 		vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 
 		mSoundPool = new SoundPool(10, AudioManager.STREAM_SYSTEM, 5);
+		
 		mSoundPool.setOnLoadCompleteListener(new OnLoadCompleteListener() {
 
 			@Override

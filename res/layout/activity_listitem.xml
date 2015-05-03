@@ -7,7 +7,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="30dp" >
+        android:layout_marginLeft="37dp" >
 
         <View
             android:id="@+id/line1"
@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/line1"
-            android:layout_marginLeft="42dp"
+            android:layout_marginLeft="47dp"
             android:layout_toRightOf="@+id/line1"
             android:text="333"
             android:textColor="@color/orgph_title"
@@ -38,9 +38,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/line2"
-            android:layout_marginLeft="42dp"
+            android:layout_marginLeft="47dp"
             android:layout_toRightOf="@+id/line1"
-            android:text="123"  />
+            android:text="123" />
 
         <TextView
             android:id="@+id/txtdistance"
@@ -51,14 +51,15 @@
             android:layout_marginTop="40dp"
             android:background="@drawable/corners_bg"
             android:text="150m"
-            android:textColor="@color/gray"  />
+            android:textColor="@color/gray" />
     </RelativeLayout>
 
-    <ImageView
+    <com.xkx.yjxm.activity.CircleImageView
         android:id="@+id/imageView1"
-        android:layout_width="66dp"
-        android:layout_height="66dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/img_left_bg" />
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="3dp"
+         />
 
 </FrameLayout>

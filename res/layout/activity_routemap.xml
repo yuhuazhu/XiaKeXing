@@ -101,8 +101,8 @@
 
         <ImageButton
             android:id="@+id/imgswitch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="400dp"
+            android:layout_height="30dp"
             android:layout_alignTop="@+id/imageView1"
             android:layout_toRightOf="@+id/imageView1"
             android:background="@drawable/img_autoexplain" />
