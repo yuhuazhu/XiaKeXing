@@ -27,8 +27,10 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageButton;
@@ -95,7 +97,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 			{ ".doc", "application/msword" },
 			{ ".docx",
 					"application/vnd.openxmlformats-officedocument.wordprocessingml.document" },
-			{ ".xls", "application/vnd.ms-excel" },
+			{ ".xls", "appli cation/vnd.ms-excel" },
 			{ ".xlsx",
 					"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" },
 			{ ".exe", "application/octet-stream" },
@@ -187,6 +189,61 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		listView1 = (ListView) findViewById(R.id.listView1);
 		txt_ti = (TextView) findViewById(R.id.txt_ti);
 		ivMap = (ImageView) findViewById(R.id.iv_map);
+		textView1= (TextView) findViewById(R.id.textView1);
+		ivMap.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				
+				
+				
+				
+				int x = (int) event.getX();
+				int topleftx =  x-10;
+				
+				//left, top, right, bottom
+				int y = (int) event.getY();
+				int toplefty =  y-10;
+				textView1.setText("x=" + x + ",y=" + y);
+				//右上角
+				int topRightx =  x+10;
+				int topRighty =  y-10;
+				
+				// 左下角
+				int bottomleftx =  x-10;
+				int bottomlefty =  y+10;
+				
+				//右上角
+				int bottomRightx =  x+10;
+				int bottomRighty =  y+10;
+				
+				
+//				LayoutParams lp = new lay
+//				textView1.setLayoutParams())
+				if (event.getAction() == MotionEvent.ACTION_UP) {
+					
+					String title = "";
+					if(event.getX()>=367 && event.getY()<815)
+					{
+						
+						mapID = 1;
+						title = "引导台";
+						process(mapID, title);
+					}
+					if(event.getX()>=417 && event.getY()<792)
+					{
+						
+						mapID = 3;
+						title = "感互动3D景区推介区";
+						process(mapID, title);
+					}	
+					
+					
+				}
+				return true;
+			}
+		});
+
 		btnback = (ImageButton) findViewById(R.id.btnback);
 		btnback.setOnClickListener(this);
 		soundlay = (RelativeLayout) findViewById(R.id.soundlay);

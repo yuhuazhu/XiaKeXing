@@ -141,6 +141,16 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:background="@drawable/img_autoexplain" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/imgswitch"
+            android:layout_alignLeft="@+id/imgswitch"
+            android:layout_marginLeft="55dp"
+            android:text="TextView" />
+
     </RelativeLayout>
 
 </FrameLayout>
