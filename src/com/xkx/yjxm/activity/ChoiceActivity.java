@@ -25,6 +25,11 @@ public class ChoiceActivity extends Activity {
 		isList = intent.getBooleanExtra("列表", true);
 	}
 	
+	// 返回
+	public void Back(View v) {
+		finish();
+	}
+	
 	// 跳转到观音山（ 导览 or 路线）
 	public void StartGuanYinShan(View v) {
 		Intent intent = null;
