@@ -41,6 +41,14 @@ public class RouteActivity extends Activity implements OnClickListener {
 	DisplayImageOptions options; // 配置图片加载及显示选项
 	private MyAdapter myAdapter;
 	private ImageView imgmap;
+	private int img[] = new int[19];
+	private String title[] = {"智慧导览","引导台", "感互动3D景区推介区", "智慧旅游应用展示区", "综合服务区",
+			"按摩免费体验区", "产品信息播放屏幕", "自助行李寄存柜", "医务室", "伴手礼超市", "多功能会议厅", "机房",
+			"预警指挥中心", "办公区","智慧旅游视屏","单车租赁","旅客上车处","呼叫中心","19"};
+	private String time[] = new String[19];
+	private int times = 10;
+	private int distances = 100;
+	private String distance[] = new String[19];
 	private String stringExtra;
 	protected ImageLoader imageLoader = ImageLoader.getInstance();
 
@@ -55,6 +63,17 @@ public class RouteActivity extends Activity implements OnClickListener {
 		stringExtra = intent.getStringExtra("name");
 		initData();
 		initUI();
+		for (int i = 0; i < img.length; i++) {
+			img[i] = R.drawable.route01 + i;
+		}
+		for (int i = 0; i < img.length; i++) {
+			times += 10;
+			time[i] = "浏览时长：" + times + "分钟";
+		}
+		for (int i = 0; i < img.length; i++) {
+			distances += 50;
+			distance[i] = distances + "m";
+		}
 	}
 
 	private List<Map<String, Object>> getData() {
@@ -154,7 +173,7 @@ public class RouteActivity extends Activity implements OnClickListener {
 		@Override
 		public int getCount() {
 			// TODO Auto-generated method stub
-			return list.size();
+			return title.length;
 		}
 
 		@SuppressLint("NewApi")
@@ -194,18 +213,16 @@ public class RouteActivity extends Activity implements OnClickListener {
 			
 			
 			
-			holder.imageView1.setBackgroundResource((Integer) list.get(position).get("img"));
+			holder.imageView1.setBackgroundResource(img[position]);
 //			Bitmap image = Bitmap.createBitmap(((BitmapDrawable)holder.imageView1.getDrawable()).getBitmap());  
 //			imgUtils.getRoundedCornerBitmap(image, 90);
 //			imageLoader.displayImage(
 //					"drawable://" + (Integer) list.get(position).get("img"),
 //					holder.imageView1, options);
 			
-			holder.txttitle.setText((String) list.get(position).get("title"));
-			holder.txttime.setText((String) list.get(position).get("time"));
-			Map<String, Object> map = list.get(position); // distance
-			String object = (String) list.get(position).get("distance");
-			holder.txtdistance.setText(object);
+			holder.txttitle.setText(title[position]);
+			holder.txttime.setText(time[position]);
+			holder.txtdistance.setText(distance[position]);
 
 			return convertView;
 		}
