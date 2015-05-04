@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 
+//—°‘ÒΩÁ√Ê
 public class ChoiceActivity extends Activity {
 
 	private boolean isList;
