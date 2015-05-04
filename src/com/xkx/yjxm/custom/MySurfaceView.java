@@ -91,11 +91,11 @@ public class MySurfaceView extends SurfaceView implements Callback, Runnable {
 		case MotionEvent.ACTION_DOWN:
 			mPosX = x;
 			mPosY = y;
-			mPath.quadTo(mPosX, mPosY, x, y);
-			mPath.moveTo(x, y);
+//			mPath.quadTo(mPosX, mPosY, x, y);
+//			mPath.moveTo(x, y);
 			break;
 		case MotionEvent.ACTION_MOVE:
-			mPath.quadTo(mPosX, mPosY, x, y);
+//			mPath.quadTo(mPosX, mPosY, x, y);
 			break;
 		case MotionEvent.ACTION_UP:
 			// mPath.reset();
@@ -155,6 +155,7 @@ public class MySurfaceView extends SurfaceView implements Callback, Runnable {
 	public void QuadTo(float x,float y, float toX, float toY)
 	{
 		mPath.quadTo(x, y, toX, toY);
+		mPath.moveTo(toX, toY);
 	}
 	
 	public void MoveTo(float x,float y)
