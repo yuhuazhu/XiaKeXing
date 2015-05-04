@@ -52,36 +52,35 @@ public class PhotoTakeActivity extends Activity implements OnClickListener {
 		initUI();
 
 	}
-    private void initData()
-    {
-    	selectedImage = (Uri) getIntent().getExtras().get("Uri");
-    	fileName = (String) getIntent().getExtras().get("fileName");
-    	new Thread(new Runnable() {
-			
+
+	private void initData() {
+		selectedImage = (Uri) getIntent().getExtras().get("Uri");
+		fileName = (String) getIntent().getExtras().get("fileName");
+		new Thread(new Runnable() {
+
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				((ImageView) findViewById(R.id.imageView1)).setImageURI(selectedImage);// 将图片显示在ImageView里
+				((ImageView) findViewById(R.id.imageView1))
+						.setImageURI(selectedImage);// 将图片显示在ImageView里
 			}
 		}).start();
-    	
-    	
-    }
+
+	}
+
 	private void initUI() {
 		upbtn = (RelativeLayout) findViewById(R.id.upbtn);
 		upbtn.setOnClickListener(this);
 		cancel = (RelativeLayout) findViewById(R.id.cancel);
 		cancel.setOnClickListener(this);
-		
+
 		progresslay = (RelativeLayout) findViewById(R.id.progresslay);
 		progress_horizontal = (ProgressBar) findViewById(R.id.progress_horizontal);
 
 		btnback = (ImageButton) findViewById(R.id.btnback);
 		btnback.setOnClickListener(this);
-		
-	}
 
-	
+	}
 
 	@Override
 	public void onClick(View v) {
@@ -155,7 +154,7 @@ public class PhotoTakeActivity extends Activity implements OnClickListener {
 
 			ds.close();
 		} catch (Exception e) {
-			 showDialog("上传失败" + e);
+			showDialog("上传失败" + e);
 		}
 		return b.toString();
 	}
@@ -187,7 +186,29 @@ public class PhotoTakeActivity extends Activity implements OnClickListener {
 			// TODO Auto-generated method stub
 
 			String str = uploadFile(params[0].get("arg2").toString());
-			
+			for (int i = 0; i < 10; i++)
+
+			{
+
+				try
+
+				{
+
+					Thread.sleep(1000);
+
+					publishProgress(i * 10);// 进度条每次更新10%,执行中创建新线程处理onProgressUpdate()
+
+				}
+
+				catch (InterruptedException e)
+
+				{
+
+					e.printStackTrace();
+
+				}
+
+			}
 			return str;
 		}
 
@@ -200,10 +221,6 @@ public class PhotoTakeActivity extends Activity implements OnClickListener {
 
 		}
 
-		
-	
-		
-		
 		// onCancelled方法用于在取消执行中的任务时更改UI
 		@Override
 		protected void onCancelled() {
@@ -235,9 +252,7 @@ public class PhotoTakeActivity extends Activity implements OnClickListener {
 								"QRCODE");
 						if (QRCODE.equals("")) {
 							return;
-						}
-						else
-						{
+						} else {
 							showDialog("上传成功");
 							progress_horizontal.setProgress(100);
 							progresslay.setVisibility(View.GONE);
@@ -245,12 +260,12 @@ public class PhotoTakeActivity extends Activity implements OnClickListener {
 					}
 
 				}
-				
+
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			// showDialog("上传成功" + b.toString().trim()); /* 关闭DataOutputStream
 			// */
 
