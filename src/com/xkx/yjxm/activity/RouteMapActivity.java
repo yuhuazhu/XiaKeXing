@@ -752,6 +752,12 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 				Log.e("插入列表","插入列表");
 				addToList(mapID, title);
 			}
+			else
+			{
+				txtlist.remove(0);
+				idlist.remove(0);
+				addToList(mapID, title);
+			}
 			return;
 		}
 		playSound(mapID);// 播放dudu，dudu文件被解码为16位的PCM数据后超过了SoundPool的1M缓冲区了，循环不了，而且不能播完整个歌曲
