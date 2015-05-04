@@ -56,7 +56,15 @@ public class PhotoTakeActivity extends Activity implements OnClickListener {
     {
     	selectedImage = (Uri) getIntent().getExtras().get("Uri");
     	fileName = (String) getIntent().getExtras().get("fileName");
-    	((ImageView) findViewById(R.id.imageView1)).setImageURI(selectedImage);// 将图片显示在ImageView里
+    	new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				((ImageView) findViewById(R.id.imageView1)).setImageURI(selectedImage);// 将图片显示在ImageView里
+			}
+		});
+    	
     	
     }
 	private void initUI() {
@@ -179,6 +187,7 @@ public class PhotoTakeActivity extends Activity implements OnClickListener {
 			// TODO Auto-generated method stub
 
 			String str = uploadFile(params[0].get("arg2").toString());
+			
 			return str;
 		}
 
@@ -191,6 +200,10 @@ public class PhotoTakeActivity extends Activity implements OnClickListener {
 
 		}
 
+		
+	
+		
+		
 		// onCancelled方法用于在取消执行中的任务时更改UI
 		@Override
 		protected void onCancelled() {
