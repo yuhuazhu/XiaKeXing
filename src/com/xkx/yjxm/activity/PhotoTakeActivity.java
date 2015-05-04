@@ -63,7 +63,7 @@ public class PhotoTakeActivity extends Activity implements OnClickListener {
 				// TODO Auto-generated method stub
 				((ImageView) findViewById(R.id.imageView1)).setImageURI(selectedImage);// 将图片显示在ImageView里
 			}
-		});
+		}).start();
     	
     	
     }
