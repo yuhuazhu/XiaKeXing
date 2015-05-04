@@ -10,6 +10,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" 
         android:background="@drawable/img_sounditem"
+        android:paddingLeft="10dp"
+         android:paddingRight="8dp"
         >
 
         <ImageButton
@@ -18,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="12dp"
+           
             android:background="@drawable/img_play" />
 
         <ImageButton
@@ -27,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="33dp"
+            
            
             android:background="@drawable/img_close" />
 
