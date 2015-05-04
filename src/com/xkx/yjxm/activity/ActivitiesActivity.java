@@ -25,14 +25,12 @@ public class ActivitiesActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				finish();
-				
 			}
 		});
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.activities, menu);
 		return true;
 	}
