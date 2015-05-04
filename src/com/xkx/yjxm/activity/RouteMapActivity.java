@@ -79,6 +79,8 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private BLEService bleService;
 	private int mapID;
     private ImageButton btnback;
+    boolean stopThread=false;
+
 	/**
 	 * 是否已经处理过
 	 */
@@ -556,6 +558,8 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		//清空音频列表
 		idlist.clear();
 		txtlist.clear();
+		stopThread=true;
+
 		if (mediaPlayer != null) {
 			mediaPlayer.stop();
 			mediaPlayer.release();
@@ -599,6 +603,9 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 			@Override
 			public void run() {
+				while (!stopThread)
+					            {
+					               
 
 				AssetManager assetMg = getApplicationContext().getAssets();
 				AssetFileDescriptor fileDescriptor = null;
@@ -615,7 +622,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-
+					            }
 				// try {
 				// Thread.sleep(10000);
 				// } catch (InterruptedException e) {
