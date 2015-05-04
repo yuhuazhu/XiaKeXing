@@ -16,13 +16,25 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:background="@drawable/img_lou01por" />
-        <ImageButton
-            android:id="@+id/imgswitch"
-            android:layout_width="wrap_content"
+
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/img_autoexplain" />
+            android:layout_gravity="bottom"
+            android:background="@color/ligwhite"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/margin_smallest"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/margin_smallest" >
+
+            <ImageButton
+                android:id="@+id/btnback"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:background="@drawable/ic_back" />
+        </RelativeLayout>
     </RelativeLayout>
 
     <RelativeLayout
@@ -117,6 +129,18 @@
         </ListView>
     </RelativeLayout>
 
-   
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <ImageButton
+            android:id="@+id/imgswitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/img_autoexplain" />
+    </RelativeLayout>
 
 </FrameLayout>

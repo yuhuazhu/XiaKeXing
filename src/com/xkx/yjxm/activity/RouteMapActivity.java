@@ -74,7 +74,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private boolean isPausePlay = false;
 	private BLEService bleService;
 	private int mapID;
-
+    private ImageButton btnback;
 	/**
 	 * 是否已经处理过
 	 */
@@ -187,7 +187,8 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		listView1 = (ListView) findViewById(R.id.listView1);
 		txt_ti = (TextView) findViewById(R.id.txt_ti);
 		ivMap = (ImageView) findViewById(R.id.iv_map);
-
+		btnback = (ImageButton) findViewById(R.id.btnback);
+		btnback.setOnClickListener(this);
 		soundlay = (RelativeLayout) findViewById(R.id.soundlay);
 		
 		myAdapter = new MyAdapter();
@@ -607,6 +608,9 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 			if (!CommonUtils.isFastDoubleClick()) {
 				playprocess();
 			}
+			break;
+		case R.id.btnback:
+			finish();
 			break;
 		default:
 			break;
