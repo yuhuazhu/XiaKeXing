@@ -34,6 +34,7 @@ import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -154,6 +155,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private Map<Integer, String> textMap;
 	private ListView listView1;
 	private TextView txt_ti;
+	private RelativeLayout soundlay;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -186,6 +188,8 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		txt_ti = (TextView) findViewById(R.id.txt_ti);
 		ivMap = (ImageView) findViewById(R.id.iv_map);
 
+		soundlay = (RelativeLayout) findViewById(R.id.soundlay);
+		
 		myAdapter = new MyAdapter();
 		listView1.setAdapter(myAdapter);
 
@@ -661,6 +665,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 			public void run() {
 				int resId = mapBgMap.get(mapID);
 				ivMap.setBackgroundResource(resId);
+				soundlay.setVisibility(View.VISIBLE);
 				txtdetail.setText(textMap.get(mapID));
 			}
 		});
