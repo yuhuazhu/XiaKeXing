@@ -497,7 +497,9 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 				@Override
 				public void onClick(View v) {
-					process2(idlist.get(position), txtlist.get(position));
+					if (!CommonUtils.isFastDoubleClick()) {
+						process2(idlist.get(position), txtlist.get(position));
+					}
 				}
 			});
 			holder.img_btndel.setOnClickListener(new OnClickListener() {
@@ -596,32 +598,27 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	// sound hm中的第几个歌曲
 	// loop 是否循环 0不循环 -1循环
 	public void playSound(final int sound) {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					if (mediaPlayer != null) {
-						if(!mediaPlayer.isPlaying())
-						{
-							mediaPlayer.stop();
-						}
-						mediaPlayer.reset();
-						AssetFileDescriptor assetFileDescritor = RouteMapActivity.this
-								.getAssets().openFd(soundMap.get(sound));
-						mediaPlayer.setDataSource(
-								assetFileDescritor.getFileDescriptor(),
-								assetFileDescritor.getStartOffset(),
-								assetFileDescritor.getLength());
 
-						play();// 开始或恢复播放
-					}
-
-				} catch (IOException e) {
-					e.printStackTrace();
+		try {
+			if (mediaPlayer != null) {
+				if (!mediaPlayer.isPlaying()) {
+					mediaPlayer.stop();
 				}
+				mediaPlayer.reset();
+				AssetFileDescriptor assetFileDescritor = RouteMapActivity.this
+						.getAssets().openFd(soundMap.get(sound));
+				mediaPlayer.setDataSource(
+						assetFileDescritor.getFileDescriptor(),
+						assetFileDescritor.getStartOffset(),
+						assetFileDescritor.getLength());
 
+				play();// 开始或恢复播放
 			}
-		}).start();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		// try {
 		// Thread.sleep(10000);
 		// } catch (InterruptedException e) {
