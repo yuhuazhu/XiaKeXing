@@ -243,9 +243,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 				return true;
 			}
 		});
-
-		btnback = (ImageButton) findViewById(R.id.btnback);
-		btnback.setOnClickListener(this);
+		
 		soundlay = (RelativeLayout) findViewById(R.id.soundlay);
 		
 		myAdapter = new MyAdapter();
@@ -326,11 +324,11 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 				mapBgMap.put(12, R.drawable.img_map_hu_jiao_zhong_xin);
 				soundMap.put(13, "yu_jing_zhi_hui.m4a");
 				textMap.put(13, getResources().getString(R.string.txt_yu_jin));
-				mapBgMap.put(12, R.drawable.img_map_yu_jing_zhi_hui);
+				mapBgMap.put(13, R.drawable.img_map_yu_jing_zhi_hui);
 				soundMap.put(14, "bangongqu.m4a");
 				textMap.put(14,
 						getResources().getString(R.string.txt_ban_gong_qu));
-				mapBgMap.put(12, R.drawable.img_map_ban_gong_qu);
+				mapBgMap.put(14, R.drawable.img_map_ban_gong_qu);
 			}
 		}).start();
 
@@ -347,7 +345,6 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F1")) {
 			mapID = 8;
 			title = "自助行李寄存柜";
-
 		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F2")) {
 			mapID = 3;
 			title = "感互动3D景区推介区";
@@ -363,6 +360,8 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F6")) {
 			// 智慧旅游视屏
 			noAudio = true;
+			mapID = 2;
+			title = "自助服务区";
 		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F7")) {
 			// 单车租赁 no
 			noAudio = true;
@@ -408,6 +407,12 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 			// Toast.LENGTH_LONG).show();
 			// }
 			// });
+			runOnUiThread(new Runnable() {
+				public void run() {
+					Toast.makeText(RouteMapActivity.this, "该基站没有介绍哦",
+							Toast.LENGTH_LONG).show();
+				}
+			});
 		} else {
 			if (hasProcessedMap.get(mapID) == null
 					|| !hasProcessedMap.get(mapID)) {
@@ -421,7 +426,6 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 				txt_ti.setText(t);
 			}
 		});
-
 	}
 
 	private class MyAdapter extends BaseListAdapter {
@@ -627,6 +631,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 				if (sensorManager != null) {// 取消监听器
 					sensorManager.unregisterListener(sensorEventListener);
 				}
+				bleService.setShakeScan(false);
 				openstate = false;
 			} else {
 				// 注册摇一摇
@@ -640,6 +645,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 									SensorManager.SENSOR_DELAY_NORMAL);
 					// 第一个参数是Listener，第二个参数是所得传感器类型，第三个参数值获取传感器信息的频率
 				}
+				bleService.setShakeScan(true);
 				openstate = true;
 			}
 			break;
@@ -843,7 +849,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 					Log.e("toast", "yaoyiyao");
 				}
 			} else {
-				Toast.makeText(RouteMapActivity.this, "刚才没有检测到基站噢~~~",
+				Toast.makeText(RouteMapActivity.this, "刚才没有检测到基站噢~~~,请尝试...",
 						Toast.LENGTH_SHORT).show();
 			}
 		}
