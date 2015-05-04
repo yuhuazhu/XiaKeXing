@@ -5,6 +5,25 @@
     android:background="@drawable/img_choice_bg"
     tools:context=".ChoiceActivity" >
 
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="#3effffff"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/margin_smallest"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/margin_smallest" >
+
+            <ImageButton
+                android:id="@+id/btnback"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:onClick="Back"
+                android:background="@drawable/ic_back" />
+        </RelativeLayout>
     <ImageButton
         android:id="@+id/imageButton2"
         android:layout_width="90dp"
