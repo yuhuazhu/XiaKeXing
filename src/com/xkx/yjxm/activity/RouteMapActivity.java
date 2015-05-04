@@ -484,7 +484,8 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	protected void onDestroy() {
 		super.onDestroy();
 		unbindBleScanService();
-
+		//清空音频列表
+		listmap.clear();
 		if (mediaPlayer != null) {
 			mediaPlayer.stop();
 			mediaPlayer.release();
@@ -670,7 +671,9 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 			}
 		});
 		if (mediaPlayer.isPlaying()) {
+			Log.e("加入列表","加入列表");
 			if (listmap.size() < 3) {
+				Log.e("插入列表","插入列表");
 				addToList(mapID, title);
 			}
 			return;

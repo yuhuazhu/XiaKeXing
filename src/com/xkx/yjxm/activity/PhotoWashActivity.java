@@ -73,7 +73,7 @@ public class PhotoWashActivity extends Activity implements OnClickListener {
 			startActivity(intent);
 			break;
 		case R.id.laybtn02:
-
+          
 			intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 			File photo = new File(Environment.getExternalStorageDirectory(),
 					"Pic.jpg");
