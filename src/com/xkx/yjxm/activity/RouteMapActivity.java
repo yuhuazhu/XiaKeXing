@@ -2,7 +2,9 @@ package com.xkx.yjxm.activity;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.annotation.SuppressLint;
@@ -152,7 +154,8 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private boolean isOnRouteActivity = false;
 
 	private Map<Integer, String> soundMap;
-	private Map<Integer, String> listmap = new HashMap<Integer, String>();
+	private List<String> txtlist = new ArrayList<String>();
+	private List<Integer> idlist = new ArrayList<Integer>();
 	private Map<Integer, Integer> mapBgMap = new HashMap<Integer, Integer>();
 	private Map<Integer, String> textMap;
 	private ListView listView1;
@@ -234,6 +237,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 					{
 						
 						mapID = 3;
+						
 						title = "感互动3D景区推介区";
 						process(mapID, title);
 					}	
@@ -448,7 +452,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 		@Override
 		public int getCount() {
-			return listmap.size();
+			return txtlist.size();
 		}
 
 		@SuppressLint("NewApi")
@@ -481,7 +485,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 			} else {
 				holder = (ViewHolder) convertView.getTag();
 			}
-			holder.txtname.setText(listmap.get(position));
+			holder.txtname.setText(txtlist.get(position));
 			// if (position == selectItem) { // 选中状态 高亮
 			// convertView.setBackgroundResource(R.drawable.img_sounditem);
 			//
@@ -493,13 +497,14 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 				@Override
 				public void onClick(View v) {
-					process2(position, listmap.get(position));
+					process2(idlist.get(position), txtlist.get(position));
 				}
 			});
 			holder.img_btndel.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					listmap.remove(position);
+					idlist.remove(position);
+					txtlist.remove(position);
 					myAdapter.notifyDataSetChanged();
 				}
 			});
@@ -547,7 +552,8 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		super.onDestroy();
 		unbindBleScanService();
 		//清空音频列表
-		listmap.clear();
+		idlist.clear();
+		txtlist.clear();
 		if (mediaPlayer != null) {
 			mediaPlayer.stop();
 			mediaPlayer.release();
@@ -702,7 +708,8 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	}
 
 	private void addToList(int mapId, String title) {
-		listmap.put(mapId, title);
+		txtlist.add(title);
+		idlist.add(mapId);
 		runOnUiThread(new Runnable() {
 			public void run() {
 				myAdapter.notifyDataSetChanged();
@@ -739,7 +746,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		});
 		if (mediaPlayer.isPlaying()) {
 			Log.e("加入列表","加入列表");
-			if (listmap.size() < 3) {
+			if (idlist.size() < 3) {
 				Log.e("插入列表","插入列表");
 				addToList(mapID, title);
 			}
