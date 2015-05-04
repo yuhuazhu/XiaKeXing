@@ -193,6 +193,8 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		txt_ti = (TextView) findViewById(R.id.txt_ti);
 		ivMap = (ImageView) findViewById(R.id.iv_map);
 		textView1= (TextView) findViewById(R.id.textView1);
+		btnback = (ImageButton) findViewById(R.id.btnback);
+		btnback.setOnClickListener(this);
 		ivMap.setOnTouchListener(new OnTouchListener() {
 
 			@Override
