@@ -93,7 +93,8 @@
         </activity>
         <activity
             android:name="com.xkx.yjxm.activity.RouteMapActivity"
-            android:label="@string/title_activity_activities" >
+            android:label="@string/title_activity_activities"
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name="com.xkx.yjxm.activity.PhotoUploadActivity"
