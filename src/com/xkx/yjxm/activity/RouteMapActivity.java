@@ -21,6 +21,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
@@ -78,8 +79,9 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private boolean isPausePlay = false;
 	private BLEService bleService;
 	private int mapID;
-    private ImageButton btnback;
-    boolean stopThread=false;
+	private ImageButton btnback;
+
+	private boolean isfinish = false;
 
 	/**
 	 * 是否已经处理过
@@ -194,66 +196,59 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		listView1 = (ListView) findViewById(R.id.listView1);
 		txt_ti = (TextView) findViewById(R.id.txt_ti);
 		ivMap = (ImageView) findViewById(R.id.iv_map);
-		textView1= (TextView) findViewById(R.id.textView1);
+		textView1 = (TextView) findViewById(R.id.textView1);
 		btnback = (ImageButton) findViewById(R.id.btnback);
 		btnback.setOnClickListener(this);
 		ivMap.setOnTouchListener(new OnTouchListener() {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				
-				
-				
-				
+
 				int x = (int) event.getX();
-				int topleftx =  x-10;
-				
-				//left, top, right, bottom
+				int topleftx = x - 10;
+
+				// left, top, right, bottom
 				int y = (int) event.getY();
-				int toplefty =  y-10;
+				int toplefty = y - 10;
 				textView1.setText("x=" + x + ",y=" + y);
-				//右上角
-				int topRightx =  x+10;
-				int topRighty =  y-10;
-				
+				// 右上角
+				int topRightx = x + 10;
+				int topRighty = y - 10;
+
 				// 左下角
-				int bottomleftx =  x-10;
-				int bottomlefty =  y+10;
-				
-				//右上角
-				int bottomRightx =  x+10;
-				int bottomRighty =  y+10;
-				
-				
-//				LayoutParams lp = new lay
-//				textView1.setLayoutParams())
+				int bottomleftx = x - 10;
+				int bottomlefty = y + 10;
+
+				// 右上角
+				int bottomRightx = x + 10;
+				int bottomRighty = y + 10;
+
+				// LayoutParams lp = new lay
+				// textView1.setLayoutParams())
 				if (event.getAction() == MotionEvent.ACTION_UP) {
-					
+
 					String title = "";
-					if(event.getX()>=367 && event.getY()<815)
-					{
-						
+					if (event.getX() >= 367 && event.getY() < 815) {
+
 						mapID = 1;
 						title = "引导台";
 						process(mapID, title);
 					}
-					if(event.getX()>=417 && event.getY()<792)
-					{
-						
+					if (event.getX() >= 417 && event.getY() < 792) {
+
 						mapID = 3;
-						
+
 						title = "感互动3D景区推介区";
 						process(mapID, title);
-					}	
-					
-					
+					}
+
 				}
 				return true;
 			}
 		});
-		
+
 		soundlay = (RelativeLayout) findViewById(R.id.soundlay);
-		
+
 		myAdapter = new MyAdapter();
 		listView1.setAdapter(myAdapter);
 
@@ -276,7 +271,8 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 				 */
 				// mp.release();
 				imgplay.setBackgroundResource(R.drawable.ic_play);
-				isPausePlay = true;
+				mediaPlayer.stop();
+				mediaPlayer.release();
 			}
 		});
 
@@ -555,15 +551,14 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	protected void onDestroy() {
 		super.onDestroy();
 		unbindBleScanService();
-		//清空音频列表
+		// 清空音频列表
 		idlist.clear();
 		txtlist.clear();
-		stopThread=true;
 
 		if (mediaPlayer != null) {
 			mediaPlayer.stop();
 			mediaPlayer.release();
-			mediaPlayer = null;
+
 		}
 	}
 
@@ -592,47 +587,50 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		// File(Environment.getExternalStorageDirectory(),"");
 		// mediaPlayer.reset();
 		// mediaPlayer.setDataSource("drawable://" + (Integer) R.raw.yindao);
+
 		mediaPlayer.prepare();
 		mediaPlayer.start();// 播放
+		isPausePlay = true;
 	}
 
 	// sound hm中的第几个歌曲
 	// loop 是否循环 0不循环 -1循环
 	public void playSound(final int sound) {
 		new Thread(new Runnable() {
-
 			@Override
 			public void run() {
-				while (!stopThread)
-					            {
-					               
-
-				AssetManager assetMg = getApplicationContext().getAssets();
-				AssetFileDescriptor fileDescriptor = null;
 				try {
-					mediaPlayer.reset();
-					fileDescriptor = assetMg.openFd(soundMap.get(sound));
-					mediaPlayer.setDataSource(
-							fileDescriptor.getFileDescriptor(),
-							fileDescriptor.getStartOffset(),
-							fileDescriptor.getLength());
+					if (mediaPlayer != null) {
+						if(!mediaPlayer.isPlaying())
+						{
+							mediaPlayer.stop();
+						}
+						mediaPlayer.reset();
+						AssetFileDescriptor assetFileDescritor = RouteMapActivity.this
+								.getAssets().openFd(soundMap.get(sound));
+						mediaPlayer.setDataSource(
+								assetFileDescritor.getFileDescriptor(),
+								assetFileDescritor.getStartOffset(),
+								assetFileDescritor.getLength());
 
-					play();// 开始或恢复播放
+						play();// 开始或恢复播放
+					}
 
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-					            }
-				// try {
-				// Thread.sleep(10000);
-				// } catch (InterruptedException e) {
-				// e.printStackTrace();
-				// }
-				// Log.e("sound", "before:" + System.currentTimeMillis());
-				// pool.play(id, 1, 1, 1, 0, 1f);
-				// Log.e("sound", "after:" + System.currentTimeMillis());
+
 			}
 		}).start();
+		// try {
+		// Thread.sleep(10000);
+		// } catch (InterruptedException e) {
+		// e.printStackTrace();
+		// }
+		// Log.e("sound", "before:" + System.currentTimeMillis());
+		// pool.play(id, 1, 1, 1, 0, 1f);
+		// Log.e("sound", "after:" + System.currentTimeMillis());
+
 	}
 
 	@Override
@@ -698,17 +696,15 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	// 暂停播放
 	private void playprocess() {
 		// tupian
-		if (mediaPlayer.isPlaying()) {
+		if (isPausePlay) {
 			// 暂停语音
 			mediaPlayer.pause(); // 调用暂停方法
 			imgplay.setBackgroundResource(R.drawable.ic_play);
-			isPausePlay = true;
+			isPausePlay = false;
 		} else {
-			if (isPausePlay) {
-				mediaPlayer.start(); // 播放
-				imgplay.setBackgroundResource(R.drawable.ic_pause);
-				isPausePlay = false;
-			}
+			mediaPlayer.start(); // 播放
+			imgplay.setBackgroundResource(R.drawable.ic_pause);
+			isPausePlay = true;
 			// else {
 			//
 			// process(mapID);
@@ -754,20 +750,20 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 			}
 		});
 		if (mediaPlayer.isPlaying()) {
-			Log.e("加入列表","加入列表");
+			Log.e("加入列表", "加入列表");
 			if (idlist.size() < 3) {
-				Log.e("插入列表","插入列表");
+				Log.e("插入列表", "插入列表");
 				addToList(mapID, title);
-			}
-			else
-			{
+			} else {
 				txtlist.remove(0);
 				idlist.remove(0);
 				addToList(mapID, title);
 			}
 			return;
 		}
+
 		playSound(mapID);// 播放dudu，dudu文件被解码为16位的PCM数据后超过了SoundPool的1M缓冲区了，循环不了，而且不能播完整个歌曲
+
 		runOnUiThread(new Runnable() {
 			public void run() {
 				imgplay.setBackgroundResource(R.drawable.ic_pause);
