@@ -162,8 +162,6 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private List<Integer> idlist = new ArrayList<Integer>();
 	private Map<Integer, Integer> mapBgMap = new HashMap<Integer, Integer>();
 	private Map<Integer, String> textMap;
-	private Map<Integer, String> xMap = new HashMap<Integer, String>();
-	private Map<Integer, String> yMap = new HashMap<Integer, String>();
 	private ListView listView1;
 	private TextView txt_ti;
 	private RelativeLayout soundlay;
@@ -201,6 +199,52 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		textView1 = (TextView) findViewById(R.id.textView1);
 		btnback = (ImageButton) findViewById(R.id.btnback);
 		btnback.setOnClickListener(this);
+		ivMap.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+
+				int x = (int) event.getX();
+				int topleftx = x - 10;
+
+				// left, top, right, bottom
+				int y = (int) event.getY();
+				int toplefty = y - 10;
+				textView1.setText("x=" + x + ",y=" + y);
+				// 右上角
+				int topRightx = x + 10;
+				int topRighty = y - 10;
+
+				// 左下角
+				int bottomleftx = x - 10;
+				int bottomlefty = y + 10;
+
+				// 右上角
+				int bottomRightx = x + 10;
+				int bottomRighty = y + 10;
+
+				// LayoutParams lp = new lay
+				// textView1.setLayoutParams())
+				if (event.getAction() == MotionEvent.ACTION_UP) {
+
+					String title = "";
+					if (event.getX() >= 367 && event.getY() < 815) {
+
+						mapID = 1;
+						title = "引导台";
+						process(mapID, title);
+					}
+					if (event.getX() >= 417 && event.getY() < 792) {
+
+						mapID = 3;
+						title = "感互动3D景区推介区";
+						process(mapID, title);
+					}
+
+				}
+				return true;
+			}
+		});
 
 		soundlay = (RelativeLayout) findViewById(R.id.soundlay);
 
@@ -239,29 +283,6 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 			@Override
 			public void run() {
 				soundMap.put(1, "yindao.m4a");
-
-				xMap.put(1, getResources().getString(R.string.point1x));
-				yMap.put(1, getResources().getString(R.string.point1y));
-				xMap.put(2, getResources().getString(R.string.point2x));
-				yMap.put(2, getResources().getString(R.string.point2y));
-				xMap.put(3, getResources().getString(R.string.point3x));
-				yMap.put(3, getResources().getString(R.string.point3y));
-				xMap.put(4, getResources().getString(R.string.point4x));
-				yMap.put(4, getResources().getString(R.string.point4y));
-				xMap.put(5, getResources().getString(R.string.point5x));
-				yMap.put(5, getResources().getString(R.string.point5y));
-				xMap.put(6, getResources().getString(R.string.point6x));
-				yMap.put(6, getResources().getString(R.string.point6y));
-				xMap.put(7, getResources().getString(R.string.point7x));
-				yMap.put(7, getResources().getString(R.string.point7y));
-				xMap.put(8, getResources().getString(R.string.point8x));
-				yMap.put(8, getResources().getString(R.string.point8y));
-				xMap.put(9, getResources().getString(R.string.point9x));
-				yMap.put(9, getResources().getString(R.string.point9y));
-				xMap.put(10, getResources().getString(R.string.point10x));
-				yMap.put(10, getResources().getString(R.string.point10y));
-				xMap.put(11, getResources().getString(R.string.point11x));
-				yMap.put(11, getResources().getString(R.string.point11y));
 				textMap.put(1, getResources().getString(R.string.txt_yin_dao));
 				mapBgMap.put(1, R.drawable.img_map_yin_dao_tai);
 				soundMap.put(2, "zi_zhu_fu_wu.m4a");
@@ -313,118 +334,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 				mapBgMap.put(14, R.drawable.img_map_ban_gong_qu);
 			}
 		}).start();
-		ivMap.setOnTouchListener(new OnTouchListener() {
 
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-
-				int x = (int) event.getX();
-				int topleftx = x - 10;
-
-				// left, top, right, bottom
-				int y = (int) event.getY();
-				int toplefty = y - 10;
-				textView1.setText("x=" + x + ",y=" + y);
-				// 右上角
-				int topRightx = x + 10;
-				int topRighty = y - 10;
-
-				// 左下角
-				int bottomleftx = x - 10;
-				int bottomlefty = y + 10;
-
-				// 右上角
-				int bottomRightx = x + 10;
-				int bottomRighty = y + 10;
-
-				// LayoutParams lp = new lay
-				// textView1.setLayoutParams())
-				if (event.getAction() == MotionEvent.ACTION_UP) {
-
-					String title = "";
-
-					if (event.getX() >= Integer.parseInt(xMap.get(2))
-							&& event.getY() < Integer.parseInt(xMap.get(2))) {
-
-						mapID = 1;
-						title = "引导台";
-						process(mapID, title);
-					}
-					if (event.getX() >= Integer.parseInt(xMap.get(3))
-							&& event.getY() < Integer.parseInt(xMap.get(3))) {
-
-						mapID = 4;
-						title = "智慧旅游应用展示区";
-						process(mapID, title);
-					}
-					if (event.getX() >= Integer.parseInt(xMap.get(4))
-							&& event.getY() < Integer.parseInt(xMap.get(4))) {
-
-						mapID = 7;
-						title = "产品信息播放屏幕";
-						process(mapID, title);
-					}
-					
-					if (event.getX() >= Integer.parseInt(xMap.get(5))
-							&& event.getY() < Integer.parseInt(xMap.get(5))) {
-
-						mapID = 5;
-						title = "综合服务区";
-						process(mapID, title);
-					}
-					
-					
-					if (event.getX() >= Integer.parseInt(xMap.get(6))
-							&& event.getY() < Integer.parseInt(xMap.get(6))) {
-
-						mapID = 3;
-						title = "感互动3D景区推介区";
-						process(mapID, title);
-					}
-					
-					if (event.getX() >= Integer.parseInt(xMap.get(8))
-							&& event.getY() < Integer.parseInt(xMap.get(8))) {
-
-						mapID = 8;
-						title = "自助行李寄存柜";
-						process(mapID, title);
-					}
-					
-					
-					if (event.getX() >= Integer.parseInt(xMap.get(9))
-							&& event.getY() < Integer.parseInt(xMap.get(9))) {
-
-						mapID = 6;
-						title = "按摩免费体验区";
-						process(mapID, title);
-					}
-					
-					if (event.getX() >= Integer.parseInt(xMap.get(10))
-							&& event.getY() < Integer.parseInt(xMap.get(10))) {
-
-						mapID = 9;
-						title = "医务室";
-						process(mapID, title);
-					}
-					if (event.getX() >= Integer.parseInt(xMap.get(11))
-							&& event.getY() < Integer.parseInt(xMap.get(11))) {
-
-						mapID = 10;
-						title = "伴手礼超市";
-						process(mapID, title);
-					}
-//					if (event.getX() >= Integer.parseInt(xMap.get(2))
-//							&& event.getY() < Integer.parseInt(xMap.get(2))) {
-//
-//						mapID = 1;
-//						title = "引导台";
-//						process(mapID, title);
-//					}
-
-				}
-				return true;
-			}
-		});
 	}
 
 	private void trigger(BluetoothDevice device) {
@@ -635,9 +545,6 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		if (sensorManager != null) {// 取消监听器
 			sensorManager.unregisterListener(sensorEventListener);
 		}
-
-		
-
 	}
 
 	@Override
@@ -774,21 +681,20 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	// 暂停播放
 	private void playprocess() {
 		// tupian
-			if (isPausePlay) {
-				// 暂停语音
-				mediaPlayer.pause(); // 调用暂停方法
-				imgplay.setBackgroundResource(R.drawable.ic_play);
-				isPausePlay = false;
-			} else {
-				mediaPlayer.start(); // 播放
-				imgplay.setBackgroundResource(R.drawable.ic_pause);
-				isPausePlay = true;
-				// else {
-				//
-				// process(mapID);
-				// }
-			}
-
+		if (isPausePlay) {
+			// 暂停语音
+			mediaPlayer.pause(); // 调用暂停方法
+			imgplay.setBackgroundResource(R.drawable.ic_play);
+			isPausePlay = false;
+		} else {
+			mediaPlayer.start(); // 播放
+			imgplay.setBackgroundResource(R.drawable.ic_pause);
+			isPausePlay = true;
+			// else {
+			//
+			// process(mapID);
+			// }
+		}
 	}
 
 	private void addToList(int mapId, String title) {
@@ -957,7 +863,6 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			Log.e("scan", "onServiceConnected()");
 			BleBinder binder = (BleBinder) service;
 			bleService = binder.getService();
 			bleService
