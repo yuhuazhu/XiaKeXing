@@ -97,5 +97,5 @@
     <dimen name="main_menu_width">70dp</dimen>
     <!-- mainmenu -->
     <dimen name="main_menu_laywidth">150dp</dimen>
-
+     
 </resources>
