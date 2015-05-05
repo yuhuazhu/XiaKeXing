@@ -431,9 +431,6 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private void trigger(BluetoothDevice device) {
 		final String address = device.getAddress();
 		final String name = device.getName();
-		Toast.makeText(RouteMapActivity.this,
-				"¥•∑¢¡À" + name + "," + device.getAddress(),
-				Toast.LENGTH_SHORT).show();
 		String title = "";
 		boolean noAudio = false;
 		if (address.equalsIgnoreCase("CF:01:01:00:02:F0")) {
