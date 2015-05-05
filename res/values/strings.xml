@@ -72,5 +72,27 @@
     <string name="txt_ban_gong_qu">福建霞客行信息科技有限公司、厦门旅游集散中心员工办公区；
 总经理办公室、财务室、副总办公室；
 员工休息区（提供冰箱、微波炉、餐桌等设施设备，方便员工午餐、休息，让他们在忙碌的工作之余有个放松心情的地方,体现公司人性化管理,增加员工归属感。）</string>
-
+    <!-- 热点 -->
+    <string name="point1x">563</string>
+    <string name="point1y">1208</string>
+    <string name="point2x">659</string>
+    <string name="point2y">1164</string>
+    <string name="point3x">115</string>
+    <string name="point3y">1248</string>
+    <string name="point4x">146</string>
+    <string name="point4y">1106</string>
+    <string name="point5x">203</string>
+    <string name="point5y">811</string>
+    <string name="point6x">427</string>
+    <string name="point6y">681</string>
+    <string name="point7x">590</string>
+    <string name="point7y">834</string>
+    <string name="point8x">893</string>
+    <string name="point8y">824</string>
+    <string name="point9x">863</string>
+    <string name="point9y">545</string>
+    <string name="point10x">630</string>
+    <string name="point10y">363</string>
+    <string name="point11x">345</string>
+    <string name="point11y">305</string>
 </resources>
