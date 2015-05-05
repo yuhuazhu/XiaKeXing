@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="title">
+        <item >智慧导览</item>
+        <item >引导台</item>
+        <item >自助服务区</item>
+        <item >3D互动区</item>
+        <item >应用展示区</item>
+        <item >旅游智慧屏</item>
+        <item >综合服务区</item>
+        <item >信息播放屏</item>
+        <item >行李寄存区</item>
+        <item >医务室</item>
+        <item >伴手礼超市</item>
+        <item >多功能厅</item>
+        <item >机房</item>
+        <item >呼叫中心</item>
+        <item >预警指挥中心</item>
+        <item >办公区</item>
+        <item >游客上车区</item>
+        <item >自行车租赁</item>
+        <item >婚纱摄影区</item>
+    </string-array>
+    
+    <string-array name="content">
+        <item >???</item>
+    </string-array>
+
+</resources>
