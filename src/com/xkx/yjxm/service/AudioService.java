@@ -11,17 +11,21 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 
+import com.xkx.yjxm.R;
+
 public class AudioService extends Service {
 	private MediaPlayer mediaPlayer;
 	// 是不是已经导入了资源
 	private boolean isFrist;
 
+//	Uri uri = Uri.parse("android.resource://com.xkx.yjxm/"+R.raw.yindao);
 	public AudioService() {
 	}
 
 	@Override
 	public void onCreate() {
 		mediaPlayer = new MediaPlayer();
+//		play(uri);
 		super.onCreate();
 	}
 
