@@ -11,6 +11,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.res.AssetFileDescriptor;
@@ -24,6 +25,7 @@ import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -45,12 +47,32 @@ import android.widget.Toast;
 
 import com.xkx.yjxm.R;
 import com.xkx.yjxm.adpater.BaseListAdapter;
+import com.xkx.yjxm.service.AudioService;
+import com.xkx.yjxm.service.AudioService.AudioBinder;
 import com.xkx.yjxm.service.BLEService;
 import com.xkx.yjxm.service.BLEService.BleBinder;
 import com.xkx.yjxm.utils.CommonUtils;
 
 @SuppressLint("HandlerLeak")
 public class RouteMapActivity extends Activity implements OnClickListener {
+	private Uri uri = Uri.parse("android.resource://com.example.play/"+R.raw.yindao);
+	private AudioBinder binder;
+	ServiceConnection connection = new ServiceConnection() {
+			
+	
+			@Override
+			public void onServiceDisconnected(ComponentName name) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onServiceConnected(ComponentName name, IBinder service) {
+				binder = (AudioBinder) service;
+				
+			}
+		};
+	
 	// private Bitmap bitmap;
 	int mBitmapWidth = 0;
 	int mBitmapHeight = 0;
@@ -158,7 +180,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 	private boolean isOnRouteActivity = false;
 
-	private Map<Integer, String> soundMap;
+	private Map<Integer, Integer> soundMap;
 	private List<String> txtlist = new ArrayList<String>();
 	private List<Integer> idlist = new ArrayList<Integer>();
 	private Map<Integer, Integer> mapBgMap = new HashMap<Integer, Integer>();
@@ -183,6 +205,8 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		Intent service = new Intent(RouteMapActivity.this, BLEService.class);
 		bindService(service, conn, BIND_AUTO_CREATE);
 	}
+	
+	
 
 	private void initUI() {
 
@@ -342,7 +366,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 			}
 		});
 
-		soundMap = new HashMap<Integer, String>();
+		soundMap = new HashMap<Integer, Integer>();
 		textMap = new HashMap<Integer, String>();
 
 		new Thread(new Runnable() {
@@ -373,53 +397,53 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 				xMap.put(11, getResources().getString(R.string.point11x));
 				yMap.put(11, getResources().getString(R.string.point11y));
 				
-				soundMap.put(1, "yindao.m4a");
+				soundMap.put(1, R.raw.yindao);
 				textMap.put(1, getResources().getString(R.string.txt_yin_dao));
 				mapBgMap.put(1, R.drawable.img_map_yin_dao_tai);
-				soundMap.put(2, "zi_zhu_fu_wu.m4a");
+				soundMap.put(2, R.raw.zi_zhu_fu_wu);
 				textMap.put(2, getResources()
 						.getString(R.string.txt_bo_fang_qu));
 				// mapBgMap.put(2, R.drawable.img_map)
-				soundMap.put(3, "tiyan3d.m4a");
+				soundMap.put(3, R.raw.tiyan3d);
 				textMap.put(3, getResources().getString(R.string.txt_tiyan_3d));
 				mapBgMap.put(3, R.drawable.img_map_ti_yan_3d);
-				soundMap.put(4, "ying_yong_zhan_shi.m4a");
+				soundMap.put(4, R.raw.ying_yong_zhan_shi);
 				mapBgMap.put(4, R.drawable.img_map_ying_yong_zhan_shi);
 				textMap.put(4,
 						getResources().getString(R.string.txt_lv_you_zhan_shi));
-				soundMap.put(5, "you_ke_jie_dai.m4a");
+				soundMap.put(5, R.raw.you_ke_jie_dai);
 				mapBgMap.put(5, R.drawable.img_map_you_ke_jie_dai);
 				textMap.put(5,
 						getResources().getString(R.string.txt_jie_dai_fu_wu));
-				soundMap.put(6, "anmo.m4a");
+				soundMap.put(6, R.raw.anmo);
 				textMap.put(6, getResources().getString(R.string.txt_anmo));
 				mapBgMap.put(6, R.drawable.img_map_an_mo_qu);
-				soundMap.put(7, "bo_fang_ping_mu.m4a");
+				soundMap.put(7, R.raw.bo_fang_ping_mu);
 				textMap.put(7,
 						getResources().getString(R.string.txt_lv_you_shi_ping));
 				// mapBgMap.put(7, R.drawable.img_map);
-				soundMap.put(8, "xinglijicun.m4a");
+				soundMap.put(8, R.raw.xinglijicun);
 				textMap.put(8,
 						getResources().getString(R.string.txt_xing_li_ji_cun));
 				mapBgMap.put(8, R.drawable.img_map_xing_li_ji_cun_gui);
-				soundMap.put(9, "yi_wu_shi.m4a");
+				soundMap.put(9, R.raw.yi_wu_shi);
 				textMap.put(9, getResources().getString(R.string.txt_yiwu_shi));
 				mapBgMap.put(9, R.drawable.img_map_yi_wu_shi);
-				soundMap.put(10, "banshouli.m4a");
+				soundMap.put(10, R.raw.banshouli);
 				textMap.put(10,
 						getResources().getString(R.string.txt_ban_shou_li));
 				mapBgMap.put(10, R.drawable.img_map_ban_shou_li_chao_shi);
-				soundMap.put(11, "duo_gong_neng.m4a");
+				soundMap.put(11, R.raw.duo_gong_neng);
 				textMap.put(11,
 						getResources().getString(R.string.txt_duo_gong_neng));
 				mapBgMap.put(11, R.drawable.img_map_duo_gong_neng_ting);
-				soundMap.put(12, "ji_fang.m4a");
+				soundMap.put(12, R.raw.ji_fang);
 				textMap.put(12, getResources().getString(R.string.txt_hu_jiao));
 				mapBgMap.put(12, R.drawable.img_map_hu_jiao_zhong_xin);
-				soundMap.put(13, "yu_jing_zhi_hui.m4a");
+				soundMap.put(13, R.raw.yu_jing_zhi_hui);
 				textMap.put(13, getResources().getString(R.string.txt_yu_jin));
 				mapBgMap.put(13, R.drawable.img_map_yu_jing_zhi_hui);
-				soundMap.put(14, "bangongqu.m4a");
+				soundMap.put(14, R.raw.bangongqu);
 				textMap.put(14,
 						getResources().getString(R.string.txt_ban_gong_qu));
 				mapBgMap.put(14, R.drawable.img_map_ban_gong_qu);
@@ -623,11 +647,16 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 	@Override
 	protected void onStart() {
+		Intent service = new Intent(this, AudioService.class);
+		startService(service);
+		bindService(service, connection, Context.BIND_AUTO_CREATE);
 		super.onStart();
 	}
 
 	@Override
 	protected void onStop() {
+		
+		unbindService(connection);
 		super.onStop();
 		// 暗屏,不要取消摇动传感
 		if (sensorManager != null) {// 取消监听器
@@ -684,33 +713,36 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	// sound hm中的第几个歌曲
 	// loop 是否循环 0不循环 -1循环
 	public void playSound(final int sound) {
-		new Handler().postDelayed(new Runnable() {
-
-			@Override
-			public void run() {
-
-				try {
-					if (mediaPlayer != null) {
-						if (!mediaPlayer.isPlaying()) {
-							mediaPlayer.stop();
-						}
-						mediaPlayer.reset();
-						AssetFileDescriptor assetFileDescritor = RouteMapActivity.this
-								.getAssets().openFd(soundMap.get(sound));
-						mediaPlayer.setDataSource(
-								assetFileDescritor.getFileDescriptor(),
-								assetFileDescritor.getStartOffset(),
-								assetFileDescritor.getLength());
-
-						play();// 开始或恢复播放
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-
-			}
-
-		}, 2000);
+		Integer integer = soundMap.get(sound);
+		Uri uri = Uri.parse("android.resource://com.xkx.yjxm/"+integer);
+		binder.audioPlay(uri);
+//		new Handler().postDelayed(new Runnable() {
+//
+//			@Override
+//			public void run() {
+//
+//				try {
+//					if (mediaPlayer != null) {
+//						if (!mediaPlayer.isPlaying()) {
+//							mediaPlayer.stop();
+//						}
+//						mediaPlayer.reset();
+//						AssetFileDescriptor assetFileDescritor = RouteMapActivity.this
+//								.getAssets().openFd(soundMap.get(sound));
+//						mediaPlayer.setDataSource(
+//								assetFileDescritor.getFileDescriptor(),
+//								assetFileDescritor.getStartOffset(),
+//								assetFileDescritor.getLength());
+//
+//						play();// 开始或恢复播放
+//					}
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//
+//			}
+//
+//		}, 2000);
 		
 
 	}
