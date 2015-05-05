@@ -126,6 +126,12 @@
             android:enabled="true"
             android:exported="true" >
         </service>
+        
+        <service
+            android:name="com.xkx.yjxm.service.AudioService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
 
         <activity
             android:name="com.xkx.yjxm.activity.ChoiceActivity"
