@@ -80,7 +80,8 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private BLEService bleService;
 	private int mapID;
 	private ImageButton btnback;
-
+	private Map<Integer, String> xMap = new HashMap<Integer, String>();
+	private Map<Integer, String> yMap = new HashMap<Integer, String>();
 	private boolean isfinish = false;
 
 	/**
@@ -228,18 +229,84 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 
 					String title = "";
-					if (event.getX() >= 367 && event.getY() < 815) {
+
+					if ( x >= Integer.parseInt(xMap.get(2))-20 && x <= Integer.parseInt(xMap.get(2))+20 
+						&& y >= Integer.parseInt(yMap.get(2))-20 && y <= Integer.parseInt(yMap.get(2))+20 ) {
 
 						mapID = 1;
 						title = "引导台";
 						process(mapID, title);
 					}
-					if (event.getX() >= 417 && event.getY() < 792) {
+					if ( x >= Integer.parseInt(xMap.get(3))-20 && x <= Integer.parseInt(xMap.get(3))+20 
+							&& y >= Integer.parseInt(yMap.get(3))-20 && y <= Integer.parseInt(yMap.get(3))+20 ) {
+
+						mapID = 4;
+						title = "智慧旅游应用展示区";
+						process(mapID, title);
+					}
+					if ( x >= Integer.parseInt(xMap.get(4))-20 && x <= Integer.parseInt(xMap.get(4))+20 
+							&& y >= Integer.parseInt(yMap.get(4))-20 && y <= Integer.parseInt(yMap.get(4))+20 ) {
+
+						mapID = 7;
+						title = "产品信息播放屏幕";
+						process(mapID, title);
+					}
+					
+					if ( x >= Integer.parseInt(xMap.get(5))-20 && x <= Integer.parseInt(xMap.get(5))+20 
+							&& y >= Integer.parseInt(yMap.get(5))-20 && y <= Integer.parseInt(yMap.get(5))+20 ) {
+
+						mapID = 5;
+						title = "综合服务区";
+						process(mapID, title);
+					}
+					
+					
+					if ( x >= Integer.parseInt(xMap.get(6))-20 && x <= Integer.parseInt(xMap.get(6))+20 
+							&& y >= Integer.parseInt(yMap.get(6))-20 && y <= Integer.parseInt(yMap.get(6))+20 ) {
 
 						mapID = 3;
 						title = "感互动3D景区推介区";
 						process(mapID, title);
 					}
+					
+					if ( x >= Integer.parseInt(xMap.get(8))-20 && x <= Integer.parseInt(xMap.get(8))+20 
+							&& y >= Integer.parseInt(yMap.get(8))-20 && y <= Integer.parseInt(yMap.get(8))+20 ) {
+
+						mapID = 8;
+						title = "自助行李寄存柜";
+						process(mapID, title);
+					}
+					
+					
+					if ( x >= Integer.parseInt(xMap.get(9))-20 && x <= Integer.parseInt(xMap.get(9))+20 
+							&& y >= Integer.parseInt(yMap.get(9))-20 && y <= Integer.parseInt(yMap.get(9))+20 ) {
+
+						mapID = 6;
+						title = "按摩免费体验区";
+						process(mapID, title);
+					}
+					
+					if ( x >= Integer.parseInt(xMap.get(10))-20 && x <= Integer.parseInt(xMap.get(10))+20 
+							&& y >= Integer.parseInt(yMap.get(10))-20 && y <= Integer.parseInt(yMap.get(10))+20 ) {
+
+						mapID = 9;
+						title = "医务室";
+						process(mapID, title);
+					}
+					if ( x >= Integer.parseInt(xMap.get(11))-20 && x <= Integer.parseInt(xMap.get(11))+20 
+							&& y >= Integer.parseInt(yMap.get(11))-20 && y <= Integer.parseInt(yMap.get(11))+20 ) {
+
+						mapID = 10;
+						title = "伴手礼超市";
+						process(mapID, title);
+					}
+//					if (event.getX() >= Integer.parseInt(xMap.get(2))
+//							&& event.getY() < Integer.parseInt(xMap.get(2))) {
+//
+//						mapID = 1;
+//						title = "引导台";
+//						process(mapID, title);
+//					}
 
 				}
 				return true;
@@ -282,6 +349,30 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 			@Override
 			public void run() {
+				
+				xMap.put(1, getResources().getString(R.string.point1x));
+				yMap.put(1, getResources().getString(R.string.point1y));
+				xMap.put(2, getResources().getString(R.string.point2x));
+				yMap.put(2, getResources().getString(R.string.point2y));
+				xMap.put(3, getResources().getString(R.string.point3x));
+				yMap.put(3, getResources().getString(R.string.point3y));
+				xMap.put(4, getResources().getString(R.string.point4x));
+				yMap.put(4, getResources().getString(R.string.point4y));
+				xMap.put(5, getResources().getString(R.string.point5x));
+				yMap.put(5, getResources().getString(R.string.point5y));
+				xMap.put(6, getResources().getString(R.string.point6x));
+				yMap.put(6, getResources().getString(R.string.point6y));
+				xMap.put(7, getResources().getString(R.string.point7x));
+				yMap.put(7, getResources().getString(R.string.point7y));
+				xMap.put(8, getResources().getString(R.string.point8x));
+				yMap.put(8, getResources().getString(R.string.point8y));
+				xMap.put(9, getResources().getString(R.string.point9x));
+				yMap.put(9, getResources().getString(R.string.point9y));
+				xMap.put(10, getResources().getString(R.string.point10x));
+				yMap.put(10, getResources().getString(R.string.point10y));
+				xMap.put(11, getResources().getString(R.string.point11x));
+				yMap.put(11, getResources().getString(R.string.point11y));
+				
 				soundMap.put(1, "yindao.m4a");
 				textMap.put(1, getResources().getString(R.string.txt_yin_dao));
 				mapBgMap.put(1, R.drawable.img_map_yin_dao_tai);
