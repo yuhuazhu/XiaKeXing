@@ -11,10 +11,10 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 public class AudioService extends Service {
 	private MediaPlayer mediaPlayer;
+	//是不是已经导入了资源
 	private boolean isFrist;
 	public AudioService() {
 	}
@@ -22,7 +22,6 @@ public class AudioService extends Service {
 	@Override
 	public void onCreate() {
 		mediaPlayer = new MediaPlayer();
-		Log.e("123", "456");
 		super.onCreate();
 	}
 
@@ -54,13 +53,12 @@ public class AudioService extends Service {
 			@Override
 			public void onCompletion(MediaPlayer mp) {
 				//播完后要做的事
-				
 			}
 		});
 	}
 
 
-	class AudioBinder extends Binder {
+	public class AudioBinder extends Binder {
 
 		public void audioPlay(Uri uri) {
 			play(uri);
@@ -79,6 +77,11 @@ public class AudioService extends Service {
 		}
 		public boolean audioIsFrist() {
 			return isFrist;
+		}
+		
+		public void audioPlayNext(Uri uri) {
+			isFrist = false;
+			play(uri);
 		}
 		
 	}
