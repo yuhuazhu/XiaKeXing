@@ -46,7 +46,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
 		if (!dir.exists()) {
 			try {
 				dir.mkdirs();
-				f = new File(path + File.separator + "ex.log");
+				
 				f.createNewFile();
 			} catch (IOException e) {
 				Log.e("yjxm", e.getLocalizedMessage());
@@ -56,13 +56,15 @@ public class CrashHandler implements UncaughtExceptionHandler {
 
 		FileWriter writer = null;
 		try {
+			f = new File(path + File.separator + "ex.log");
 			writer = new FileWriter(f, true);
 			StringBuffer sb = new StringBuffer();
 			StackTraceElement[] trace = ex.getStackTrace();
 			sb.append(ex.getLocalizedMessage() + "\n");
-			sb.append(trace[0] + "\n");
-			sb.append(trace[1] + "\n");
-			sb.append("---------------------------------\n");
+			for (int i = 0; i < trace.length; i++) {
+				sb.append(trace[i] + "\n");
+			}
+			sb.append("----------------------------------------------------------------------------\n");
 			writer.write(sb.toString());
 		} catch (IOException e) {
 			Log.e("yjxm", e.getLocalizedMessage());
