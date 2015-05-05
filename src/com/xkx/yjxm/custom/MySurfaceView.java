@@ -20,6 +20,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.os.Environment;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
@@ -82,6 +83,13 @@ public class MySurfaceView extends SurfaceView implements Callback, Runnable {
 
 	}
 	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (KeyEvent.KEYCODE_BACK == keyCode) {
+			mRunning = false;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
 	
 	public boolean onTouchEvent(MotionEvent event) {
 		int action = event.getAction();
