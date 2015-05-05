@@ -16,13 +16,15 @@ public class BLEService extends Service {
 
 	private static final int PERIOD_TO_SCAN = 400;
 
-	private static final float RSSI_TO_TRIGGER = -70f;
+	private static final float RSSI_TO_TRIGGER = -73f;
 
 	private final int NUM_SCAN = 5;
 
 	private int maxRssi = -1000;
 
 	private boolean exitScan = false;
+
+	private boolean isScanning = false;
 
 	private boolean shake = false;
 
@@ -42,6 +44,7 @@ public class BLEService extends Service {
 		super.onCreate();
 		Log.e("scan", "onCreate()");
 		enableBlueToothIfClosed();
+		exitScan = false;
 	}
 
 	@Override
@@ -55,7 +58,6 @@ public class BLEService extends Service {
 	}
 
 	public void startScanBLE() {
-		exitScan = false;
 		new Thread() {
 			public void run() {
 				continualLeScan();
@@ -78,33 +80,30 @@ public class BLEService extends Service {
 		}
 	}
 
-	// public BluetoothDevice maxShakeLeScan() {
-	// shake = true;
-	// maxRssi = -1000;
-	// proximityBleDevice = null;
-	// for (int i = 0; i < NUM_SCAN; i++) {
-	// adapter.startLeScan(callback);
-	// try {
-	// Thread.sleep(PERIOD_TO_SCAN);
-	// } catch (InterruptedException e) {
-	// e.printStackTrace();
-	// }
-	// adapter.stopLeScan(callback);
-	// }
-	// BluetoothDevice rs = proximityBleDevice;
-	// maxRssi = -1000;
-	// proximityBleDevice = null;
-	// shake = false;
-	// return rs;
-	// }
+	private BluetoothDevice maxShakeLeScan() {
+		maxRssi = -1000;
+		proximityBleDevice = null;
+		for (int i = 0; i < NUM_SCAN; i++) {
+			adapter.startLeScan(callback);
+			try {
+				Thread.sleep(PERIOD_TO_SCAN);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			adapter.stopLeScan(callback);
+		}
+		BluetoothDevice rs = proximityBleDevice;
+		maxRssi = -1000;
+		proximityBleDevice = null;
+		return rs;
+	}
 
 	public void setShakeScan(boolean shake) {
 		this.shake = shake;
 	}
 
 	private void maxAutoLeScan(int scanNumber, float rssiFilter) {
-		maxRssi = -1000;
-		proximityBleDevice = null;
+		isScanning = true;
 		for (int i = 0; i < scanNumber; i++) {
 			adapter.startLeScan(callback);
 			try {
@@ -114,13 +113,22 @@ public class BLEService extends Service {
 			}
 			adapter.stopLeScan(callback);
 		}
+		isScanning = false;
 		if (!shake) {
 			if (maxRssi >= rssiFilter) {
-				listener.onConditionTriggerSuccess(proximityBleDevice);
+				listener.onConditionTriggerSuccess(proximityBleDevice, maxRssi);
 			} else {
-				listener.onConditionTriggerFailed(proximityBleDevice);
+				listener.onConditionTriggerFailed(proximityBleDevice, maxRssi);
+			}
+		} else {
+			try {
+				Thread.sleep(60);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
+		maxRssi = -1000;
+		proximityBleDevice = null;
 	}
 
 	private void maxAutoLeScan(int scanNumber) {
@@ -131,12 +139,24 @@ public class BLEService extends Service {
 		return proximityBleDevice;
 	}
 
+	private long lastShakeTime;
+
 	public BluetoothDevice getProximityBleDevice() {
-		return proximityBleDevice;
+		while (true) {
+			if (isScanning) {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			} else {
+				lastShakeTime = System.currentTimeMillis();
+				return proximityBleDevice;
+			}
+		}
 	}
 
 	public void stopScanBLE() {
-		exitScan = true;
 		adapter.stopLeScan(callback);
 	}
 
@@ -159,6 +179,7 @@ public class BLEService extends Service {
 
 	public void onDestroy() {
 		exitScan = true;
+		isScanning = false;
 		adapter.disable();
 	}
 
@@ -201,8 +222,8 @@ public class BLEService extends Service {
 
 		void onProximityBleChanged(BluetoothDevice ori, BluetoothDevice current);
 
-		void onConditionTriggerSuccess(BluetoothDevice device);
+		void onConditionTriggerSuccess(BluetoothDevice device, int rssi);
 
-		void onConditionTriggerFailed(BluetoothDevice device);
+		void onConditionTriggerFailed(BluetoothDevice device, int rssi);
 	}
 }
