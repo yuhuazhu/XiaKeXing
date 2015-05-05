@@ -65,7 +65,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private ImageButton imgmouth;
 	private ImageButton imgplay;
 	private ImageButton imgdownmouth;
-	private static final int SENSOR_SHAKE = 10;
+	private final int MSG_SENSOR_SHAKE = 10;
 	private boolean down = false;
 	/**
 	 * 自动讲解是否开着
@@ -237,7 +237,6 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 					if (event.getX() >= 417 && event.getY() < 792) {
 
 						mapID = 3;
-
 						title = "感互动3D景区推介区";
 						process(mapID, title);
 					}
@@ -341,6 +340,9 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private void trigger(BluetoothDevice device) {
 		final String address = device.getAddress();
 		final String name = device.getName();
+		Toast.makeText(RouteMapActivity.this,
+				"触发了" + name + "," + device.getAddress(),
+				Toast.LENGTH_SHORT).show();
 		String title = "";
 		boolean noAudio = false;
 		if (address.equalsIgnoreCase("CF:01:01:00:02:F0")) {
@@ -539,14 +541,10 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onStop() {
 		super.onStop();
+		// 暗屏,不要取消摇动传感
 		if (sensorManager != null) {// 取消监听器
 			sensorManager.unregisterListener(sensorEventListener);
 		}
-
-		if (sensorManager != null) {// 取消监听器
-			sensorManager.unregisterListener(sensorEventListener);
-		}
-
 	}
 
 	@Override
@@ -614,19 +612,9 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 				play();// 开始或恢复播放
 			}
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		// try {
-		// Thread.sleep(10000);
-		// } catch (InterruptedException e) {
-		// e.printStackTrace();
-		// }
-		// Log.e("sound", "before:" + System.currentTimeMillis());
-		// pool.play(id, 1, 1, 1, 0, 1f);
-		// Log.e("sound", "after:" + System.currentTimeMillis());
 
 	}
 
@@ -830,7 +818,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 					|| Math.abs(z) > medumValue) {
 				vibrator.vibrate(200);
 				Message msg = new Message();
-				msg.what = SENSOR_SHAKE;
+				msg.what = MSG_SENSOR_SHAKE;
 				handler.sendMessage(msg);
 			}
 		}
@@ -850,7 +838,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			switch (msg.what) {
-			case SENSOR_SHAKE:
+			case MSG_SENSOR_SHAKE:
 				processAfterShake();
 				break;
 			}
@@ -859,10 +847,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		private void processAfterShake() {
 			BluetoothDevice device = bleService.getProximityBleDevice();
 			if (device != null) {
-				if (openstate) {
-					trigger(device);
-					Log.e("toast", "yaoyiyao");
-				}
+				trigger(device);
 			} else {
 				Toast.makeText(RouteMapActivity.this, "刚才没有检测到基站噢~~~,请尝试...",
 						Toast.LENGTH_SHORT).show();
@@ -878,7 +863,6 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			Log.e("scan", "onServiceConnected()");
 			BleBinder binder = (BleBinder) service;
 			bleService = binder.getService();
 			bleService
@@ -888,15 +872,26 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 								BluetoothDevice current) {
 						}
 
-						public void onConditionTriggerFailed(
-								BluetoothDevice device) {
+						@Override
+						public void onConditionTriggerSuccess(
+								BluetoothDevice device, int rssi) {
+							trigger(device);
 						}
 
-						public void onConditionTriggerSuccess(
-								BluetoothDevice device) {
-							if (!openstate) {
-								trigger(device);
-							}
+						@Override
+						public void onConditionTriggerFailed(
+								BluetoothDevice device, int rssi) {
+							final BluetoothDevice d = device;
+							final int r = rssi;
+							handler.post(new Runnable() {
+								public void run() {
+									Toast.makeText(
+											RouteMapActivity.this,
+											d.getName() + "," + d.getAddress()
+													+ ",信号不够," + r,
+											Toast.LENGTH_SHORT).show();
+								}
+							});
 						}
 					});
 			bleService.startScanBLE();
