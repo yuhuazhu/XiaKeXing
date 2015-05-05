@@ -60,7 +60,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
 			writer = new FileWriter(f, true);
 			StringBuffer sb = new StringBuffer();
 			StackTraceElement[] trace = ex.getStackTrace();
-			sb.append(ex.getLocalizedMessage() + "\n");
+			sb.append(ex.getMessage() + "\n");
 			for (int i = 0; i < trace.length; i++) {
 				sb.append(trace[i] + "\n");
 			}
