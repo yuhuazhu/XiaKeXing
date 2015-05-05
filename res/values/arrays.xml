@@ -24,6 +24,24 @@
     </string-array>
     
     <string-array name="content">
+        <item >@string/txt_dao_lan_she_bei</item>
+        <item >@string/txt_yin_dao</item>
+        <item >???/</item>
+        <item >@string/txt_tiyan_3d</item>
+        <item >???</item>
+        <item >@string/txt_lv_you_zhan_shi</item>
+        <item >???</item>
+        <item >???</item>
+        <item >@string/txt_xing_li_ji_cun</item>
+        <item >@string/txt_yiwu_shi</item>
+        <item >@string/txt_ban_shou_li</item>
+        <item >@string/txt_duo_gong_neng</item>
+        <item >???</item>
+        <item >@string/txt_hu_jiao</item>
+        <item >@string/txt_yu_jin</item>
+        <item >@string/txt_ban_gong_qu</item>
+        <item >???</item>
+        <item >???</item>
         <item >???</item>
     </string-array>
 
