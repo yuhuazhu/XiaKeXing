@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="title">
+        <item >智慧导览</item>
+        <item >引导台</item>
+        <item >自助服务区</item>
+        <item >3D互动区</item>
+        <item >应用展示区</item>
+        <item >旅游智慧屏</item>
+        <item >综合服务区</item>
+        <item >信息播放屏</item>
+        <item >行李寄存区</item>
+        <item >医务室</item>
+        <item >伴手礼超市</item>
+        <item >多功能厅</item>
+        <item >机房</item>
+        <item >呼叫中心</item>
+        <item >预警指挥中心</item>
+        <item >办公区</item>
+        <item >游客上车区</item>
+        <item >自行车租赁</item>
+        <item >婚纱摄影区</item>
+    </string-array>
+    
+    <string-array name="content">
+        <item >@string/txt_dao_lan_she_bei</item>
+        <item >@string/txt_yin_dao</item>
+        <item >？？？/</item>
+        <item >@string/txt_tiyan_3d</item>
+        <item >？？？</item>
+        <item >@string/txt_lv_you_zhan_shi</item>
+        <item >？？？</item>
+        <item >？？？</item>
+        <item >@string/txt_xing_li_ji_cun</item>
+        <item >@string/txt_yiwu_shi</item>
+        <item >@string/txt_ban_shou_li</item>
+        <item >@string/txt_duo_gong_neng</item>
+        <item >？？？</item>
+        <item >@string/txt_hu_jiao</item>
+        <item >@string/txt_yu_jin</item>
+        <item >@string/txt_ban_gong_qu</item>
+        <item >？？？</item>
+        <item >？？？</item>
+        <item >？？？</item>
+    </string-array>
+    
+    <string-array name="mac">
+        <item >CF:01:01:00:02:E0</item>
+        <item >CF:01:01:00:02:E4</item>
+        <item >CF:01:01:00:02:E8</item>
+        <item >CF:01:01:00:02:E2</item>
+        <item >？？？</item>
+        <item >？？？</item>
+        <item >？？？</item>
+        <item >？？？</item>
+        <item >？？？</item>
+        <item >？？？</item>
+        <item >？？？</item>
+        <item >？？？</item>
+        <item >？？？</item>
+        <item >？？？</item>
+        <item >？？？</item>
+        <item >？？？</item>
+        <item >？？？</item>
+        <item >？？？</item>
+        <item >？？？</item>
+    </string-array>
+
+</resources>

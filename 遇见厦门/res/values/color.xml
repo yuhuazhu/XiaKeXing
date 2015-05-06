@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!--  基本色 -->
+    <color name="background">#E8E4E4</color><!--  背景色 -->
+    <color name="white">#ffffff</color> 
+    <color name="ligwhite">#aeffffff</color> 
+    <color name="black">#000000</color>   
+    <color name="transparent">#00000000</color><!--  透明色 -->   
+    <color name="red">#ff0000</color>
+    <color name="menuorange">#febe27</color>
+    <color name="tabbag">#1f273e</color>
+    <color name="tabbagclick">#29324c</color>
+    <color name="org_title">#fddaba</color> <!-- 橙色标题 -->
+     <color name="fgbg">#edeff4</color>
+    <color name="lightgray">#D3D3D3</color><!--亮灰色 -->
+    <color name="yellow">#FFFF00</color><!--黄色 -->
+    <color name="orange">#ff8900</color>
+    <color name="litblue">#ebeef0</color>	
+	<color name="gray">#bfbfbf</color>	
+	<color name="orgph_title">#e64e17</color>
+		  
+     <color name="canlendar_text_color">#323232</color>  
+	<color name="blue">#03a9e9</color>
+	<color name="green">#68a617</color>
+	<color name="translucent_background">#50000000</color><!-- 半透明颜色 --> 
+	<color name="newstyle_grid_bg">#bf07467c</color><!--  WIN7风格宫格背景色 -->
+	<color name="newstyle_start_text">#0D518C</color><!-- 软件加载面文字颜色 -->
+	
+	<color name="common_title_ind">#ffffff</color><!--  标题文字颜色 -->  
+	<color name="gray_background">#818183</color><!--  边框灰色 -->  
+	<color name="ratio_color">#072338</color><!-- 地图上比例尺文字颜色 --> 	
+	<color name="text_color">#383838</color><!-- 内容文字颜色 --> 
+	<color name="frame_color">#babcbd</color><!--  通用圆角边框色  表格区标题栏分隔线颜色 --> 
+	<color name="content_line_color">#d6d7d7</color><!-- 内容区横线颜色,表格区分隔线颜色 --> 	
+	
+	 <!--  表格-->
+	<color name="table_title_bg">#d5dded</color><!-- 表格标题背景颜色   二级列表色--> 
+	<color name="control_table_title_bg">#9dc3e5</color><!-- 表格标题背景颜色   二级列表色--> 
+	
+	
+	
+	<color name="table_content_bg">#ffffff</color><!-- 表格内容区背景颜色 --> 
+	<color name="table_title_text">#383838</color>
+	<color name="table_text_green_color">#8ebb15</color><!-- 表格文字绿色 -->  
+	<color name="table_text_orange_color">#ff8400</color><!-- 表格文字橙色 -->  
+	
+	<!--  TAB -->
+    <color name="tab_text_color">#044e8d</color><!-- TAB文字颜色 --> 
+	
+	 <!-- 按钮-->
+    <color name="button_text_blue_color">#0e5492</color><!-- 底部按钮蓝色按钮文字颜色 --> 
+    <color name="button_text_orange_color">#ff6000</color><!-- 底部橙色按钮文字颜色  日历底部橙色文字--> 
+    <color name="button_text_green_color">#ffffff</color><!-- 底部绿色按钮文字颜色 --> 
+    <color name="bottom_text_red_color">#fc0000</color><!-- 底部红色文字颜色 --> 
+    
+    <!-- 列表-->
+    <color name="listview_select_color">#bec7da</color><!-- 列表选中背景颜色 -->    
+    <color name="prompt_color">#a8b2b6</color><!-- 提示文字颜色 灰色 --> 
+    <color name="listview_text_gray_color">#9a9696</color><!-- 列表文字颜色 灰色 -->  
+    
+ 	
+ 	<!-- 上传队列查看-->
+    <color name="alert_color">#ff8400</color><!-- 白色底提示文字颜色 橙色 --> 
+ 	<color name="litorg_color">#fcf3e6</color><!-- 浅 橙色 -->
+ 	<color name="lightorg_color">#fef1e4</color><!-- 浅 橙色 -->
+ 	<color name="orgbtn">#cce86f3f</color>
+    <!-- 多张拍照-->
+ 	<color name="multiphoto_bottom_top_color">#cccccd</color><!-- 多张拍照底部背景前两个像素颜色 灰色 --> 
+ 	<color name="multiphoto_bottom_bg_color">#d5dded</color><!-- 多张拍照底部背景色 --> 
+ 	
+ 	<!-- 日历-->
+    <color name="calendar_today_bg_color">#8ebb15</color><!-- 日历今天被绑定日程背景 绿色--> 
+    <color name="calendar_select_bg_color">#fd9e2e</color><!-- 日历被绑定日程背景  橙色--> 
+ 	<color name="calendar_not_curmonth_text_color">#cacaca</color><!-- 日历被绑定日程 文字 灰色 --> 
+ 	<color name="calendar_bottom_bg_color">#fee9cd</color><!-- 日历提醒文字背景色 橙色--> 
+ 	<color name="calendar_frame_color">#c2c3c3</color><!-- 日历边框色 灰色--> 
+    <!-- 后续需要修改的-->
+    <color name="time_select_bg">#ff000000</color>
+    <color name="time_select_text">#ffffffff</color>	
+   <!-- 扫描用到-->
+	<color name="viewfinder_frame">#ff000000</color>
+    <color name="viewfinder_laser">#ffff0000</color>
+    <color name="viewfinder_mask">#60000000</color>
+    <color name="result_view">#b0000000</color>
+    <color name="possible_result_points">#c0ffff00</color>
+    
+    <color name="warning_bg">#43abf3</color>
+    <drawable name="popup_bg">#43abf3</drawable>
+    <color name="btn_change_normal">#0a569B</color>
+    <color name="btn_change_pressed">#0a5677</color>
+    
+    <color name="main_normal">#4b78a5</color>
+    <color name="main_pressed">#b1b0b0</color>
+    
+    <color name="popup_normal">#0a569B</color>
+    <color name="popup_pressed">#0a5677</color>
+    
+    
+    
+    
+    
+      
+</resources>
