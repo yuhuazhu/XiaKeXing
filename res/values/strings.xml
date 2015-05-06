@@ -24,6 +24,8 @@
     <string name="cancel">取消</string>
     <!-- 活动信息 -->
     <string name="title_activities">活动信息</string>
+    <!-- 自动讲解 -->
+    <string name="title_autoplay">自动讲解</string>
     <!-- 经典线路 -->
     <string name="R_toptitle">经典线路1</string>
     <string name="R_maplong">全长三公里</string>
