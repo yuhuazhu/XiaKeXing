@@ -55,14 +55,24 @@
                 android:layout_centerVertical="true"
                 android:background="@drawable/ic_back" />
 
+            <ImageButton
+                android:id="@+id/btnhome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/btnback"
+                android:background="@drawable/ic_home"
+                android:onClick="home" />
+
             <TextView
                 android:id="@+id/textView1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:textSize="@dimen/text_size_list"
                 android:layout_marginTop="@dimen/space_content_listview_vertical"
-                android:text="@string/R_toptitle" />
+                android:text="@string/R_toptitle"
+                android:textSize="@dimen/text_size_list" />
 
             <ImageButton
                 android:id="@+id/btndlist"
@@ -83,12 +93,11 @@
     </RelativeLayout>
 
     <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" 
-        android:layout_gravity="center"
         android:id="@+id/txtlay"
-        android:visibility="gone"
-         >
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" >
 
         <ImageButton
             android:id="@+id/imgdown"
@@ -119,8 +128,7 @@
                     android:layout_below="@+id/imgplay"
                     android:layout_centerHorizontal="true"
                     android:text="没有介绍哦"
-                    android:textSize="@dimen/text_size_start"
-                    />
+                    android:textSize="@dimen/text_size_start" />
             </LinearLayout>
         </ScrollView>
 

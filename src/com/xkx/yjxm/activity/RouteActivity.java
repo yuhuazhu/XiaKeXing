@@ -51,6 +51,13 @@ public class RouteActivity extends Activity implements OnClickListener {
 	private ImageButton img_close;
     private FrameLayout txtlay;
     private Map<Integer, String> textMap;
+    public void home(View v) {
+		Intent intent = null;
+
+		intent = new Intent(this, MainActivity.class);
+
+		startActivity(intent);
+	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
