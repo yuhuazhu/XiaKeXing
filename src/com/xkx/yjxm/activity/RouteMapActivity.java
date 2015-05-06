@@ -1,30 +1,21 @@
 package com.xkx.yjxm.activity;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.res.AssetFileDescriptor;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnCompletionListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,156 +29,83 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.xkx.yjxm.R;
 import com.xkx.yjxm.adpater.BaseListAdapter;
 import com.xkx.yjxm.service.AudioService;
 import com.xkx.yjxm.service.AudioService.AudioBinder;
+import com.xkx.yjxm.service.AudioService.OnPlayCompleteListener;
 import com.xkx.yjxm.service.BLEService;
 import com.xkx.yjxm.service.BLEService.BleBinder;
 import com.xkx.yjxm.utils.CommonUtils;
+import com.xkx.yjxm.utils.CrashHandler;
 
-@SuppressLint("HandlerLeak")
+@SuppressLint({ "HandlerLeak", "DefaultLocale", "UseSparseArrays" })
 public class RouteMapActivity extends Activity implements OnClickListener {
-	private Uri uri = Uri.parse("android.resource://com.example.play/"+R.raw.yindao);
-	private AudioBinder binder;
-	ServiceConnection connection = new ServiceConnection() {
-			
-	
-			@Override
-			public void onServiceDisconnected(ComponentName name) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void onServiceConnected(ComponentName name, IBinder service) {
-				binder = (AudioBinder) service;
-				
-			}
-		};
-	
-	// private Bitmap bitmap;
-	int mBitmapWidth = 0;
-	int mBitmapHeight = 0;
-	int mArrayColor[] = null;
-	int mArrayColorLengh = 0;
-	private String TAG = "RouteMapActivity";
-	private ImageView imageView;
+
+	private final int ID_BAN_GONG_QU_2 = 20;
+	private final int ID_ZHI_HUI_DAO_LAN = 1;
+	private final int ID_XING_LI_JI_CUN = 2;
+	private final int ID_3D_HU_DONG = 3;
+	private final int ID_YING_YONG_ZHAN_SHI = 4;
+	private final int ID_YIN_DAO_TAI = 5;
+	private final int ID_LV_KE_SHANG_CHE = 6;
+	private final int ID_ZHI_HUI_LV_YOU_SHI_PING = 7;
+	private final int ID_DAN_CHE_ZU_LIN = 8;
+	private final int ID_XIU_XIAN_ZI_ZHU = 9;
+	private final int ID_BAN_SHOU_LI_CHAO_SHI = 10;
+	private final int ID_DUO_GONG_NENG_TING = 11;
+	private final int ID_ZONG_HE_FU_WU_QU = 12;
+	private final int ID_HU_JIAO_ZHONG_XIN = 13;
+	private final int ID_YU_JING_ZHI_HUI_ZHONG_XIN = 14;
+	private final int ID_BAN_GONG_QU = 15;
+	private final int ID_YI_WU_SHI = 16;
+	private final int ID_XIN_XI_SHI_PING = 17;
+	private final int ID_JI_FNAG = 18;
+	private final int ID_HUN_SHA_SHE_YING = 19;
+
+	private final int MSG_SENSOR_SHAKE = 10;
+
 	private TextView textView1;
-	private TextView txtdetail;
+	private TextView tvContent;
 	private SensorManager sensorManager;
 	private Vibrator vibrator;
 	private ImageButton imgmouth;
 	private ImageButton imgplay;
 	private ImageButton imgdownmouth;
-	private final int MSG_SENSOR_SHAKE = 10;
+
+	private String TAG = "RouteMapActivity";
+	private boolean isPlaying = false;
 	private boolean down = false;
 	/**
 	 * 自动讲解是否开着
 	 */
 	private boolean openstate = false;
+	private long lastTriggerTime;
+
+	private TextView tvTitle;
 	private ImageButton imgswitch;
-	private int soundID;
-	private int currentStreamId;
-	private MyAdapter myAdapter;
-	// private boolean isFinishedLoad = false;
-	private boolean isPausePlay = false;
-	private BLEService bleService;
-	private int mapID;
 	private ImageButton btnback;
+	private ImageView ivMap;
+	private ListView listView1;
+
 	private Map<Integer, String> xMap = new HashMap<Integer, String>();
 	private Map<Integer, String> yMap = new HashMap<Integer, String>();
-	private boolean isfinish = false;
 
-	/**
-	 * 是否已经处理过
-	 */
+	private HashMap<Integer, String> contentMap = new HashMap<Integer, String>();
+	private HashMap<Integer, String> titleMap = new HashMap<Integer, String>();
 	private HashMap<Integer, Boolean> hasProcessedMap = new HashMap<Integer, Boolean>();
+	private HashMap<Integer, Integer> bgMap = new HashMap<Integer, Integer>();
+	private CopyOnWriteArrayList<ItemData> titleList = new CopyOnWriteArrayList<ItemData>();
 
-	private final String[][] MIME_MapTable = {
-			// {后缀名，MIME类型}
-			{ ".3gp", "video/3gpp" },
-			{ ".apk", "application/vnd.android.package-archive" },
-			{ ".asf", "video/x-ms-asf" },
-			{ ".avi", "video/x-msvideo" },
-			{ ".bin", "application/octet-stream" },
-			{ ".bmp", "image/bmp" },
-			{ ".c", "text/plain" },
-			{ ".class", "application/octet-stream" },
-			{ ".conf", "text/plain" },
-			{ ".cpp", "text/plain" },
-			{ ".doc", "application/msword" },
-			{ ".docx",
-					"application/vnd.openxmlformats-officedocument.wordprocessingml.document" },
-			{ ".xls", "appli cation/vnd.ms-excel" },
-			{ ".xlsx",
-					"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" },
-			{ ".exe", "application/octet-stream" },
-			{ ".gif", "image/gif" },
-			{ ".gtar", "application/x-gtar" },
-			{ ".gz", "application/x-gzip" },
-			{ ".h", "text/plain" },
-			{ ".htm", "text/html" },
-			{ ".html", "text/html" },
-			{ ".jar", "application/java-archive" },
-			{ ".java", "text/plain" },
-			{ ".jpeg", "image/jpeg" },
-			{ ".jpg", "image/jpeg" },
-			{ ".js", "application/x-javascript" },
-			{ ".log", "text/plain" },
-			{ ".m3u", "audio/x-mpegurl" },
-			{ ".m4a", "audio/mp4a-latm" },
-			{ ".m4b", "audio/mp4a-latm" },
-			{ ".m4p", "audio/mp4a-latm" },
-			{ ".m4u", "video/vnd.mpegurl" },
-			{ ".m4v", "video/x-m4v" },
-			{ ".mov", "video/quicktime" },
-			{ ".mp2", "audio/x-mpeg" },
-			{ ".mp3", "audio/x-mpeg" },
-			{ ".mp4", "video/mp4" },
-			{ ".mpc", "application/vnd.mpohun.certificate" },
-			{ ".mpe", "video/mpeg" },
-			{ ".mpeg", "video/mpeg" },
-			{ ".mpg", "video/mpeg" },
-			{ ".mpg4", "video/mp4" },
-			{ ".mpga", "audio/mpeg" },
-			{ ".msg", "application/vnd.ms-outlook" },
-			{ ".ogg", "audio/ogg" },
-			{ ".pdf", "application/pdf" },
-			{ ".png", "image/png" },
-			{ ".pps", "application/vnd.ms-powerpoint" },
-			{ ".ppt", "application/vnd.ms-powerpoint" },
-			{ ".pptx",
-					"application/vnd.openxmlformats-officedocument.presentationml.presentation" },
-			{ ".prop", "text/plain" }, { ".rc", "text/plain" },
-			{ ".rmvb", "audio/x-pn-realaudio" }, { ".rtf", "application/rtf" },
-			{ ".sh", "text/plain" }, { ".tar", "application/x-tar" },
-			{ ".tgz", "application/x-compressed" }, { ".txt", "text/plain" },
-			{ ".wav", "audio/x-wav" }, { ".wma", "audio/x-ms-wma" },
-			{ ".wmv", "audio/x-ms-wmv" },
-			{ ".wps", "application/vnd.ms-works" }, { ".xml", "text/plain" },
-			{ ".z", "application/x-compress" },
-			{ ".zip", "application/x-zip-compressed" }, { "", "*/*" } };
+	private BaseAdapter adapter;
 
-	private MediaPlayer mediaPlayer;
-
-	private boolean isOnRouteActivity = false;
-
-	private Map<Integer, Integer> soundMap;
-	private List<String> txtlist = new ArrayList<String>();
-	private List<Integer> idlist = new ArrayList<Integer>();
-	private Map<Integer, Integer> mapBgMap = new HashMap<Integer, Integer>();
-	private Map<Integer, String> textMap;
-	private ListView listView1;
-	private TextView txt_ti;
-	private RelativeLayout soundlay;
+	private BLEService bleService;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -197,16 +115,21 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.activity_routemap);
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 		vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+		initData();
 		initUI();
 		bindBleScanService();
+		bindAudioService();
+	}
+
+	private void bindAudioService() {
+		Intent service = new Intent(RouteMapActivity.this, AudioService.class);
+		bindService(service, audioConn, BIND_AUTO_CREATE);
 	}
 
 	private void bindBleScanService() {
 		Intent service = new Intent(RouteMapActivity.this, BLEService.class);
 		bindService(service, conn, BIND_AUTO_CREATE);
 	}
-	
-	
 
 	private void initUI() {
 
@@ -217,13 +140,53 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		imgdownmouth = (ImageButton) findViewById(R.id.imgdown);
 		imgswitch = (ImageButton) findViewById(R.id.imgswitch);
 		imgswitch.setOnClickListener(this);
-		txtdetail = (TextView) findViewById(R.id.txtdetail);
+		imgplay.setEnabled(false);
+		tvContent = (TextView) findViewById(R.id.txtdetail);
 		listView1 = (ListView) findViewById(R.id.listView1);
-		txt_ti = (TextView) findViewById(R.id.txt_ti);
 		ivMap = (ImageView) findViewById(R.id.iv_map);
 		textView1 = (TextView) findViewById(R.id.textView1);
+		tvTitle = (TextView) findViewById(R.id.txt_ti);
 		btnback = (ImageButton) findViewById(R.id.btnback);
 		btnback.setOnClickListener(this);
+		// setIvMap();
+
+		adapter = new MyAdapter();
+		listView1.setAdapter(adapter);
+
+		// initXYMap();
+	}
+
+	private void initXYMap() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				xMap.put(1, getResources().getString(R.string.point1x));
+				yMap.put(1, getResources().getString(R.string.point1y));
+				xMap.put(2, getResources().getString(R.string.point2x));
+				yMap.put(2, getResources().getString(R.string.point2y));
+				xMap.put(3, getResources().getString(R.string.point3x));
+				yMap.put(3, getResources().getString(R.string.point3y));
+				xMap.put(4, getResources().getString(R.string.point4x));
+				yMap.put(4, getResources().getString(R.string.point4y));
+				xMap.put(5, getResources().getString(R.string.point5x));
+				yMap.put(5, getResources().getString(R.string.point5y));
+				xMap.put(6, getResources().getString(R.string.point6x));
+				yMap.put(6, getResources().getString(R.string.point6y));
+				xMap.put(7, getResources().getString(R.string.point7x));
+				yMap.put(7, getResources().getString(R.string.point7y));
+				xMap.put(8, getResources().getString(R.string.point8x));
+				yMap.put(8, getResources().getString(R.string.point8y));
+				xMap.put(9, getResources().getString(R.string.point9x));
+				yMap.put(9, getResources().getString(R.string.point9y));
+				xMap.put(10, getResources().getString(R.string.point10x));
+				yMap.put(10, getResources().getString(R.string.point10y));
+				xMap.put(11, getResources().getString(R.string.point11x));
+				yMap.put(11, getResources().getString(R.string.point11y));
+			}
+		}).start();
+	}
+
+	private void setIvMap() {
 		ivMap.setOnTouchListener(new OnTouchListener() {
 
 			@Override
@@ -254,433 +217,351 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 					String title = "";
 
-					if ( x >= Integer.parseInt(xMap.get(2))-20 && x <= Integer.parseInt(xMap.get(2))+20 
-						&& y >= Integer.parseInt(yMap.get(2))-20 && y <= Integer.parseInt(yMap.get(2))+20 ) {
+					if (x >= Integer.parseInt(xMap.get(2)) - 20
+							&& x <= Integer.parseInt(xMap.get(2)) + 20
+							&& y >= Integer.parseInt(yMap.get(2)) - 20
+							&& y <= Integer.parseInt(yMap.get(2)) + 20) {
 
-						mapID = 1;
 						title = "引导台";
-						process(mapID, title);
 					}
-					if ( x >= Integer.parseInt(xMap.get(3))-20 && x <= Integer.parseInt(xMap.get(3))+20 
-							&& y >= Integer.parseInt(yMap.get(3))-20 && y <= Integer.parseInt(yMap.get(3))+20 ) {
+					if (x >= Integer.parseInt(xMap.get(3)) - 20
+							&& x <= Integer.parseInt(xMap.get(3)) + 20
+							&& y >= Integer.parseInt(yMap.get(3)) - 20
+							&& y <= Integer.parseInt(yMap.get(3)) + 20) {
 
-						mapID = 4;
 						title = "智慧旅游应用展示区";
-						process(mapID, title);
 					}
-					if ( x >= Integer.parseInt(xMap.get(4))-20 && x <= Integer.parseInt(xMap.get(4))+20 
-							&& y >= Integer.parseInt(yMap.get(4))-20 && y <= Integer.parseInt(yMap.get(4))+20 ) {
+					if (x >= Integer.parseInt(xMap.get(4)) - 20
+							&& x <= Integer.parseInt(xMap.get(4)) + 20
+							&& y >= Integer.parseInt(yMap.get(4)) - 20
+							&& y <= Integer.parseInt(yMap.get(4)) + 20) {
 
-						mapID = 7;
 						title = "产品信息播放屏幕";
-						process(mapID, title);
 					}
-					
-					if ( x >= Integer.parseInt(xMap.get(5))-20 && x <= Integer.parseInt(xMap.get(5))+20 
-							&& y >= Integer.parseInt(yMap.get(5))-20 && y <= Integer.parseInt(yMap.get(5))+20 ) {
 
-						mapID = 5;
+					if (x >= Integer.parseInt(xMap.get(5)) - 20
+							&& x <= Integer.parseInt(xMap.get(5)) + 20
+							&& y >= Integer.parseInt(yMap.get(5)) - 20
+							&& y <= Integer.parseInt(yMap.get(5)) + 20) {
+
 						title = "综合服务区";
-						process(mapID, title);
 					}
-					
-					
-					if ( x >= Integer.parseInt(xMap.get(6))-20 && x <= Integer.parseInt(xMap.get(6))+20 
-							&& y >= Integer.parseInt(yMap.get(6))-20 && y <= Integer.parseInt(yMap.get(6))+20 ) {
 
-						mapID = 3;
+					if (x >= Integer.parseInt(xMap.get(6)) - 20
+							&& x <= Integer.parseInt(xMap.get(6)) + 20
+							&& y >= Integer.parseInt(yMap.get(6)) - 20
+							&& y <= Integer.parseInt(yMap.get(6)) + 20) {
+
 						title = "感互动3D景区推介区";
-						process(mapID, title);
 					}
-					
-					if ( x >= Integer.parseInt(xMap.get(8))-20 && x <= Integer.parseInt(xMap.get(8))+20 
-							&& y >= Integer.parseInt(yMap.get(8))-20 && y <= Integer.parseInt(yMap.get(8))+20 ) {
 
-						mapID = 8;
+					if (x >= Integer.parseInt(xMap.get(8)) - 20
+							&& x <= Integer.parseInt(xMap.get(8)) + 20
+							&& y >= Integer.parseInt(yMap.get(8)) - 20
+							&& y <= Integer.parseInt(yMap.get(8)) + 20) {
+
 						title = "自助行李寄存柜";
-						process(mapID, title);
 					}
-					
-					
-					if ( x >= Integer.parseInt(xMap.get(9))-20 && x <= Integer.parseInt(xMap.get(9))+20 
-							&& y >= Integer.parseInt(yMap.get(9))-20 && y <= Integer.parseInt(yMap.get(9))+20 ) {
 
-						mapID = 6;
+					if (x >= Integer.parseInt(xMap.get(9)) - 20
+							&& x <= Integer.parseInt(xMap.get(9)) + 20
+							&& y >= Integer.parseInt(yMap.get(9)) - 20
+							&& y <= Integer.parseInt(yMap.get(9)) + 20) {
+
 						title = "按摩免费体验区";
-						process(mapID, title);
 					}
-					
-					if ( x >= Integer.parseInt(xMap.get(10))-20 && x <= Integer.parseInt(xMap.get(10))+20 
-							&& y >= Integer.parseInt(yMap.get(10))-20 && y <= Integer.parseInt(yMap.get(10))+20 ) {
 
-						mapID = 9;
+					if (x >= Integer.parseInt(xMap.get(10)) - 20
+							&& x <= Integer.parseInt(xMap.get(10)) + 20
+							&& y >= Integer.parseInt(yMap.get(10)) - 20
+							&& y <= Integer.parseInt(yMap.get(10)) + 20) {
+
 						title = "医务室";
-						process(mapID, title);
 					}
-					if ( x >= Integer.parseInt(xMap.get(11))-20 && x <= Integer.parseInt(xMap.get(11))+20 
-							&& y >= Integer.parseInt(yMap.get(11))-20 && y <= Integer.parseInt(yMap.get(11))+20 ) {
+					if (x >= Integer.parseInt(xMap.get(11)) - 20
+							&& x <= Integer.parseInt(xMap.get(11)) + 20
+							&& y >= Integer.parseInt(yMap.get(11)) - 20
+							&& y <= Integer.parseInt(yMap.get(11)) + 20) {
 
-						mapID = 10;
 						title = "伴手礼超市";
-						process(mapID, title);
 					}
-//					if (event.getX() >= Integer.parseInt(xMap.get(2))
-//							&& event.getY() < Integer.parseInt(xMap.get(2))) {
-//
-//						mapID = 1;
-//						title = "引导台";
-//						process(mapID, title);
-//					}
+					// if (event.getX() >= Integer.parseInt(xMap.get(2))
+					// && event.getY() < Integer.parseInt(xMap.get(2))) {
+					//
+					// mapID = 1;
+					// title = "引导台";
+					// process(mapID, title);
+					// }
 
 				}
 				return true;
 			}
 		});
+	}
 
-		soundlay = (RelativeLayout) findViewById(R.id.soundlay);
-
-		myAdapter = new MyAdapter();
-		listView1.setAdapter(myAdapter);
-
-		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-		vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-
-		if (mediaPlayer != null) {
-			mediaPlayer.reset();
-			mediaPlayer.release();
-			mediaPlayer = null;
+	private void initData() {
+		int[] bgRes = new int[] {
+				R.drawable.img_map_first_floor,// TODO
+				R.drawable.img_map_xing_li_ji_cun_gui,
+				R.drawable.img_map_ti_yan_3d,
+				R.drawable.img_map_ying_yong_zhan_shi,
+				R.drawable.img_map_yin_dao_tai,
+				R.drawable.img_map_first_floor,// TODO
+				R.drawable.img_map_first_floor,// TODO
+				R.drawable.img_map_first_floor,// TODO
+				R.drawable.img_map_first_floor,// TODO
+				R.drawable.img_map_ban_shou_li_chao_shi,
+				R.drawable.img_map_duo_gong_neng_ting,
+				R.drawable.img_map_first_floor,// TODO 综合服务区
+				R.drawable.img_map_hu_jiao_zhong_xin,
+				R.drawable.img_map_yu_jing_zhi_hui,
+				R.drawable.img_map_ban_gong_qu,// TODO
+				R.drawable.img_map_yi_wu_shi, R.drawable.img_map_xin_xi_ping,// TODO
+				R.drawable.img_map_duo_gong_neng_ting,// TODO 机房
+				R.drawable.img_map_first_floor, // TODO 婚纱摄影
+				R.drawable.img_map_first_floor // TODO 婚纱摄影
+		};
+		String titleArray[] = getResources().getStringArray(R.array.title);
+		String contentArray[] = getResources().getStringArray(R.array.content);
+		for (int id = 1; id <= 19; id++) {
+			titleMap.put(id, titleArray[id - 1]);
+			contentMap.put(id, contentArray[id - 1]);
+			bgMap.put(id, bgRes[id - 1]);
+			hasProcessedMap.put(id, false);
 		}
+	}
 
-		mediaPlayer = new MediaPlayer();
-		mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
-
-			@Override
-			public void onCompletion(MediaPlayer mp) {
-				/*
-				 * 解除资源与MediaPlayer的赋值关系 103. * 让资源可以为其它程序利用
-				 */
-				// mp.release();
-				imgplay.setBackgroundResource(R.drawable.ic_play);
-				mediaPlayer.stop();
-				mediaPlayer.release();
+	private void updateHead(final int id, final boolean play) {
+		runOnUiThread(new Runnable() {
+			public void run() {
+				String title = titleMap.get(id);
+				String content = contentMap.get(id);
+				tvTitle.setText(title);
+				tvContent.setText(content);
+				if (play) {
+					imgplay.setBackgroundResource(R.drawable.ic_pause);
+				} else {
+					imgplay.setBackgroundResource(R.drawable.ic_play);
+				}
+				ivMap.setImageResource(bgMap.get(id));
 			}
 		});
-
-		soundMap = new HashMap<Integer, Integer>();
-		textMap = new HashMap<Integer, String>();
-
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				
-				xMap.put(1, getResources().getString(R.string.point1x));
-				yMap.put(1, getResources().getString(R.string.point1y));
-				xMap.put(2, getResources().getString(R.string.point2x));
-				yMap.put(2, getResources().getString(R.string.point2y));
-				xMap.put(3, getResources().getString(R.string.point3x));
-				yMap.put(3, getResources().getString(R.string.point3y));
-				xMap.put(4, getResources().getString(R.string.point4x));
-				yMap.put(4, getResources().getString(R.string.point4y));
-				xMap.put(5, getResources().getString(R.string.point5x));
-				yMap.put(5, getResources().getString(R.string.point5y));
-				xMap.put(6, getResources().getString(R.string.point6x));
-				yMap.put(6, getResources().getString(R.string.point6y));
-				xMap.put(7, getResources().getString(R.string.point7x));
-				yMap.put(7, getResources().getString(R.string.point7y));
-				xMap.put(8, getResources().getString(R.string.point8x));
-				yMap.put(8, getResources().getString(R.string.point8y));
-				xMap.put(9, getResources().getString(R.string.point9x));
-				yMap.put(9, getResources().getString(R.string.point9y));
-				xMap.put(10, getResources().getString(R.string.point10x));
-				yMap.put(10, getResources().getString(R.string.point10y));
-				xMap.put(11, getResources().getString(R.string.point11x));
-				yMap.put(11, getResources().getString(R.string.point11y));
-				
-				soundMap.put(1, R.raw.yindao);
-				textMap.put(1, getResources().getString(R.string.txt_yin_dao));
-				mapBgMap.put(1, R.drawable.img_map_yin_dao_tai);
-				soundMap.put(2, R.raw.zi_zhu_fu_wu);
-				textMap.put(2, getResources()
-						.getString(R.string.txt_bo_fang_qu));
-				// mapBgMap.put(2, R.drawable.img_map)
-				soundMap.put(3, R.raw.tiyan3d);
-				textMap.put(3, getResources().getString(R.string.txt_tiyan_3d));
-				mapBgMap.put(3, R.drawable.img_map_ti_yan_3d);
-				soundMap.put(4, R.raw.ying_yong_zhan_shi);
-				mapBgMap.put(4, R.drawable.img_map_ying_yong_zhan_shi);
-				textMap.put(4,
-						getResources().getString(R.string.txt_lv_you_zhan_shi));
-				soundMap.put(5, R.raw.you_ke_jie_dai);
-				mapBgMap.put(5, R.drawable.img_map_you_ke_jie_dai);
-				textMap.put(5,
-						getResources().getString(R.string.txt_jie_dai_fu_wu));
-				soundMap.put(6, R.raw.anmo);
-				textMap.put(6, getResources().getString(R.string.txt_anmo));
-				mapBgMap.put(6, R.drawable.img_map_an_mo_qu);
-				soundMap.put(7, R.raw.bo_fang_ping_mu);
-				textMap.put(7,
-						getResources().getString(R.string.txt_lv_you_shi_ping));
-				// mapBgMap.put(7, R.drawable.img_map);
-				soundMap.put(8, R.raw.xinglijicun);
-				textMap.put(8,
-						getResources().getString(R.string.txt_xing_li_ji_cun));
-				mapBgMap.put(8, R.drawable.img_map_xing_li_ji_cun_gui);
-				soundMap.put(9, R.raw.yi_wu_shi);
-				textMap.put(9, getResources().getString(R.string.txt_yiwu_shi));
-				mapBgMap.put(9, R.drawable.img_map_yi_wu_shi);
-				soundMap.put(10, R.raw.banshouli);
-				textMap.put(10,
-						getResources().getString(R.string.txt_ban_shou_li));
-				mapBgMap.put(10, R.drawable.img_map_ban_shou_li_chao_shi);
-				soundMap.put(11, R.raw.duo_gong_neng);
-				textMap.put(11,
-						getResources().getString(R.string.txt_duo_gong_neng));
-				mapBgMap.put(11, R.drawable.img_map_duo_gong_neng_ting);
-				soundMap.put(12, R.raw.ji_fang);
-				textMap.put(12, getResources().getString(R.string.txt_hu_jiao));
-				mapBgMap.put(12, R.drawable.img_map_hu_jiao_zhong_xin);
-				soundMap.put(13, R.raw.yu_jing_zhi_hui);
-				textMap.put(13, getResources().getString(R.string.txt_yu_jin));
-				mapBgMap.put(13, R.drawable.img_map_yu_jing_zhi_hui);
-				soundMap.put(14, R.raw.bangongqu);
-				textMap.put(14,
-						getResources().getString(R.string.txt_ban_gong_qu));
-				mapBgMap.put(14, R.drawable.img_map_ban_gong_qu);
-			}
-		}).start();
-
 	}
 
 	private void trigger(BluetoothDevice device) {
-		final String address = device.getAddress();
-		final String name = device.getName();
-		String title = "";
-		boolean noAudio = false;
-		if (address.equalsIgnoreCase("CF:01:01:00:02:F0")) {
-			// 智慧导览
-			noAudio = true;
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F1")) {
-			mapID = 8;
-			title = "自助行李寄存柜";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F2")) {
-			mapID = 3;
-			title = "感互动3D景区推介区";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F3")) {
-			mapID = 4;
-			title = "智慧旅游应用展示区";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F4")) {
-			mapID = 1;
-			title = "引导台";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F5")) {
-			// 旅客上车处
-			noAudio = true;
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F6")) {
-			// 智慧旅游视屏
-			noAudio = true;
-			mapID = 2;
-			title = "自助服务区";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F7")) {
-			// 单车租赁 no
-			noAudio = true;
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F8")) {
-			mapID = 6;
-			title = "按摩免费体验区";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:FC")) {
-			mapID = 10;
-			title = "伴手礼超市";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E1")) {
-			mapID = 11;
-			title = "多功能会议厅";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E2")) {
-			mapID = 5;
-			title = "综合服务区";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E3")) {
-			// 呼叫中心
-			noAudio = true;
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E4")) {
-			mapID = 13;
-			title = "预警指挥中心";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E5")) {
-			mapID = 14;
-			title = "办公区";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E6")) {
-			mapID = 9;
-			title = "医务室";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E7")) {
-			mapID = 7;
-			title = "产品信息播放屏幕";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E8")) {
-			mapID = 12;
-			title = "机房";
-		} else {
-			noAudio = true;
+		if (System.currentTimeMillis() - lastTriggerTime < 3000) {
+			return;
 		}
-		if (noAudio) {
-			// process(1, "测试");
-			// runOnUiThread(new Runnable() {
-			// public void run() {
-			// Toast.makeText(RouteMapActivity.this,
-			// "无声音设备" + name + "  " + address,
-			// Toast.LENGTH_LONG).show();
-			// }
-			// });
-			runOnUiThread(new Runnable() {
-				public void run() {
-					Toast.makeText(RouteMapActivity.this, "该基站没有介绍哦",
-							Toast.LENGTH_LONG).show();
-				}
-			});
-		} else {
-			if (hasProcessedMap.get(mapID) == null
-					|| !hasProcessedMap.get(mapID)) {
-				process(mapID, title);
-				hasProcessedMap.put(mapID, true);
-			}
+		final String address = device.getAddress().trim();
+		Log.e("address", address);
+		final int id = getId(address);
+		if (id < 1 || id > 19) {
+			return;
 		}
-		final String t = title;
 		runOnUiThread(new Runnable() {
 			public void run() {
-				txt_ti.setText(t);
+				String title = titleMap.get(id);
+				ItemData data = new ItemData(title, id);
+				if (isPlaying) {
+					for (int i = 0; i < titleList.size(); i++) {
+						ItemData listData = titleList.get(i);
+						if (listData.id == id) {
+							return;
+						}
+					}
+					boolean hasProcess = hasProcessedMap.get(id);
+					if (titleList.size() < 3 && !hasProcess) {
+						titleList.add(0, data);
+						adapter.notifyDataSetChanged();
+					}
+				} else {
+					boolean hasProcessd = hasProcessedMap.get(id);
+					if (!hasProcessd) {
+						lastTriggerTime = System.currentTimeMillis();
+						imgplay.setEnabled(true);
+						processPlay(id, true);
+					}
+				}
 			}
 		});
 	}
 
 	private class MyAdapter extends BaseListAdapter {
-		/**
-		 * 适配器
-		 */
 		private class ViewHolder {
-
 			private ImageButton img_btnplay;
 			private ImageButton img_btndel;
 			private TextView txtname;
-
-		}
-
-		private int selectItem = -1;
-
-		public void setSelectItem(int selectItem) {
-			this.selectItem = selectItem;
 		}
 
 		@Override
 		public int getCount() {
-			return txtlist.size();
+			return titleList.size();
 		}
 
-		@SuppressLint("NewApi")
 		@Override
 		public View getView(final int position, View convertView,
 				ViewGroup parent) {
-
 			ViewHolder holder = null;
 			if (convertView == null) {
-
 				convertView = getLayoutInflater().inflate(
 						R.layout.activity_sounditem, null);
-
 				holder = new ViewHolder();
-
 				holder.img_btnplay = (ImageButton) convertView
 						.findViewById(R.id.img_btnplay);
 				holder.img_btndel = (ImageButton) convertView
 						.findViewById(R.id.img_btndel);
 				holder.txtname = (TextView) convertView
 						.findViewById(R.id.txtname);
-
-				// 设置交错颜色
-				// int[] arrayOfInt = mColors;
-				// int colorLength = mColors.length;
-				// int selected = arrayOfInt[position % colorLength];
-				//
-				// convertView.setBackgroundResource(selected);
 				convertView.setTag(holder);
 			} else {
 				holder = (ViewHolder) convertView.getTag();
 			}
-			holder.txtname.setText(txtlist.get(position));
-			// if (position == selectItem) { // 选中状态 高亮
-			// convertView.setBackgroundResource(R.drawable.img_sounditem);
-			//
-			// } else { // 正常状态
-			// convertView.setBackgroundResource(R.drawable.tabli);
-			// }
-
+			holder.txtname.setText(titleList.get(position).title);
 			holder.img_btnplay.setOnClickListener(new OnClickListener() {
-
 				@Override
 				public void onClick(View v) {
 					if (!CommonUtils.isFastDoubleClick()) {
-						process2(idlist.get(position), txtlist.get(position));
+						ItemData data = titleList.get(position);
+						processPlay(data.id, true);
 					}
 				}
 			});
 			holder.img_btndel.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					idlist.remove(position);
-					txtlist.remove(position);
-					myAdapter.notifyDataSetChanged();
+					titleList.remove(position);
+					adapter.notifyDataSetChanged();
 				}
 			});
-			// holder.imageView1.setBackgroundResource((Integer)
-			// list.get(position).get("img"));
-			// // Bitmap image =
-			// Bitmap.createBitmap(((BitmapDrawable)holder.imageView1.getDrawable()).getBitmap());
-			// // imgUtils.getRoundedCornerBitmap(image, 90);
-			// // imageLoader.displayImage(
-			// // "drawable://" + (Integer) list.get(position).get("img"),
-			// // holder.imageView1, options);
-			//
-			// holder.txttitle.setText((String)
-			// list.get(position).get("title"));
-			// holder.txttime.setText((String) list.get(position).get("time"));
-			// Map<String, Object> map = list.get(position); // distance
-			// String object = (String) list.get(position).get("distance");
-			// holder.txtdistance.setText(object);
-
 			return convertView;
 		}
-
 	}
 
-	@Override
-	protected void onStart() {
-		Intent service = new Intent(this, AudioService.class);
-		startService(service);
-		bindService(service, connection, Context.BIND_AUTO_CREATE);
-		super.onStart();
-	}
+	private class ItemData {
+		public String title;
+		public int id;
 
-	@Override
-	protected void onStop() {
-		
-		unbindService(connection);
-		super.onStop();
-		// 暗屏,不要取消摇动传感
-		if (sensorManager != null) {// 取消监听器
-			sensorManager.unregisterListener(sensorEventListener);
+		public ItemData(String title, int id) {
+			super();
+			this.title = title;
+			this.id = id;
 		}
+	}
+
+	private int getId(String address) {
+		address = address.trim();
+		if (address.equalsIgnoreCase("CF:01:01:00:02:F0")) {
+			return ID_ZHI_HUI_DAO_LAN;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F1")) {
+			return ID_XING_LI_JI_CUN;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F2")) {
+			return ID_3D_HU_DONG;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F3")) {
+			return ID_YING_YONG_ZHAN_SHI;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F4")) {
+			return ID_YIN_DAO_TAI;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:FB")) {
+			return ID_LV_KE_SHANG_CHE;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F5")) {
+			return ID_ZHI_HUI_LV_YOU_SHI_PING;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F7")) {
+			return ID_DAN_CHE_ZU_LIN;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F8")) {
+			return ID_XIU_XIAN_ZI_ZHU;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:FC")) {
+			return ID_BAN_SHOU_LI_CHAO_SHI;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E1")) {
+			return ID_DUO_GONG_NENG_TING;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E2")) {
+			return ID_ZONG_HE_FU_WU_QU;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E4")) {
+			return ID_HU_JIAO_ZHONG_XIN;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E7")) {
+			return ID_YU_JING_ZHI_HUI_ZHONG_XIN;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E5")) {
+			return ID_BAN_GONG_QU;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E6")) {
+			return ID_YI_WU_SHI;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F6")) {
+			return ID_XIN_XI_SHI_PING;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E8")) {
+			return ID_JI_FNAG;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:FD")) {
+			return ID_HUN_SHA_SHE_YING;
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E3")) {
+			return ID_BAN_GONG_QU_2;
+		}
+		return -1;
+	}
+
+	private void processPlay(int id, boolean play) {
+		Uri uri = getUri(id);
+		if (uri == null) {
+			CrashHandler.getInstance().logToFile(Thread.currentThread(),
+					new Exception("Uri null"));
+			return;
+		}
+		updateHead(id, play);
+		hasProcessedMap.put(id, true);
+		isPlaying = true;
+		audioBinder.audioPlay(uri);
+	}
+
+	private Uri getUri(int id) {
+		Uri uri = null;
+		String parent = "android.resource://com.xkx.yjxm/";
+		if (id == ID_BAN_GONG_QU) {
+			uri = Uri.parse(parent + R.raw.ban_gong_qu);
+		} else if (id == ID_BAN_SHOU_LI_CHAO_SHI) {
+			uri = Uri.parse(parent + R.raw.ban_shou_li_chao_shi);
+		} else if (id == ID_DUO_GONG_NENG_TING) {
+			uri = Uri.parse(parent + R.raw.duo_gong_neng_ting);
+		} else if (id == ID_3D_HU_DONG) {
+			uri = Uri.parse(parent + R.raw.hu_dong_qu);
+		} else if (id == ID_HU_JIAO_ZHONG_XIN) {
+			uri = Uri.parse(parent + R.raw.hu_jiao_zhong_xin);
+		} else if (id == ID_HUN_SHA_SHE_YING) {
+			uri = Uri.parse(parent + R.raw.hun_sha_she_ying);
+		} else if (id == ID_JI_FNAG) {
+			uri = Uri.parse(parent + R.raw.ji_fang);
+		} else if (id == ID_ZHI_HUI_LV_YOU_SHI_PING) {
+			uri = Uri.parse(parent + R.raw.lv_you_zhi_hui_ping);
+		} else if (id == ID_XIU_XIAN_ZI_ZHU) {
+			uri = Uri.parse(parent + R.raw.lv_you_zi_zhu_fu_wu_qu);
+		} else if (id == ID_XIN_XI_SHI_PING) {
+			uri = Uri.parse(parent + R.raw.xin_xi_bo_fang_ping);
+		} else if (id == ID_XING_LI_JI_CUN) {
+			uri = Uri.parse(parent + R.raw.xing_li_ji_cun_qu);
+		} else if (id == ID_YI_WU_SHI) {
+			uri = Uri.parse(parent + R.raw.yi_wu_shi);
+		} else if (id == ID_YIN_DAO_TAI) {
+			uri = Uri.parse(parent + R.raw.yin_dao_tai);
+		} else if (id == ID_YING_YONG_ZHAN_SHI) {
+			uri = Uri.parse(parent + R.raw.ying_yong_zhan_shi_qu);
+		} else if (id == ID_LV_KE_SHANG_CHE) {
+			uri = Uri.parse(parent + R.raw.you_ke_shang_che_qu);
+		} else if (id == ID_YU_JING_ZHI_HUI_ZHONG_XIN) {
+			uri = Uri.parse(parent + R.raw.yu_jing_zhong_xin);
+		} else if (id == ID_DAN_CHE_ZU_LIN) {
+			uri = Uri.parse(parent + R.raw.zi_xing_che_zu_lin);
+		} else if (id == ID_ZONG_HE_FU_WU_QU) {
+			uri = Uri.parse(parent + R.raw.zong_he_fu_wu_qu);
+		} else if (id == ID_ZHI_HUI_DAO_LAN) {
+			uri = Uri.parse(parent + R.raw.zhi_hui_dao_lan);
+		} else {
+		}
+		return uri;
 	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		unbindBleScanService();
-		// 清空音频列表
-		idlist.clear();
-		txtlist.clear();
-
-		if (mediaPlayer != null) {
-			mediaPlayer.stop();
-			mediaPlayer.release();
-
-		}
+		unbindAllService();
 	}
 
-	private void unbindBleScanService() {
+	private void unbindAllService() {
 		unbindService(conn);
+		unbindService(audioConn);
 	}
 
 	private static Bitmap big(Bitmap bitmap) {
@@ -699,65 +580,14 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		return resizeBmp;
 	}
 
-	private void play() throws IOException {
-		// File audioFile = new
-		// File(Environment.getExternalStorageDirectory(),"");
-		// mediaPlayer.reset();
-		// mediaPlayer.setDataSource("drawable://" + (Integer) R.raw.yindao);
-
-		mediaPlayer.prepare();
-		mediaPlayer.start();// 播放
-		isPausePlay = true;
-	}
-
-	// sound hm中的第几个歌曲
-	// loop 是否循环 0不循环 -1循环
-	public void playSound(final int sound) {
-		Integer integer = soundMap.get(sound);
-		Uri uri = Uri.parse("android.resource://com.xkx.yjxm/"+integer);
-		binder.audioPlay(uri);
-//		new Handler().postDelayed(new Runnable() {
-//
-//			@Override
-//			public void run() {
-//
-//				try {
-//					if (mediaPlayer != null) {
-//						if (!mediaPlayer.isPlaying()) {
-//							mediaPlayer.stop();
-//						}
-//						mediaPlayer.reset();
-//						AssetFileDescriptor assetFileDescritor = RouteMapActivity.this
-//								.getAssets().openFd(soundMap.get(sound));
-//						mediaPlayer.setDataSource(
-//								assetFileDescritor.getFileDescriptor(),
-//								assetFileDescritor.getStartOffset(),
-//								assetFileDescritor.getLength());
-//
-//						play();// 开始或恢复播放
-//					}
-//				} catch (IOException e) {
-//					e.printStackTrace();
-//				}
-//
-//			}
-//
-//		}, 2000);
-		
-
-	}
-
 	@Override
 	public void onClick(View v) {
-
 		switch (v.getId()) {
 		case R.id.imgswitch:
 			if (openstate) {
 				// 取消摇一摇
 				imgswitch.setBackgroundResource(R.drawable.img_autoexplain);
-				if (sensorManager != null) {// 取消监听器
-					sensorManager.unregisterListener(sensorEventListener);
-				}
+				sensorManager.unregisterListener(sensorEventListener);
 				bleService.setShakeScan(false);
 				openstate = false;
 			} else {
@@ -777,26 +607,31 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 			}
 			break;
 		case R.id.imgmouth:
-
 			if (down) {
 				// 不显示文本
 				imgmouth.setBackgroundResource(R.drawable.ic_mouth);
 				imgdownmouth.setVisibility(View.GONE);
-				txtdetail.setVisibility(View.GONE);
+				tvContent.setVisibility(View.GONE);
 				down = false;
 			} else {
 				// 显示文本
 				imgmouth.setBackgroundResource(R.drawable.img_moudown);
 				imgdownmouth.setVisibility(View.VISIBLE);
-				txtdetail.setVisibility(View.VISIBLE);
+				tvContent.setVisibility(View.VISIBLE);
 				down = true;
 			}
 			break;
 		case R.id.imgplay:
-			// disableViewForSeconds(imgplay);
-			// 如果是在播放态
-			if (!CommonUtils.isFastDoubleClick()) {
-				playprocess();
+			if (CommonUtils.isFastDoubleClick()) {
+				return;
+			}
+			isPlaying = !isPlaying;
+			if (isPlaying) {
+				imgplay.setBackgroundResource(R.drawable.ic_pause);
+				audioBinder.audioStart();
+			} else {
+				imgplay.setBackgroundResource(R.drawable.ic_play);
+				audioBinder.audioPause();
 			}
 			break;
 		case R.id.btnback:
@@ -807,126 +642,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		}
 	}
 
-	// 暂停播放
-	private void playprocess() {
-		// tupian
-		if (isPausePlay) {
-			// 暂停语音
-			mediaPlayer.pause(); // 调用暂停方法
-			imgplay.setBackgroundResource(R.drawable.ic_play);
-			isPausePlay = false;
-		} else {
-			mediaPlayer.start(); // 播放
-			imgplay.setBackgroundResource(R.drawable.ic_pause);
-			isPausePlay = true;
-			// else {
-			//
-			// process(mapID);
-			// }
-		}
-	}
-
-	private void addToList(int mapId, String title) {
-		txtlist.add(title);
-		idlist.add(mapId);
-		runOnUiThread(new Runnable() {
-			public void run() {
-				myAdapter.notifyDataSetChanged();
-			}
-		});
-	}
-
-	// 播放
-	private void process2(final int mapID, String title) {
-		runOnUiThread(new Runnable() {
-			public void run() {
-
-				txtdetail.setText(textMap.get(mapID));
-			}
-		});
-
-		playSound(mapID);// 播放dudu，dudu文件被解码为16位的PCM数据后超过了SoundPool的1M缓冲区了，循环不了，而且不能播完整个歌曲
-		runOnUiThread(new Runnable() {
-			public void run() {
-				imgplay.setBackgroundResource(R.drawable.ic_pause);
-			}
-		});
-	}
-
-	// 播放
-	private void process(final int mapID, String title) {
-		runOnUiThread(new Runnable() {
-			public void run() {
-				int resId = mapBgMap.get(mapID);
-				ivMap.setBackgroundResource(resId);
-				soundlay.setVisibility(View.VISIBLE);
-				txtdetail.setText(textMap.get(mapID));
-			}
-		});
-		if (mediaPlayer.isPlaying()) {
-			Log.e("加入列表", "加入列表");
-			if (idlist.size() < 3) {
-				Log.e("插入列表", "插入列表");
-				addToList(mapID, title);
-			} else {
-				txtlist.remove(0);
-				idlist.remove(0);
-				addToList(mapID, title);
-			}
-			return;
-		}
-
-		playSound(mapID);// 播放dudu，dudu文件被解码为16位的PCM数据后超过了SoundPool的1M缓冲区了，循环不了，而且不能播完整个歌曲
-
-		runOnUiThread(new Runnable() {
-			public void run() {
-				imgplay.setBackgroundResource(R.drawable.ic_pause);
-			}
-		});
-	}
-
-	public void disableViewForSeconds(final View v) {
-
-		v.setClickable(false);
-
-		new Handler().postDelayed(new Runnable() {
-
-			@Override
-			public void run() {
-
-				v.setClickable(true);
-
-			}
-
-		}, 2000);
-
-	}
-
-	/**
-	 * 根据文件后缀名获得对应的MIME类型。
-	 * 
-	 * @param file
-	 */
-	private String getMIMEType(File file) {
-
-		String type = "*/*";
-		String fName = file.getName();
-		// 获取后缀名前的分隔符"."在fName中的位置。
-		int dotIndex = fName.lastIndexOf(".");
-		if (dotIndex < 0) {
-			return type;
-		}
-		/* 获取文件的后缀名 */
-		String end = fName.substring(dotIndex, fName.length()).toLowerCase();
-		if (end == "")
-			return type;
-		// 在MIME和文件类型的匹配表中找到对应的MIME类型。
-		for (int i = 0; i < MIME_MapTable.length; i++) { // MIME_MapTable??在这里你一定有疑问，这个MIME_MapTable是什么？
-			if (end.equals(MIME_MapTable[i][0]))
-				type = MIME_MapTable[i][1];
-		}
-		return type;
-	}
+	private int currentID;
 
 	/**
 	 * 重力感应监听
@@ -940,8 +656,10 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 			float x = values[0]; // x轴方向的重力加速度，向右为正
 			float y = values[1]; // y轴方向的重力加速度，向前为正
 			float z = values[2]; // z轴方向的重力加速度，向上为正
-			Log.i(TAG, "x轴方向的重力加速度" + x + "；y轴方向的重力加速度" + y + "；z轴方向的重力加速度" + z);
 			// 一般在这三个方向的重力加速度达到40就达到了摇晃手机的状态。
+			if (Math.abs(x) > 15 || Math.abs(y) > 15 || Math.abs(z) > 15) {
+				Log.i(TAG, "x轴" + x + "；y轴" + y + "；z轴" + z);
+			}
 			int medumValue = 19;// 三星 i9250怎么晃都不会超过20，没办法，只设置19了
 			if (Math.abs(x) > medumValue || Math.abs(y) > medumValue
 					|| Math.abs(z) > medumValue) {
@@ -977,12 +695,42 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 			BluetoothDevice device = bleService.getProximityBleDevice();
 			if (device != null) {
 				trigger(device);
-			} else {
-				Toast.makeText(RouteMapActivity.this, "刚才没有检测到基站噢~~~,请尝试...",
-						Toast.LENGTH_SHORT).show();
 			}
 		}
 	};
+
+	private AudioBinder audioBinder;
+
+	private ServiceConnection audioConn = new ServiceConnection() {
+
+		@Override
+		public void onServiceConnected(ComponentName name, IBinder service) {
+			audioBinder = (AudioBinder) service;
+			audioBinder.setOnPlayCompleteListener(new OnPlayCompleteListener() {
+
+				@Override
+				public void onPlayComplete() {
+					runOnUiThread(new Runnable() {
+						public void run() {
+							isPlaying = false;
+							imgplay.setBackgroundResource(R.drawable.ic_play);
+						}
+					});
+				}
+			});
+			if (audioBinder == null) {
+				CrashHandler.getInstance().logToFile(Thread.currentThread(),
+						new Exception("audioBinder null"));
+			}
+		}
+
+		@Override
+		public void onServiceDisconnected(ComponentName name) {
+
+		}
+
+	};
+
 	private ServiceConnection conn = new ServiceConnection() {
 
 		@Override
@@ -1010,22 +758,9 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 						@Override
 						public void onConditionTriggerFailed(
 								BluetoothDevice device, int rssi) {
-							final BluetoothDevice d = device;
-							final int r = rssi;
-							handler.post(new Runnable() {
-								public void run() {
-									Toast.makeText(
-											RouteMapActivity.this,
-											d.getName() + "," + d.getAddress()
-													+ ",信号不够," + r,
-											Toast.LENGTH_SHORT).show();
-								}
-							});
 						}
 					});
 			bleService.startScanBLE();
 		}
 	};
-	private ImageView ivMap;
-
 }
