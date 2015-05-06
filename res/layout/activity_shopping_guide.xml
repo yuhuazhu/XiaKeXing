@@ -30,7 +30,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:onClick="Finsh"
-            android:background="@drawable/img_txtclose" />
+            android:background="@drawable/ic_closeview" />
 
         <TextView
             android:id="@+id/textView1"
