@@ -22,9 +22,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:background="@drawable/ic_back"
             android:minHeight="0dp"
-            android:minWidth="0dp"
-            android:background="@drawable/ic_back" />
+            android:minWidth="0dp" />
+
+        <ImageButton
+            android:id="@+id/btnhome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/btnback"
+            android:background="@drawable/ic_home"
+            android:onClick="home" />
 
         <TextView
             android:id="@+id/textView1"
@@ -32,8 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_marginTop="@dimen/space_content_listview_vertical"
-            android:text="@string/viewPhws_title" 
-             />
+            android:text="@string/viewPhws_title" />
     </RelativeLayout>
 
     <LinearLayout
@@ -60,7 +69,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_content"
-            android:text="@string/contentPHws_detail"  />
+            android:text="@string/contentPHws_detail" />
     </LinearLayout>
 
     <LinearLayout
@@ -82,7 +91,7 @@
             android:layout_height="@dimen/content_top_margint"
             android:background="@drawable/washbutton"
             android:text="@string/contentPHws_btnsee"
-            android:textColor="@color/orgph_title"  />
+            android:textColor="@color/orgph_title" />
     </LinearLayout>
 
     <View
@@ -138,9 +147,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:textSize="@dimen/text_size_start"
                     android:text="@string/contentPHws_btnsel"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_start" />
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>
@@ -189,9 +198,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:textSize="@dimen/text_size_start"
                     android:text="@string/contentPHws_btnph"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_start" />
             </RelativeLayout>
         </LinearLayout>
     </LinearLayout>

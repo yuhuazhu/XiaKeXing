@@ -117,7 +117,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/ic_back" />
-        
+        <ImageButton
+            android:id="@+id/btnhome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/btnback"
+            android:background="@drawable/ic_home"
+            android:onClick="home" />
          <TextView
             android:id="@+id/textView1"
             android:layout_width="wrap_content"

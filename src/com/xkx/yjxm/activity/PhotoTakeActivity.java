@@ -52,7 +52,13 @@ public class PhotoTakeActivity extends Activity implements OnClickListener {
 		initUI();
 
 	}
+	public void home(View v) {
+		Intent intent = null;
 
+		intent = new Intent(this, MainActivity.class);
+
+		startActivity(intent);
+	}
 	private void initData() {
 		selectedImage = (Uri) getIntent().getExtras().get("Uri");
 		fileName = (String) getIntent().getExtras().get("fileName");

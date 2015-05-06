@@ -7,6 +7,7 @@ import java.net.URL;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
@@ -36,7 +37,13 @@ public class PhotoScanningActivity extends Activity implements OnClickListener {
 		initData();
 		initUI();
 	}
+	public void home(View v) {
+		Intent intent = null;
 
+		intent = new Intent(this, MainActivity.class);
+
+		startActivity(intent);
+	}
 	private void initData() {
 
 		url = getIntent().getStringExtra("QRCODE");

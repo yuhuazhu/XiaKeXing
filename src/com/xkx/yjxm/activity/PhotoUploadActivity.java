@@ -87,7 +87,13 @@ public class PhotoUploadActivity extends Activity implements OnClickListener {
 		initData();
 		initUI();
 	}
+	public void home(View v) {
+		Intent intent = null;
 
+		intent = new Intent(this, MainActivity.class);
+
+		startActivity(intent);
+	}
 	private void initData() {
 
 		// 扫描内存中图片并存入list

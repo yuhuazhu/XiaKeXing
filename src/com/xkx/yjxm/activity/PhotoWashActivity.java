@@ -43,7 +43,13 @@ public class PhotoWashActivity extends Activity implements OnClickListener {
 		initData();
 		initUI();
 	}
+	public void home(View v) {
+		Intent intent = null;
 
+		intent = new Intent(this, MainActivity.class);
+
+		startActivity(intent);
+	}
 	private void initData() {
 
 	}
