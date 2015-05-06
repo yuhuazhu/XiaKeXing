@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -64,12 +65,17 @@ public class RouteActivity extends Activity implements OnClickListener {
 		for (int i = 0; i < img.length; i++) {
 			img[i] = R.drawable.route01 + i;
 		}
+		Random random = new Random();
+		Random random2 = null;
 		for (int i = 0; i < img.length; i++) {
-			times += 10;
+			int nextInt = random.nextInt();
+			random2  = new Random(nextInt);
+			times = random2.nextInt(10) + 5;
+			
 			time[i] = "ä¯ÀÀÊ±³¤£º" + times + "·ÖÖÓ";
 		}
 		for (int i = 0; i < img.length; i++) {
-			distances += 50;
+			distances += 10;
 			distance[i] = distances + "m";
 		}
 	}
