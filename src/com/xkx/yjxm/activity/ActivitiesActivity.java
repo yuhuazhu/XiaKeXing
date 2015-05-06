@@ -15,7 +15,7 @@ import android.widget.TextView;
 //活动资讯
 public class ActivitiesActivity extends Activity {
 
-	private RelativeLayout img_newprint;
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -23,10 +23,21 @@ public class ActivitiesActivity extends Activity {
 		// 移除ActionBar，在setContent之前调用下面这句，保证没有ActionBar
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_activities);
-		initUI();
+		
 
 	}
 
+	public void Back(View v)
+	{
+		finish();
+	}
+	public void home(View v) {
+		Intent intent = null;
+
+		intent = new Intent(this, MainActivity.class);
+
+		startActivity(intent);
+	}
 	public void gophotoview(View v) {
 
 		Intent intent = null;
@@ -36,19 +47,7 @@ public class ActivitiesActivity extends Activity {
 		startActivity(intent);
 	}
 
-	private void initUI() {
-
-		img_newprint = (RelativeLayout) findViewById(R.id.print);
-
-		TextView textView = (TextView) findViewById(R.id.textView1);
-		textView.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				finish();
-			}
-		});
-	}
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
