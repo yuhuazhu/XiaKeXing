@@ -8,7 +8,7 @@
         <item >应用展示区</item>
         <item >引导台</item>
         <item >游客上车区</item>
-        <item >智慧旅游视屏</item>
+        <item >智慧旅游视频</item>
         <item >自行车租赁</item>
         <item >自助服务区</item>
         <item >伴手礼超市</item>
@@ -21,7 +21,6 @@
         <item >信息播放屏</item>
         <item >云数据中心</item>
         <item >婚纱摄影园</item>
-        <item >办公区</item>
     </string-array>
     
     
@@ -32,7 +31,7 @@
         <item >@string/txt_lv_you_zhan_shi</item>
         <item >@string/txt_yin_dao</item>
         <item >@string/txt_you_ke_shang_che</item>
-        <item >@string/txt_lv_you_shi_ping</item>
+        <item >@string/txt_zhi_hui_lv_you</item>
         <item >@string/txt_zi_xing_che_zu_lin</item>
         <item >@string/txt_anmo</item>
         <item >@string/txt_ban_shou_li</item>
@@ -45,7 +44,6 @@
         <item >@string/txt_xin_xi_bo_fang</item>
         <item >@string/txt_yun_shu_ju</item>
         <item >@string/txt_hun_sha_she_ying</item>
-        <item >@string/txt_ban_gong_qu</item>
     </string-array>
     
     <string-array name="mac">
