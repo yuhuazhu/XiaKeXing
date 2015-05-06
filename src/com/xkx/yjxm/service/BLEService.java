@@ -54,6 +54,7 @@ public class BLEService extends Service {
 
 	@Override
 	public boolean onUnbind(Intent intent) {
+		adapter.disable();
 		return super.onUnbind(intent);
 	}
 
@@ -169,7 +170,7 @@ public class BLEService extends Service {
 
 		@Override
 		public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-			Log.e("scan", device.getAddress() + "rssi:" + rssi);
+			// Log.e("scan", device.getAddress() + "rssi:" + rssi);
 			if (maxRssi < rssi) {
 				maxRssi = rssi;
 				proximityBleDevice = device;
@@ -181,6 +182,7 @@ public class BLEService extends Service {
 		exitScan = true;
 		isScanning = false;
 		adapter.disable();
+		adapter = null;
 	}
 
 	public class BleBinder extends Binder {
