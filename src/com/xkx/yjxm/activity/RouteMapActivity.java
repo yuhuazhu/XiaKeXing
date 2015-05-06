@@ -108,7 +108,8 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private BaseAdapter adapter;
 
 	private BLEService bleService;
-    private RelativeLayout soundlay;
+	private RelativeLayout soundlay;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -122,8 +123,8 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		bindBleScanService();
 		bindAudioService();
 	}
-	public void hidesoundlay()
-	{
+
+	public void hidesoundlay(View v) {
 		isPlaying = false;
 		audioBinder.audioStop();
 		soundlay.setVisibility(View.GONE);
