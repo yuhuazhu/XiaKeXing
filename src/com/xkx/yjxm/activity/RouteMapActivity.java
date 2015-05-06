@@ -33,6 +33,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.xkx.yjxm.R;
@@ -107,7 +108,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private BaseAdapter adapter;
 
 	private BLEService bleService;
-
+    private RelativeLayout soundlay;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -121,6 +122,12 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		bindBleScanService();
 		bindAudioService();
 	}
+	public void hidesoundlay()
+	{
+		isPlaying = false;
+		audioBinder.audioStop();
+		soundlay.setVisibility(View.GONE);
+	}
 
 	private void bindAudioService() {
 		Intent service = new Intent(RouteMapActivity.this, AudioService.class);
@@ -133,7 +140,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	}
 
 	private void initUI() {
-
+		soundlay = (RelativeLayout) findViewById(R.id.soundlay);
 		imgplay = (ImageButton) findViewById(R.id.imgplay);
 		imgplay.setOnClickListener(this);
 		imgmouth = (ImageButton) findViewById(R.id.imgmouth);
@@ -362,6 +369,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		updateHead(id, play);
 		hasProcessedMap.put(id, true);
 		isPlaying = true;
+		soundlay.setVisibility(View.VISIBLE);
 		audioBinder.audioPlay(uri);
 	}
 
