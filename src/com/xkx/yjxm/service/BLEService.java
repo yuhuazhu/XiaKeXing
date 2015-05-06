@@ -116,14 +116,23 @@ public class BLEService extends Service {
 		}
 		isScanning = false;
 		if (!shake) {
-			if (maxRssi >= rssiFilter) {
-				listener.onConditionTriggerSuccess(proximityBleDevice, maxRssi);
+			String addr = proximityBleDevice.getAddress();
+			if (addr.equals("CF:01:01:00:02:E6")
+					|| addr.equals("CF:01:01:00:02:FC")
+					|| addr.equals("CF:01:01:00:02:F8")) {
+				if (maxRssi > -76) {
+					listener.onConditionTriggerSuccess(proximityBleDevice,
+							maxRssi);
+				}
 			} else {
-				listener.onConditionTriggerFailed(proximityBleDevice, maxRssi);
+				if (maxRssi >= rssiFilter) {
+					listener.onConditionTriggerSuccess(proximityBleDevice,
+							maxRssi);
+				}
 			}
 		} else {
 			try {
-				Thread.sleep(60);
+				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
