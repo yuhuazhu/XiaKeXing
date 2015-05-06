@@ -17,6 +17,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.Uri;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -33,6 +34,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.xkx.yjxm.R;
@@ -106,7 +108,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private BaseAdapter adapter;
 
 	private BLEService bleService;
-
+    private RelativeLayout soundlay;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -120,7 +122,12 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		bindBleScanService();
 		bindAudioService();
 	}
-
+    public void hidesoundlay(View v)
+    {
+    	audioBinder.audioStop();
+    	isPlaying = false;
+    	soundlay.setVisibility(View.GONE);
+    }
 	private void bindAudioService() {
 		Intent service = new Intent(RouteMapActivity.this, AudioService.class);
 		bindService(service, audioConn, BIND_AUTO_CREATE);
@@ -132,7 +139,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	}
 
 	private void initUI() {
-
+		soundlay = (RelativeLayout) findViewById(R.id.soundlay);
 		imgplay = (ImageButton) findViewById(R.id.imgplay);
 		imgplay.setOnClickListener(this);
 		imgmouth = (ImageButton) findViewById(R.id.imgmouth);
@@ -362,6 +369,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 			public void run() {
 				String title = titleMap.get(id);
 				ItemData data = new ItemData(title, id);
+				
 				if (isPlaying) {
 					for (int i = 0; i < titleList.size(); i++) {
 						ItemData listData = titleList.get(i);
@@ -375,11 +383,13 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 						adapter.notifyDataSetChanged();
 					}
 				} else {
+					
 					boolean hasProcessd = hasProcessedMap.get(id);
 					if (!hasProcessd) {
 						lastTriggerTime = System.currentTimeMillis();
 						imgplay.setEnabled(true);
 						processPlay(id, true);
+						soundlay.setVisibility(View.VISIBLE);
 					}
 				}
 			}
