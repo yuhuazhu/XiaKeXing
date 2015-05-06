@@ -1,58 +1,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/viewpager_bg"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/img_reflex_bg"
     tools:context=".ReflexActivity" >
 
-    <RelativeLayout
-        android:id="@+id/linearLayout1"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/margin_smallest"
-        android:paddingBottom="@dimen/margin_smallest"
-        android:background="#4effffff" >
-
-        <ImageButton
-                android:id="@+id/button1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:background="@drawable/ic_back"
-                android:onClick="Back" />
-
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="景点映像"
-            android:textColor="#ae000000" />
-    </RelativeLayout>
-
-    <ScrollView
-        android:id="@+id/scrollView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/linearLayout1" >
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-
-            <ImageView
-                android:id="@+id/imageView1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="410dp"
-                android:background="@drawable/img_reflex_text" />
-        </LinearLayout>
-    </ScrollView>
+        android:layout_height="match_parent">
+    </android.support.v4.view.ViewPager>
 
 </RelativeLayout>
