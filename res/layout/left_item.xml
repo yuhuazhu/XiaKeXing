@@ -26,6 +26,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="40dp"
         android:layout_centerVertical="true"
+        android:textSize="@dimen/text_size_list"
         android:layout_toRightOf="@+id/left_img1"
         android:text="TextView" />
 

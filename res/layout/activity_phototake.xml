@@ -21,9 +21,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            
             android:background="@drawable/ic_back" />
-<ImageButton
+
+        <ImageButton
             android:id="@+id/btnhome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,11 +32,13 @@
             android:layout_toRightOf="@+id/btnback"
             android:background="@drawable/ic_home"
             android:onClick="home" />
+
         <TextView
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:textSize="@dimen/text_size_list"
             android:layout_marginTop="@dimen/space_content_listview_vertical"
             android:text="@string/photo_sel" />
     </RelativeLayout>
@@ -45,8 +47,7 @@
         android:id="@+id/imageView1"
         android:layout_width="300dp"
         android:layout_height="300dp"
-        android:layout_centerInParent="true"
-        />
+        android:layout_centerInParent="true" />
 
     <RelativeLayout
         android:id="@+id/progresslay"
@@ -97,7 +98,7 @@
         android:gravity="center_horizontal" >
 
         <RelativeLayout
-             android:id="@+id/cancel"
+            android:id="@+id/cancel"
             android:layout_width="0dp"
             android:layout_height="@dimen/content_top_marginlarge"
             android:layout_weight="0.5"

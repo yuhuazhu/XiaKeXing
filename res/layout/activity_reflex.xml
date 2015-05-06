@@ -36,6 +36,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:text="景点映像"
+            android:textSize="@dimen/text_size_list"
             android:textColor="#ae000000" />
     </RelativeLayout>
 
