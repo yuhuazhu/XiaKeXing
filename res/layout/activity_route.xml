@@ -1,96 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-       >
-<RelativeLayout 
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
- 
-    <LinearLayout
-        android:id="@+id/lay01"
-        android:layout_width="match_parent"
-        android:gravity="center_horizontal"
-        android:layout_height="wrap_content" >
+        android:orientation="vertical" >
 
-        <ImageView
-            android:id="@+id/imgmap"
+        <LinearLayout
+            android:id="@+id/lay01"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:background="@drawable/img_lou01hoz" />
-       
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal" >
 
-    <LinearLayout
-        android:id="@+id/lay02"
+            <ImageView
+                android:id="@+id/imgmap"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:background="@drawable/img_lou01hoz" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/lay02"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/lay01"
+            android:orientation="vertical" >
+
+            <ListView
+                android:id="@+id/listView1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@null" >
+            </ListView>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@color/ligwhite"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/margin_smallest"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/margin_smallest" >
+
+            <ImageButton
+                android:id="@+id/btnback"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:background="@drawable/ic_back" />
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="@dimen/space_content_listview_vertical"
+                android:text="@string/R_toptitle" />
+
+            <ImageButton
+                android:id="@+id/btndlist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/textView1"
+                android:background="@drawable/ic_dlist" />
+
+            <ImageButton
+                android:id="@+id/btnlist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/ic_list" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/lay01"
-        android:orientation="vertical"
+        android:layout_height="wrap_content" 
+        android:layout_gravity="center"
+        android:id="@+id/txtlay"
+        android:visibility="gone"
          >
 
-        
+        <ImageButton
+            android:id="@+id/imgdown"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/img_textbg" />
 
-        <ListView
-            android:id="@+id/listView1"
-            android:layout_width="match_parent"
-            android:divider="@null"
-            android:layout_height="wrap_content" >
-        </ListView>
+        <ScrollView
+            android:id="@+id/scrollView1"
+            android:layout_width="wrap_content"
+            android:layout_height="220dp"
+            android:layout_marginLeft="@dimen/content_soundmargins"
+            android:layout_marginRight="@dimen/content_soundmargins"
+            android:layout_marginTop="60dp" >
 
-        
-       
-       
-    </LinearLayout>
- 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
 
-    
-
-   <RelativeLayout
-       
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:paddingTop="@dimen/margin_smallest"
-        android:paddingBottom="@dimen/margin_smallest"
-        android:orientation="horizontal"
-        android:background="@color/ligwhite"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin" >
+                <TextView
+                    android:id="@+id/txtdetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/imgplay"
+                    android:layout_centerHorizontal="true"
+                    android:text="没有介绍哦"
+                    android:textSize="@dimen/text_size_start"
+                    />
+            </LinearLayout>
+        </ScrollView>
 
         <ImageButton
-            android:id="@+id/btnback"
-            android:layout_centerVertical="true"
+            android:id="@+id/img_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_back" />
-        
-         <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/space_content_listview_vertical"
-            android:text="@string/R_toptitle"  />
-          <ImageButton
-            android:id="@+id/btndlist"
-            android:layout_centerVertical="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/textView1"
-            android:background="@drawable/ic_dlist" />
-          
-          <ImageButton
-            android:id="@+id/btnlist"
-            android:layout_centerVertical="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/ic_list" />
-    </RelativeLayout>
-  
+            android:layout_gravity="right"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/img_txtclose" />
+    </FrameLayout>
 
-</RelativeLayout>
-  </FrameLayout>
+</FrameLayout>
