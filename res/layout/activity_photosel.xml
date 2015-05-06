@@ -25,10 +25,10 @@
             android:layout_gravity="bottom"
             android:background="@color/ligwhite"
             android:orientation="horizontal"
-            android:paddingBottom="@dimen/margin_smallest"
+            android:paddingBottom="@dimen/margin_small"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/margin_smallest" >
+            android:paddingTop="@dimen/margin_small" >
 
             <ImageButton
                 android:id="@+id/btnback"
