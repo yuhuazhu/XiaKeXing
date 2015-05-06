@@ -17,7 +17,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 //选择界面
-public class ChoiceActivity extends Activity{
+public class ChoiceActivity extends Activity {
 
 	private boolean isList;
 	private ImageButton imageButton3;
@@ -28,32 +28,38 @@ public class ChoiceActivity extends Activity{
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_choice);
-//		initUI();
-		
+		// initUI();
+
 		Intent intent = getIntent();
 		isList = intent.getBooleanExtra("列表", true);
 	}
-//	private void initUI()
-//	{
-//		imageButton3 =(ImageButton)findViewById(R.id.imageButton3);
-//		imageButton3.setOnClickListener(this);
-//		imageButton2 =(ImageButton)findViewById(R.id.imageButton2);
-//		imageButton2.setOnClickListener(this);
-//	}
+
+	// private void initUI()
+	// {
+	// imageButton3 =(ImageButton)findViewById(R.id.imageButton3);
+	// imageButton3.setOnClickListener(this);
+	// imageButton2 =(ImageButton)findViewById(R.id.imageButton2);
+	// imageButton2.setOnClickListener(this);
+	// }
 	// 返回
 	public void Back(View v) {
 		finish();
 	}
-	
+
+	public void home(View v) {
+		Intent intent = null;
+
+		intent = new Intent(this, MainActivity.class);
+
+		startActivity(intent);
+	}
+
 	// 跳转到观音山（ 导览 or 路线）
 	public void StartGuanYinShan(View v) {
 		Intent intent = null;
-		if(isList)
-		{
+		if (isList) {
 			intent = new Intent(this, RouteActivity.class);
-		}
-		else
-		{
+		} else {
 			intent = new Intent(this, GuideActivity.class);
 		}
 		intent.putExtra("name", "观音山");
@@ -62,24 +68,24 @@ public class ChoiceActivity extends Activity{
 
 	// 跳转到胡里山炮台（ 导览 or 路线）
 	public void StartHuLiShan(View v) {
-//		Intent intent = null;
-//		if(isList)
-//		{
-//			intent = new Intent(this, RouteActivity.class);
-//		}
-//		else
-//		{
-//			intent = new Intent(this, GuideActivity.class);
-//		}
-//		intent.putExtra("name", "胡里山");
-		Toast.makeText(this, "即将上线,敬请期待",Toast.LENGTH_SHORT).show();
-//		startActivity(intent);
+		// Intent intent = null;
+		// if(isList)
+		// {
+		// intent = new Intent(this, RouteActivity.class);
+		// }
+		// else
+		// {
+		// intent = new Intent(this, GuideActivity.class);
+		// }
+		// intent.putExtra("name", "胡里山");
+		Toast.makeText(this, "即将上线,敬请期待", Toast.LENGTH_SHORT).show();
+		// startActivity(intent);
 	}
-	
+
 	// 跳转到鼓浪屿（ 导览 or 路线）
 	public void StartGuLangYu(View v) {
-		Toast.makeText(this, "即将上线,敬请期待",Toast.LENGTH_SHORT).show();
-//		startActivity(intent);
+		Toast.makeText(this, "即将上线,敬请期待", Toast.LENGTH_SHORT).show();
+		// startActivity(intent);
 	}
 
 	@Override
@@ -88,6 +94,5 @@ public class ChoiceActivity extends Activity{
 		getMenuInflater().inflate(R.menu.choice, menu);
 		return true;
 	}
-	
 
 }
