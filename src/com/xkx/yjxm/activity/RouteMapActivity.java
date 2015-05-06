@@ -104,6 +104,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private HashMap<Integer, Boolean> hasProcessedMap = new HashMap<Integer, Boolean>();
 	private HashMap<Integer, Integer> bgMap = new HashMap<Integer, Integer>();
 	private CopyOnWriteArrayList<ItemData> titleList = new CopyOnWriteArrayList<ItemData>();
+	private HashMap<Integer, Long> idTriggerTimeMap = new HashMap<Integer, Long>();
 
 	private BaseAdapter adapter;
 
@@ -188,6 +189,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 			contentMap.put(id, contentArray[id - 1]);
 			bgMap.put(id, bgRes[id - 1]);
 			hasProcessedMap.put(id, false);
+			idTriggerTimeMap.put(id, 0l);
 		}
 	}
 
@@ -212,13 +214,17 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	}
 
 	private void trigger(BluetoothDevice device) {
-		if (System.currentTimeMillis() - lastTriggerTime < 3000) {
+		if (System.currentTimeMillis() - lastTriggerTime < 2000) {
 			return;
 		}
 		final String address = device.getAddress().trim();
 		Log.e("address", address);
 		final int id = getId(address);
 		if (id < 1 || id > 19) {
+			return;
+		}
+		long idLastTriggerTime = idTriggerTimeMap.get(id);
+		if (System.currentTimeMillis() - idLastTriggerTime < 60 * 1000) {// 一分钟内不触发
 			return;
 		}
 		runOnUiThread(new Runnable() {
@@ -239,7 +245,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 					}
 				} else {
 					lastTriggerTime = System.currentTimeMillis();
-
+					idTriggerTimeMap.put(id, lastTriggerTime);
 					processPlay(id, true);
 					// boolean hasProcessd = hasProcessedMap.get(id);
 					// if (!hasProcessd) {
@@ -328,7 +334,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 			return ID_YIN_DAO_TAI;
 		} else if (address.equalsIgnoreCase("CF:01:01:00:02:FB")) {
 			return ID_LV_KE_SHANG_CHE;
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F5")) {
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F6")) {
 			return ID_ZHI_HUI_LV_YOU_SHI_PING;
 		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F7")) {
 			return ID_DAN_CHE_ZU_LIN;
@@ -348,7 +354,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 			return ID_BAN_GONG_QU;
 		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E6")) {
 			return ID_YI_WU_SHI;
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F6")) {
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F5")) {
 			return ID_XIN_XI_SHI_PING;
 		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E8")) {
 			return ID_JI_FNAG;
