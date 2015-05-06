@@ -653,6 +653,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	}
 
 	private void setIvMap() {
+		
 		ivMap.setOnTouchListener(new OnTouchListener() {
 
 			@Override
