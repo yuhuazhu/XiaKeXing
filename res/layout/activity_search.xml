@@ -22,8 +22,19 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="12dp"
         android:layout_marginTop="64dp"
-        android:onClick="StartNavigation"
         android:clickable="true"
+        android:onClick="StartNavigation"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/txtback"
+        android:layout_width="40dp"
+        android:layout_height="20dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="4dp"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:onClick="back"
         android:text="" />
 
 </RelativeLayout>
