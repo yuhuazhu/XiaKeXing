@@ -33,7 +33,7 @@ public class ChoiceActivity extends Activity {
 		Intent intent = getIntent();
 		isList = intent.getBooleanExtra("列表", true);
 	}
-
+	
 	// private void initUI()
 	// {
 	// imageButton3 =(ImageButton)findViewById(R.id.imageButton3);
@@ -60,7 +60,7 @@ public class ChoiceActivity extends Activity {
 		if (isList) {
 			intent = new Intent(this, RouteActivity.class);
 		} else {
-			intent = new Intent(this, GuideActivity.class);
+			intent = new Intent(this, RouteMapActivity.class);
 		}
 		intent.putExtra("name", "观音山");
 		startActivity(intent);
@@ -75,7 +75,7 @@ public class ChoiceActivity extends Activity {
 		// }
 		// else
 		// {
-		// intent = new Intent(this, GuideActivity.class);
+		// intent = new Intent(this, RouteMapActivity.class);
 		// }
 		// intent.putExtra("name", "胡里山");
 		Toast.makeText(this, "即将上线,敬请期待", Toast.LENGTH_SHORT).show();
@@ -84,6 +84,16 @@ public class ChoiceActivity extends Activity {
 
 	// 跳转到鼓浪屿（ 导览 or 路线）
 	public void StartGuLangYu(View v) {
+		// Intent intent = null;
+		// if(isList)
+		// {
+		// intent = new Intent(this, RouteActivity.class);
+		// }
+		// else
+		// {
+		// intent = new Intent(this, RouteMapActivity.class);
+		// }
+		// intent.putExtra("name", "鼓浪屿");
 		Toast.makeText(this, "即将上线,敬请期待", Toast.LENGTH_SHORT).show();
 		// startActivity(intent);
 	}
