@@ -59,7 +59,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="49dp"
-            android:text="引导台" />
+            android:text="" />
 
         <ImageButton
             android:id="@+id/imgplay"
@@ -160,7 +160,7 @@
             android:layout_alignLeft="@+id/imgswitch"
             android:layout_marginLeft="55dp"
             android:visibility="gone"
-            android:text="TextView" />
+            android:text="" />
     </RelativeLayout>
 
 </FrameLayout>
