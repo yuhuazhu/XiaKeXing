@@ -8,9 +8,6 @@ import java.util.Map;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,13 +23,8 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.LoadedFrom;
-import com.nostra13.universalimageloader.core.display.BitmapDisplayer;
-import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
-import com.nostra13.universalimageloader.core.display.SimpleBitmapDisplayer;
 import com.xkx.yjxm.R;
 import com.xkx.yjxm.adpater.BaseListAdapter;
-import com.xkx.yjxm.utils.imgUtils;
 
 //导游路线
 public class RouteActivity extends Activity implements OnClickListener {
@@ -164,10 +156,10 @@ public class RouteActivity extends Activity implements OnClickListener {
 		textMap.put(3,
 				getResources().getString(R.string.txt_lv_you_zhan_shi));
 		textMap.put(4, getResources()
-				.getString(R.string.txt_bo_fang_qu));
+				.getString(R.string.txt_zhi_hui_lv_you));
 		textMap.put(5, getResources().getString(R.string.txt_anmo));
 		textMap.put(6,
-				getResources().getString(R.string.txt_lv_you_shi_ping));
+				getResources().getString(R.string.txt_xin_xi_bo_fang));
 		
 		
 		
@@ -187,7 +179,7 @@ public class RouteActivity extends Activity implements OnClickListener {
 		textMap.put(13,
 				getResources().getString(R.string.txt_ban_gong_qu));
 		textMap.put(14,
-				getResources().getString(R.string.txt_lv_you_shi_ping));
+				getResources().getString(R.string.txt_xin_xi_bo_fang));
 		
 		textMap.put(16,
 				getResources().getString(R.string.txt_hu_jiao));
