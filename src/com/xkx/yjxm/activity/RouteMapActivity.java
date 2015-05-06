@@ -158,8 +158,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	}
 
 	private void initData() {
-		int[] bgRes = new int[] {
-				R.drawable.img_map_zhi_hui_dao_lan,
+		int[] bgRes = new int[] { R.drawable.img_map_zhi_hui_dao_lan,
 				R.drawable.img_map_xing_li_ji_cun_gui,
 				R.drawable.img_map_ti_yan_3d,
 				R.drawable.img_map_ying_yong_zhan_shi,
@@ -653,12 +652,11 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	}
 
 	private void setIvMap() {
-		
+
 		ivMap.setOnTouchListener(new OnTouchListener() {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-
 				int x = (int) event.getX();
 				int topleftx = x - 10;
 
