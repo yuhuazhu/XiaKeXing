@@ -7,13 +7,21 @@
     <RelativeLayout
         android:id="@+id/shopping_titlebar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:background="@color/ligwhite"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/margin_smallest"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/margin_smallest" >
 
         <ImageButton
             android:id="@+id/imageButton1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_back" />
+            android:layout_centerVertical="true"
+            android:onClick="back"
+            android:background="@drawable/ic_back" />
 
         <ImageButton
             android:id="@+id/imageButton2"
@@ -22,7 +30,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:onClick="Finsh"
-            android:src="@drawable/ic_back" />
+            android:background="@drawable/img_txtclose" />
 
         <TextView
             android:id="@+id/textView1"
@@ -31,9 +39,8 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:text="导购" />
-
     </RelativeLayout>
-	
+
     <WebView
         android:id="@+id/webView1"
         android:layout_width="match_parent"

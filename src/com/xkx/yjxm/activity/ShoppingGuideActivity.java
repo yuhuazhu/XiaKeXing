@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.View;
 import android.view.Window;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -42,7 +43,22 @@ public class ShoppingGuideActivity extends Activity {
 			return true;
 		}
 	}
-
+	public void Finsh(View v)
+	{
+		finish();
+	}
+	public void back(View v)
+	{
+		if (webView.canGoBack()) {
+			// goBack()表示返回WebView的上一页面
+			webView.goBack();
+			
+		}
+		else
+		{
+			finish();
+		}
+	}
 	// 设置回退
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if ((keyCode == KeyEvent.KEYCODE_BACK) && webView.canGoBack()) {
