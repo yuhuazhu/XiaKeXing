@@ -32,8 +32,8 @@ public class ReflexActivity extends Activity {
 		pager = (ViewPager) findViewById(R.id.viewpager);
 		pager.setAdapter(new ViewPagerAdapter());
 		for (int i = 0; i < 3; i++) {
-			m_ImgIdX.add(R.drawable.x1 + i);
-			m_ImgIdY.add(R.drawable.y1 + i);
+			m_ImgIdX.add(R.drawable.reflex_bg_1 + i);
+			m_ImgIdY.add(R.drawable.reflex_text_1 + i);
 			LayoutInflater layoutInflater = getLayoutInflater();
 			View view = layoutInflater.inflate(R.layout.viewpager_item, null);
 			ImageView imageView = (ImageView) view.findViewById(R.id.imageView_content);
