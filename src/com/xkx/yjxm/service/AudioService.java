@@ -11,28 +11,37 @@ import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 
-import com.xkx.yjxm.R;
-
 public class AudioService extends Service {
 	private MediaPlayer mediaPlayer;
 	// 是不是已经导入了资源
 	private boolean isFrist;
 
-//	Uri uri = Uri.parse("android.resource://com.xkx.yjxm/"+R.raw.yindao);
 	public AudioService() {
 	}
 
 	@Override
 	public void onCreate() {
 		mediaPlayer = new MediaPlayer();
-//		play(uri);
 		super.onCreate();
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		mediaPlayer.release();
+	}
+
+	@Override
+	public boolean onUnbind(Intent intent) {
+		mediaPlayer.release();
+		return super.onUnbind(intent);
 	}
 
 	public void play(Uri uri) {
 		try {
 			mediaPlayer.reset();
 			mediaPlayer.setDataSource(this, uri);
+			mediaPlayer.setVolume(1, 1);
 			mediaPlayer.prepareAsync();
 			mediaPlayer.setOnPreparedListener(new OnPreparedListener() {
 
@@ -40,7 +49,6 @@ public class AudioService extends Service {
 				public void onPrepared(MediaPlayer mp) {
 					mediaPlayer.start();
 					isFrist = true;
-
 				}
 			});
 		} catch (IllegalArgumentException e) {
@@ -56,12 +64,16 @@ public class AudioService extends Service {
 
 			@Override
 			public void onCompletion(MediaPlayer mp) {
-				// 播完后要做的事
+				listener.onPlayComplete();
 			}
 		});
 	}
 
 	public class AudioBinder extends Binder {
+		public void setOnPlayCompleteListener(OnPlayCompleteListener lis) {
+			listener = lis;
+		}
+
 		// 初始化并播放
 		public void audioPlay(Uri uri) {
 			play(uri);
@@ -99,11 +111,18 @@ public class AudioService extends Service {
 			isFrist = false;
 			play(uri);
 		}
-
 	}
+
+	private OnPlayCompleteListener listener;
+
+	AudioBinder binder = new AudioBinder();
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		return new AudioBinder();
+		return binder;
+	}
+
+	public interface OnPlayCompleteListener {
+		public void onPlayComplete();
 	}
 }
