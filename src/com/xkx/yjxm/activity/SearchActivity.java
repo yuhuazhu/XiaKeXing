@@ -31,7 +31,9 @@ public class SearchActivity extends Activity {
 			}
 		});
 	}
-	
+	public void Back(View v) {
+		finish();
+	}
 	// 跳转到活动资讯
 	public void StartNavigation(View v) {
 		Intent intent = new Intent(this, NavigationActivity.class);
