@@ -1,14 +1,12 @@
 package com.xkx.yjxm.utils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.Date;
 
 import android.os.Environment;
-import android.os.Handler;
 import android.util.Log;
 
 public class CrashHandler implements UncaughtExceptionHandler {
@@ -57,9 +55,10 @@ public class CrashHandler implements UncaughtExceptionHandler {
 		FileWriter writer = null;
 		try {
 			f = new File(path + File.separator + "ex.log");
-			writer = new FileWriter(f, true);
+			writer = new FileWriter(f, false);
 			StringBuffer sb = new StringBuffer();
 			StackTraceElement[] trace = ex.getStackTrace();
+			sb.append(new Date().toLocaleString()+"\n");
 			sb.append(ex.getMessage() + "\n");
 			for (int i = 0; i < trace.length; i++) {
 				sb.append(trace[i] + "\n");
