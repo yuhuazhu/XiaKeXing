@@ -16,6 +16,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -51,7 +54,10 @@ public class RouteActivity extends Activity implements OnClickListener {
 	private String distance[] = new String[19];
 	private String stringExtra;
 	protected ImageLoader imageLoader = ImageLoader.getInstance();
-
+	private TextView txtdetail;
+	private ImageButton img_close;
+    private FrameLayout txtlay;
+    private Map<Integer, String> textMap;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -139,6 +145,53 @@ public class RouteActivity extends Activity implements OnClickListener {
 	private void initUI() {
 		btndlist = (ImageButton) findViewById(R.id.btndlist);
 		btndlist.setOnClickListener(this);
+		txtlay  = (FrameLayout) findViewById(R.id.txtlay);
+		txtdetail = (TextView) findViewById(R.id.txtdetail);
+		img_close  = (ImageButton) findViewById(R.id.img_close);
+		
+		img_close.setOnClickListener(this);
+		
+		textMap = new HashMap<Integer, String>();
+		textMap.put(0, getResources().getString(R.string.txt_dao_lan_she_bei));
+		textMap.put(1, getResources().getString(R.string.txt_yin_dao));
+		
+		
+		// mapBgMap.put(2, R.drawable.img_map)
+		
+		textMap.put(2, getResources().getString(R.string.txt_tiyan_3d));
+	
+		
+		textMap.put(3,
+				getResources().getString(R.string.txt_lv_you_zhan_shi));
+		textMap.put(4, getResources()
+				.getString(R.string.txt_bo_fang_qu));
+		textMap.put(5, getResources().getString(R.string.txt_anmo));
+		textMap.put(6,
+				getResources().getString(R.string.txt_lv_you_shi_ping));
+		
+		
+		
+		textMap.put(7,
+				getResources().getString(R.string.txt_xing_li_ji_cun));
+		// mapBgMap.put(7, R.drawable.img_map);
+		textMap.put(8,
+				getResources().getString(R.string.txt_yiwu_shi));
+		textMap.put(9,
+				getResources().getString(R.string.txt_ban_shou_li));
+		textMap.put(10,
+				getResources().getString(R.string.txt_duo_gong_neng));
+		textMap.put(11,
+				getResources().getString(R.string.txt_yun_shu_ju));
+		textMap.put(12,
+				getResources().getString(R.string.txt_yu_jin));
+		textMap.put(13,
+				getResources().getString(R.string.txt_ban_gong_qu));
+		textMap.put(14,
+				getResources().getString(R.string.txt_lv_you_shi_ping));
+		
+		textMap.put(16,
+				getResources().getString(R.string.txt_hu_jiao));
+		
 		btnback = (ImageButton) findViewById(R.id.btnback);
 		btnback.setOnClickListener(this);
 		btnlist = (ImageButton) findViewById(R.id.btnlist);
@@ -149,6 +202,16 @@ public class RouteActivity extends Activity implements OnClickListener {
 		listView1 = (ListView) findViewById(R.id.listView1);
 		myAdapter = new MyAdapter();
 		listView1.setAdapter(myAdapter);
+		listView1.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				txtdetail.setText(textMap.get(position));
+				txtlay.setVisibility(View.VISIBLE);
+			}
+		});
 	}
 
 	private class MyAdapter extends BaseListAdapter {
@@ -246,6 +309,9 @@ public class RouteActivity extends Activity implements OnClickListener {
 			intent.setClass(this, RouteMapActivity.class);
 
 			startActivity(intent);
+			break;
+		case R.id.img_close:
+			txtlay.setVisibility(View.GONE);
 			break;
 		default:
 			break;
