@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="37dp" >
+
+        <View
+            android:id="@+id/line1"
+            android:layout_width="1dp"
+            android:layout_height="50dp"
+            android:background="@color/gray" />
+
+        <View
+            android:id="@+id/line2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="50dp"
+            android:background="@color/gray" />
+
+        <TextView
+            android:id="@+id/txttitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/line1"
+            android:layout_marginLeft="47dp"
+            android:layout_toRightOf="@+id/line1"
+            android:text="333"
+            android:textColor="@color/orgph_title"
+            android:textSize="@dimen/text_size_main_num" />
+
+        <TextView
+            android:id="@+id/txttime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/line2"
+            android:layout_marginLeft="47dp"
+            android:layout_toRightOf="@+id/line1"
+            android:text="123" />
+
+        <TextView
+            android:id="@+id/txtdistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/corners_bg"
+            android:text="150m"
+            android:textColor="@color/gray" />
+    </RelativeLayout>
+
+    <com.xkx.yjxm.custom.CircleImageView
+        android:id="@+id/imageView1"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="3dp"
+         />
+
+</FrameLayout>
