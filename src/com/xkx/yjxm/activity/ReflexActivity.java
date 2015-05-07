@@ -23,15 +23,18 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.TextView;
 
 //映像
 public class ReflexActivity extends Activity {
 	private ArrayList<View> m_ViewList = new ArrayList<View>();
 	private ArrayList<Integer> m_ImgIdX = new ArrayList<Integer>();
 	private ArrayList<Integer> m_ImgIdY = new ArrayList<Integer>();
+	private String[] m_title = {"观音山", "胡里山", "鼓浪屿"};
 	private ViewPager pager;
 	private int attractionsCount = 3;		//景点数
 	private ImageView m_imageView;
+	private TextView m_tv_title;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -46,6 +49,8 @@ public class ReflexActivity extends Activity {
 			m_ImgIdY.add(R.drawable.reflex_text_1 + i);
 			LayoutInflater layoutInflater = getLayoutInflater();
 			View view = layoutInflater.inflate(R.layout.viewpager_item, null);
+			m_tv_title = (TextView) view.findViewById(R.id.textView1);
+			m_tv_title.setText(m_title[i]);
 			ImageView imageView = (ImageView) view.findViewById(R.id.imageView_content);
 			LinearLayout layout = (LinearLayout) view.findViewById(R.id.viewpager_bg);
 			layout.setBackgroundResource(m_ImgIdX.get(i));
@@ -81,7 +86,6 @@ public class ReflexActivity extends Activity {
 				@Override
 				public void onAnimationEnd(Animation animation) {
 					m_imageView.setVisibility(View.INVISIBLE);
-					
 				}
 			});
 		}
