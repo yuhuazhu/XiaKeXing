@@ -31,11 +31,12 @@ public class BottomFragment extends Fragment {
 		if (parent != null) {
 			parent.removeView(rootView);
 		}
-		initUI(rootView);
+//		initUI(rootView);
 
 		return rootView;
 	}
 
+	
 	private void initUI(View rootView) {
 
 		GifView1 = (GifView) rootView.findViewById(R.id.GifView1);
