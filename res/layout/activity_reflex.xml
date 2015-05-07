@@ -29,16 +29,6 @@
             android:background="@drawable/ic_back"
             android:onClick="Back" />
 
-        <TextView
-            android:id="@+id/textView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="景点映像"
-            android:textSize="@dimen/text_size_list"
-            android:textColor="#ae000000" />
-
         
 
     </RelativeLayout>
