@@ -16,7 +16,7 @@ import android.webkit.WebViewClient;
 public class ShoppingGuideActivity extends Activity {
 
 	private WebView webView;
-
+	private String  url = "http://sz.himall.kuaidiantong.cn/m-Weixin/";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -27,7 +27,7 @@ public class ShoppingGuideActivity extends Activity {
 		// 设置WebView属性，能够执行Javascript脚本 
 		webView.getSettings().setJavaScriptEnabled(true);
 		// 加载需要显示的网页
-		webView.loadUrl("http://www.baidu.com");
+		webView.loadUrl(url);
 		// 设置Web视图
 		webView.setWebViewClient(new HelloWebViewClient());
 		//防止打不开网页
