@@ -22,14 +22,14 @@
     <FrameLayout
         android:id="@+id/suface_frame"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/toplay" >
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/menu_frame"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
          >
     </FrameLayout>
