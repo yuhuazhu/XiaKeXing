@@ -49,6 +49,7 @@ public class VideoFragment extends Fragment {
 		return rootView;
 	}
 
+	@SuppressWarnings("deprecation")
 	private void initUI(View rootView) {
 		
 		surfaceView = (SurfaceView) rootView.findViewById(R.id.surfaceview);
