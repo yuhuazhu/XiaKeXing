@@ -120,7 +120,7 @@ public class BLEService extends Service {
 			if (addr.equals("CF:01:01:00:02:E6")
 					|| addr.equals("CF:01:01:00:02:FC")
 					|| addr.equals("CF:01:01:00:02:F8")) {
-				if (maxRssi > -76) {
+				if (maxRssi > -78) {
 					listener.onConditionTriggerSuccess(proximityBleDevice,
 							maxRssi);
 				}
