@@ -145,6 +145,7 @@ public class HomeActivity extends FragmentActivity {
 			if (isPlaying) {
 				start.setBackgroundResource(R.drawable.ic_play);
 				mediaPlayer.pause();
+				start.setVisibility(View.VISIBLE);
 				isPlaying = false;
 				// 设置为true后，暂停服务后不会被kill掉
 				// stopForeground(true);
