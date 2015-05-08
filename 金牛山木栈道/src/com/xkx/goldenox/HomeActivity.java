@@ -36,6 +36,7 @@ public class HomeActivity extends FragmentActivity {
 	private final String TAG_FRAG_MENU = "com.xkx.goldenox.menu";
 
 	private RelativeLayout toplay;
+	private RelativeLayout playlay;
 	private GifView GifView1;
 
 	private MediaPlayer mediaPlayer;
@@ -114,6 +115,7 @@ public class HomeActivity extends FragmentActivity {
 						isFrist = true;
 						isPlaying = true;
 						start.setBackgroundResource(R.drawable.ic_pause);
+						start.setVisibility(View.GONE);
 					}
 				});
 				mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
@@ -122,6 +124,7 @@ public class HomeActivity extends FragmentActivity {
 					public void onCompletion(MediaPlayer mp) {
 						isPlaying = false;
 						start.setBackgroundResource(R.drawable.ic_play);
+						start.setVisibility(View.VISIBLE);
 					}
 				});
 			} catch (IllegalArgumentException e) {
@@ -194,6 +197,7 @@ public class HomeActivity extends FragmentActivity {
 		// toplay = (RelativeLayout) findViewById(R.id.toplay);
 		// sufacelay = (LinearLayout) findViewById(R.id.sufacelay);
 		// menu_frame = (FrameLayout) findViewById(R.id.menu_frame);
+		
 		surfaceView = (SurfaceView) findViewById(R.id.surfaceview);
 		surfaceView.getHolder().setFixedSize(176, 144);// …Ë÷√∑÷±Ê¬ 
 		surfaceView.getHolder()
@@ -204,7 +208,9 @@ public class HomeActivity extends FragmentActivity {
 		ButtonOnClikListiner buttonOnClikListinero = new ButtonOnClikListiner();
 		start = (ImageButton) findViewById(R.id.playOnHome);
 		// ImageButton pause = (ImageButton) findViewById(R.id.pause);
-		start.setOnClickListener(buttonOnClikListinero);
+		//start.setOnClickListener(buttonOnClikListinero);
+		playlay =(RelativeLayout) findViewById(R.id.playlay);
+		playlay.setOnClickListener(buttonOnClikListinero);
 		// pause.setOnClickListener(buttonOnClikListinero);
 	}
 
