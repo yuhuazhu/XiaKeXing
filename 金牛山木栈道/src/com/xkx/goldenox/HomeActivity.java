@@ -73,7 +73,7 @@ public class HomeActivity extends FragmentActivity {
 		m_NowMaxX = m_maxX;
 		m_NowMinY = m_minY;
 		m_NowMaxY = m_maxY;
-		
+
 		fragTrans.replace(R.id.menu_frame, new BottomFragment(), "");
 		fragTrans.commit();
 
@@ -93,70 +93,78 @@ public class HomeActivity extends FragmentActivity {
 	// }
 
 	private void processPlay() {
+		runOnUiThread(new Runnable() {
+			public void run() {
+				if (!isFrist) {
+					start.setBackgroundResource(R.drawable.ic_play);
 
-		if (!isFrist) {
-			start.setBackgroundResource(R.drawable.ic_play);
+					File file = new File(
+							Environment.getExternalStorageDirectory(), filename);
 
-			File file = new File(Environment.getExternalStorageDirectory(),
-					filename);
-			
-			try {
-				mediaPlayer.reset();// 重置为初始状态
-				mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);// 设置音乐流的类型
-				mediaPlayer.setDisplay(surfaceView.getHolder());// 设置video影片以surfaceviewholder播放
-				mediaPlayer.setDataSource(file.getAbsolutePath());
-				mediaPlayer.setVolume(1, 1);
-				mediaPlayer.prepareAsync();
-				mediaPlayer.setOnPreparedListener(new OnPreparedListener() {
+					try {
+						mediaPlayer.reset();// 重置为初始状态
+						mediaPlayer
+								.setAudioStreamType(AudioManager.STREAM_MUSIC);// 设置音乐流的类型
+						mediaPlayer.setDisplay(surfaceView.getHolder());// 设置video影片以surfaceviewholder播放
+						mediaPlayer.setDataSource(file.getAbsolutePath());
+						mediaPlayer.setVolume(1, 1);
+						mediaPlayer.prepareAsync();
+						mediaPlayer
+								.setOnPreparedListener(new OnPreparedListener() {
 
-					@Override
-					public void onPrepared(MediaPlayer mp) {
-						mediaPlayer.start();
-						isFrist = true;
-						isPlaying = true;
-						start.setBackgroundResource(R.drawable.ic_pause);
-						start.setVisibility(View.GONE);
-					}
-				});
-				mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
+									@Override
+									public void onPrepared(MediaPlayer mp) {
+										mediaPlayer.start();
+										isFrist = true;
+										isPlaying = true;
+										start.setBackgroundResource(R.drawable.ic_pause);
+										start.setVisibility(View.GONE);
+									}
+								});
+						mediaPlayer
+								.setOnCompletionListener(new OnCompletionListener() {
 
-					@Override
-					public void onCompletion(MediaPlayer mp) {
-						isPlaying = false;
+									@Override
+									public void onCompletion(MediaPlayer mp) {
+										isPlaying = false;
+										start.setBackgroundResource(R.drawable.ic_play);
+										start.setVisibility(View.VISIBLE);
+									}
+								});
+					} catch (IllegalArgumentException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (SecurityException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalStateException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}// 设置路径
+				} else {
+
+					if (isPlaying) {
 						start.setBackgroundResource(R.drawable.ic_play);
+						mediaPlayer.pause();
 						start.setVisibility(View.VISIBLE);
+						isPlaying = false;
+						// 设置为true后，暂停服务后不会被kill掉
+						// stopForeground(true);
+
+					} else {
+						start.setBackgroundResource(R.drawable.ic_pause);
+						mediaPlayer.start();
+						start.setVisibility(View.GONE);
+						isPlaying = true;
 					}
-				});
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SecurityException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalStateException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}// 设置路径
-		} else {
-
-			if (isPlaying) {
-				start.setBackgroundResource(R.drawable.ic_play);
-				mediaPlayer.pause();
-				start.setVisibility(View.VISIBLE);
-				isPlaying = false;
-				// 设置为true后，暂停服务后不会被kill掉
-				// stopForeground(true);
-
-			} else {
-				start.setBackgroundResource(R.drawable.ic_pause);
-				mediaPlayer.start();
-				start.setVisibility(View.GONE);
-				isPlaying = true;
+				}
+				// tvContent.setVisibility(View.INVISIBLE);
+				// imgdownmouth.setVisibility(View.INVISIBLE);
 			}
-		}
+		});
 
 	}
 
@@ -199,7 +207,7 @@ public class HomeActivity extends FragmentActivity {
 		// toplay = (RelativeLayout) findViewById(R.id.toplay);
 		// sufacelay = (LinearLayout) findViewById(R.id.sufacelay);
 		// menu_frame = (FrameLayout) findViewById(R.id.menu_frame);
-		
+
 		surfaceView = (SurfaceView) findViewById(R.id.surfaceview);
 		surfaceView.getHolder().setFixedSize(176, 144);// 设置分辨率
 		surfaceView.getHolder()
@@ -210,8 +218,8 @@ public class HomeActivity extends FragmentActivity {
 		ButtonOnClikListiner buttonOnClikListinero = new ButtonOnClikListiner();
 		start = (ImageButton) findViewById(R.id.playOnHome);
 		// ImageButton pause = (ImageButton) findViewById(R.id.pause);
-		//start.setOnClickListener(buttonOnClikListinero);
-		playlay =(RelativeLayout) findViewById(R.id.playlay);
+		// start.setOnClickListener(buttonOnClikListinero);
+		playlay = (RelativeLayout) findViewById(R.id.playlay);
 		playlay.setOnClickListener(buttonOnClikListinero);
 		// pause.setOnClickListener(buttonOnClikListinero);
 	}
@@ -295,7 +303,6 @@ public class HomeActivity extends FragmentActivity {
 				mediaPlayer.seekTo(prosition);
 				prosition = 0;
 			}
-			
 
 		}
 
