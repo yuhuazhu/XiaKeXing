@@ -72,6 +72,7 @@ public class HomeActivity extends FragmentActivity {
 		m_NowMaxX = m_maxX;
 		m_NowMinY = m_minY;
 		m_NowMaxY = m_maxY;
+		
 		fragTrans.replace(R.id.menu_frame, new BottomFragment(), "");
 		fragTrans.commit();
 
@@ -223,7 +224,7 @@ public class HomeActivity extends FragmentActivity {
 						.show();
 				return;
 			}
-			filename = "2793299.mp4";
+			filename = "zhlv0804.mp4";
 			// switch (v.getId()) {
 			// case R.id.play:
 			// processPlay();
@@ -286,6 +287,7 @@ public class HomeActivity extends FragmentActivity {
 				mediaPlayer.seekTo(prosition);
 				prosition = 0;
 			}
+			
 
 		}
 
