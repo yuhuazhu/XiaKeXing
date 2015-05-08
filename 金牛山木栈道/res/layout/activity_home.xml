@@ -5,9 +5,9 @@
     tools:context=".HomeActivity" >
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/toplay"
+        android:layout_width="match_parent"
+        android:layout_height="33dp"
         android:background="@drawable/img_titlebg" >
 
         <TextView
@@ -15,23 +15,38 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:textColor="#ffffff"
-            android:text="福道——福州城市森林步道(左海公园——金牛山)" />
+            android:text="福道——福州城市森林步道(左海公园——金牛山)"
+            android:textColor="#ffffff" />
     </RelativeLayout>
 
-    <FrameLayout
-        android:id="@+id/suface_frame"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/toplay" >
-    </FrameLayout>
+    <RelativeLayout
+        android:id="@+id/sufacelay"
+        android:layout_width="fill_parent"
+        android:layout_height="190dp"
+        android:layout_below="@+id/toplay"
+        android:background="#ffffff"
+        android:orientation="vertical" >
+
+        
+
+        <SurfaceView
+            android:id="@+id/surfaceview"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
+         <ImageButton
+                android:id="@+id/play"
+                android:layout_width="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_play" />
+        
+    </RelativeLayout>
 
     <FrameLayout
         android:id="@+id/menu_frame"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-         >
+        android:layout_height="417dp"
+        android:layout_alignParentBottom="true" >
     </FrameLayout>
 
 </RelativeLayout>
