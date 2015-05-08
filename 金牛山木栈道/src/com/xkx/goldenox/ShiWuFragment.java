@@ -12,13 +12,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-public class YantuFragment extends Fragment {
+public class ShiWuFragment extends Fragment {
 	private View rootView;// 缓存Fragment view
 	private ImageView GifView1;
-	private int[] m_minX = { 481,0};
-	private int[] m_minY = { 603 ,0};
-	private int[] m_maxX = { 724 ,190};
-	private int[] m_maxY = { 791 ,77};
+	private int[] m_minX = { 0 };
+	private int[] m_minY = { 0 };
+	private int[] m_maxX = { 190 };
+	private int[] m_maxY = { 77  };
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -29,7 +29,7 @@ public class YantuFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		if (rootView == null) {
-			rootView = inflater.inflate(R.layout.fragment_yantu, null);
+			rootView = inflater.inflate(R.layout.fragment_shiwu, null);
 		}
 		// 缓存的rootView需要判断是否已经被加过parent，
 		// 如果有parent需要从parent删除，要不然会发生这个rootview已经有parent的错误。
@@ -68,12 +68,9 @@ public class YantuFragment extends Fragment {
 							Fragment fragment = null;
 							switch (i) {
 							case 0:
-								fragment = new YantuParkFragment();
-								fragTrans.replace(R.id.menu_frame, fragment, "");
-								fragTrans.addToBackStack(null);
+								fragMgr.popBackStack();
 								break;
 							case 1:
-								fragMgr.popBackStack();
 								break;
 							case 2:
 								break;
@@ -87,7 +84,8 @@ public class YantuFragment extends Fragment {
 							default:
 								break;
 							}
-							
+//							fragTrans.replace(R.id.menu_frame, fragment, "");
+//							fragTrans.addToBackStack(null);
 							fragTrans.commit();
 						}
 					}

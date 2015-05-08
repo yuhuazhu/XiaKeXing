@@ -12,13 +12,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-public class ShijinyulanFragment extends Fragment implements OnTouchListener{
+public class ShijinyulanFragment extends Fragment implements OnTouchListener {
 	private View rootView;// »º´æFragment view
 	private ImageView GifView1;
-	private int[] m_minX = { 8, 96 };
-	private int[] m_minY = { 9, 11 };
-	private int[] m_maxX = { 69, 169 };
-	private int[] m_maxY = { 57, 63 };
+	private int[] m_minX = { 0, 96 };
+	private int[] m_minY = { 0, 11 };
+	private int[] m_maxX = { 190, 169 };
+	private int[] m_maxY = { 77, 63 };
 	private Bundle bundle;
 
 	@Override
@@ -42,8 +42,6 @@ public class ShijinyulanFragment extends Fragment implements OnTouchListener{
 		bundle = savedInstanceState;
 		return rootView;
 	}
-	
-	
 
 	private void initUI(View rootView) {
 
@@ -54,43 +52,46 @@ public class ShijinyulanFragment extends Fragment implements OnTouchListener{
 			public boolean onTouch(View v, MotionEvent event) {
 				float x = event.getX();
 				float y = event.getY();
-				Toast.makeText(getActivity(), "x=" + x + "y=" + y,
-						Toast.LENGTH_SHORT).show();
-					for (int i = 0; i < m_minX.length; i++) {
-						int x1 = m_minX[i];
-						int x2 = m_maxX[i];
-						int y1 = m_minY[i];
-						int y2 = m_maxY[i];
-						if (x < m_maxX[i] && x > m_minX[i] && y < m_maxY[i]
-								&& y > m_minY[i]) {
-							FragmentManager fragMgr = getActivity()
-									.getSupportFragmentManager();
-							FragmentTransaction fragTrans = fragMgr
-									.beginTransaction();
-							// TODO Ìæ»»frament
-							Fragment fragment = null;
-							switch (i) {
-							case 0:
-								break;
-							case 1:
-								break;
-							case 2:
-								break;
-							case 3:
-								break;
-							case 4:
-								break;
-							case 5:
-								break;
+				// Toast.makeText(getActivity(), "x=" + x + "y=" + y,
+				// Toast.LENGTH_SHORT).show();
+				// if (event.getAction() == MotionEvent.ACTION_UP) {
+				for (int i = 0; i < m_minX.length; i++) {
+					int x1 = m_minX[i];
+					int x2 = m_maxX[i];
+					int y1 = m_minY[i];
+					int y2 = m_maxY[i];
+					if (x < m_maxX[i] && x > m_minX[i] && y < m_maxY[i]
+							&& y > m_minY[i]) {
+						FragmentManager fragMgr = getActivity()
+								.getSupportFragmentManager();
+						FragmentTransaction fragTrans = fragMgr
+								.beginTransaction();
+						// TODO Ìæ»»frament
+						Fragment fragment = null;
+						switch (i) {
+						case 0:
+							// back
+							fragMgr.popBackStack();
+							break;
+						case 1:
+							fragMgr.popBackStack(0, 0);
+							break;
+						case 2:
+							break;
+						case 3:
+							break;
+						case 4:
+							break;
+						case 5:
+							break;
 
-							default:
-								break;
-							}
-							fragTrans.replace(R.id.menu_frame, fragment, "");
-							fragTrans.addToBackStack(null);
-							fragTrans.commit();
+						default:
+							break;
 						}
+						fragTrans.commit();
 					}
+				}
+				// }
 				return true;
 			}
 		});

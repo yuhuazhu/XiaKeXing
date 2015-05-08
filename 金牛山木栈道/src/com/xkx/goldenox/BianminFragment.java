@@ -15,10 +15,10 @@ import android.widget.Toast;
 public class BianminFragment extends Fragment {
 	private View rootView;// ª∫¥ÊFragment view
 	private ImageView GifView1;
-	private int[] m_minX = { 48, 96 };
-	private int[] m_minY = { 467, 11 };
-	private int[] m_maxX = { 519, 169 };
-	private int[] m_maxY = { 717, 63 };
+	private int[] m_minX = { 48, 552 ,0};
+	private int[] m_minY = { 467, 454 ,0};
+	private int[] m_maxX = { 519, 1035 ,190};
+	private int[] m_maxY = { 717, 724 ,77};
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,8 +50,8 @@ public class BianminFragment extends Fragment {
 			public boolean onTouch(View v, MotionEvent event) {
 				float x = event.getX();
 				float y = event.getY();
-				Toast.makeText(getActivity(), "x=" + x + "y=" + y,
-						Toast.LENGTH_SHORT).show();
+//				Toast.makeText(getActivity(), "x=" + x + "y=" + y,
+//						Toast.LENGTH_SHORT).show();
 					for (int i = 0; i < m_minX.length; i++) {
 						int x1 = m_minX[i];
 						int x2 = m_maxX[i];
@@ -68,12 +68,16 @@ public class BianminFragment extends Fragment {
 							switch (i) {
 							case 0:
 								fragment = new RexianFragment();
+								fragTrans.replace(R.id.menu_frame, fragment, "");
+								fragTrans.addToBackStack(null);
 								break;
 							case 1:
 								fragment = new ShiWuFragment();
+								fragTrans.replace(R.id.menu_frame, fragment, "");
+								fragTrans.addToBackStack(null);
 								break;
 							case 2:
-								fragment = new YantuFragment();
+								fragMgr.popBackStack();
 								break;
 							case 3:
 								fragment = new BianminFragment();
@@ -88,8 +92,7 @@ public class BianminFragment extends Fragment {
 							default:
 								break;
 							}
-							fragTrans.replace(R.id.menu_frame, fragment, "");
-							fragTrans.addToBackStack(null);
+							
 							fragTrans.commit();
 						}
 					}

@@ -2,6 +2,8 @@ package com.xkx.goldenox;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -13,11 +15,11 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -59,7 +61,7 @@ public class HomeActivity extends FragmentActivity {
 	private int[] m_NowMinY = new int[10];
 	private int[] m_NowMaxY = new int[10];
 	private boolean isFrist = false;
-
+	private boolean isExit;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -79,6 +81,33 @@ public class HomeActivity extends FragmentActivity {
 
 	}
 
+	private void exitBy2Click() {
+		Timer tExit = null;
+		if (isExit == false) {
+			isExit = true; // 准备退出
+			Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+			tExit = new Timer();
+			tExit.schedule(new TimerTask() {
+				@Override
+				public void run() {
+					isExit = false; // 取消退出
+				}
+			}, 2000); // 如果2秒钟内没有按下返回键，则启动定时器取消掉刚才执行的任务
+		} else {
+			finish();
+			System.exit(0);
+		}
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			exitBy2Click(); // 调用双击退出函数
+		}
+
+		return false;
+	}
+	
 	private void bindAudioService() {
 		Intent service = new Intent(HomeActivity.this, AudioService.class);
 		bindService(service, audioConn, BIND_AUTO_CREATE);
@@ -222,6 +251,7 @@ public class HomeActivity extends FragmentActivity {
 		playlay = (RelativeLayout) findViewById(R.id.playlay);
 		playlay.setOnClickListener(buttonOnClikListinero);
 		// pause.setOnClickListener(buttonOnClikListinero);
+		
 	}
 
 	// @Override
@@ -265,7 +295,7 @@ public class HomeActivity extends FragmentActivity {
 		mediaPlayer.release();
 		// Activity销毁时停止播放，释放资源。不做这个操作，即使退出还是能听到视频播放的声音
 	}
-
+	
 	private void play() {
 		try {
 			File file = new File(Environment.getExternalStorageDirectory(),

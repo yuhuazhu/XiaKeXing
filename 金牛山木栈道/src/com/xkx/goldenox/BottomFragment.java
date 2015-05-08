@@ -42,7 +42,7 @@ public class BottomFragment extends Fragment {
 	}
 
 	private void initUI(View rootView) {
-
+		
 		GifView1 = (GifView) rootView.findViewById(R.id.GifView1);
 		GifView1.setOnTouchListener(new OnTouchListener() {
 
@@ -50,8 +50,8 @@ public class BottomFragment extends Fragment {
 			public boolean onTouch(View v, MotionEvent event) {
 				float x = event.getX();
 				float y = event.getY();
-				Toast.makeText(getActivity(), "x=" + x + "y=" + y,
-						Toast.LENGTH_SHORT).show();
+//				Toast.makeText(getActivity(), "x=" + x + "y=" + y,
+//						Toast.LENGTH_SHORT).show();
 					for (int i = 0; i < m_minX.length; i++) {
 						int x1 = m_minX[i];
 						int x2 = m_maxX[i];
@@ -88,7 +88,8 @@ public class BottomFragment extends Fragment {
 							default:
 								break;
 							}
-							fragTrans.replace(R.id.menu_frame, fragment, "");
+//							fragTrans.hide(BottomFragment.this);
+							fragTrans.add(R.id.menu_frame, fragment, "");
 							fragTrans.addToBackStack(null);
 							fragTrans.commit();
 						}
