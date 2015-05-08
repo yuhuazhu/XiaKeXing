@@ -5,12 +5,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 
 public class MapserdetailFragment extends Fragment {
 	private View rootView;// ª∫¥ÊFragment view
-	private GifView GifView1;
+	private ImageView GifView1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -36,7 +37,7 @@ public class MapserdetailFragment extends Fragment {
 
 	private void initUI(View rootView) {
 
-		GifView1 = (GifView) rootView.findViewById(R.id.GifView1);
+		GifView1 = (ImageView) rootView.findViewById(R.id.GifView1);
 		GifView1.setOnTouchListener(new OnTouchListener() {
 
 			@Override
