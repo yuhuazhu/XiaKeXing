@@ -7,6 +7,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent" 
+        android:id="@+id/GifView1"
         android:background="@drawable/img_bian2">
     </ImageView>
 
