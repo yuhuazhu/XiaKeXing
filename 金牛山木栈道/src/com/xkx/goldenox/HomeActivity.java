@@ -24,7 +24,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.xkx.goldenox.utils.Utils;
 import com.xkx.yjxm.service.AudioService;
 import com.xkx.yjxm.service.AudioService.AudioBinder;
 import com.xkx.yjxm.service.AudioService.OnPlayCompleteListener;
@@ -44,7 +43,7 @@ public class HomeActivity extends FragmentActivity {
 	private int prosition = 0;
 	private FrameLayout menu_frame;
 	private ImageButton start;
-	private Boolean isPlaying;
+	private Boolean isPlaying= false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +74,26 @@ public class HomeActivity extends FragmentActivity {
 	}
 
 	private void processPlay() {
-		File file = new File(Environment.getExternalStorageDirectory(),
-				filename);
-		audioBinder.audioPlay(surfaceView, file.getAbsolutePath());
+
+		runOnUiThread(new Runnable() {
+			public void run() {
+
+				if (isPlaying) {
+
+				} else {
+					File file = new File(
+							Environment.getExternalStorageDirectory(), filename);
+					audioBinder.audioPlay(surfaceView, file.getAbsolutePath());
+					// boolean hasProcessd = hasProcessedMap.get(id);
+					// if (!hasProcessd) {
+					// lastTriggerTime = System.currentTimeMillis();
+					// imgplay.setEnabled(true);
+					// processPlay(id, true);
+					// }
+				}
+			}
+		});
+
 	}
 
 	private AudioBinder audioBinder;
@@ -151,13 +167,17 @@ public class HomeActivity extends FragmentActivity {
 			filename = "2793299.mp4";
 			switch (v.getId()) {
 			case R.id.play:
-				play();
-				break;
-			case R.id.pause:
-				if (mediaPlayer.isPlaying()) {
-					mediaPlayer.pause();
+
+				// if (CommonUtils.isFastDoubleClick()) {
+				// return;
+				// }
+				isPlaying = !isPlaying;
+				if (isPlaying) {
+					start.setBackgroundResource(R.drawable.ic_pause);
+					audioBinder.audioStart();
 				} else {
-					mediaPlayer.start();
+					start.setBackgroundResource(R.drawable.ic_play);
+					audioBinder.audioPause();
 				}
 				break;
 
