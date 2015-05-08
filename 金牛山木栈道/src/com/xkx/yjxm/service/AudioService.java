@@ -15,7 +15,6 @@ import android.view.SurfaceView;
 
 public class AudioService extends Service {
 	private MediaPlayer mediaPlayer;
-	private SurfaceView surfaceView;
 	
 	// 是不是已经导入了资源
 	private boolean isFrist;
@@ -41,12 +40,12 @@ public class AudioService extends Service {
 		return super.onUnbind(intent);
 	}
 
-	public void play(Uri uri) {
+	public void play(SurfaceView surfaceView,String uri) {
 		try {
 			mediaPlayer.reset();
 			mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);// 设置音乐流的类型
 			mediaPlayer.setDisplay(surfaceView.getHolder());// 设置video影片以surfaceviewholder播放
-			mediaPlayer.setDataSource(this, uri);
+			mediaPlayer.setDataSource(uri);
 			mediaPlayer.setVolume(1, 1);
 			mediaPlayer.prepareAsync();
 			mediaPlayer.setOnPreparedListener(new OnPreparedListener() {
@@ -81,8 +80,8 @@ public class AudioService extends Service {
 		}
 
 		// 初始化并播放
-		public void audioPlay(SurfaceView surfaceView,Uri uri) {
-			play(uri);
+		public void audioPlay(SurfaceView surfaceView,String uri) {
+			play(surfaceView,uri);
 		}
 
 		// 开始播放
@@ -112,11 +111,7 @@ public class AudioService extends Service {
 			return isFrist;
 		}
 
-		// 播放下一个
-		public void audioPlayNext(Uri uri) {
-			isFrist = false;
-			play(uri);
-		}
+		
 	}
 
 	private OnPlayCompleteListener listener;
