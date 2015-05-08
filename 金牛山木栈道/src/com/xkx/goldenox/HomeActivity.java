@@ -119,7 +119,6 @@ public class HomeActivity extends FragmentActivity {
 
 					@Override
 					public void onCompletion(MediaPlayer mp) {
-						mediaPlayer.release();
 						isPlaying = false;
 						start.setBackgroundResource(R.drawable.ic_play);
 					}
