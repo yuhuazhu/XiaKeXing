@@ -1,12 +1,15 @@
 package com.xkx.goldenox;
 
 import java.io.File;
+import java.io.IOException;
 
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
+import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
@@ -15,7 +18,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -44,7 +46,8 @@ public class HomeActivity extends FragmentActivity {
 	private int prosition = 0;
 	private FrameLayout menu_frame;
 	private ImageButton start;
-	private Boolean isPlaying= false;
+	private Boolean isPlaying = false;
+	// 是不是已经导入了资源
 	private String[] name = { "实景游览", "福道印象", "沿途风景", "便民服务", "游客互动", "地图查询" };
 	private int[] m_minX = { 13, 213, 611, 778, 698, 801 };
 	private int[] m_maxX = { 228, 360, 735, 973, 865, 1000 };
@@ -54,13 +57,14 @@ public class HomeActivity extends FragmentActivity {
 	private int[] m_NowMaxX = new int[10];
 	private int[] m_NowMinY = new int[10];
 	private int[] m_NowMaxY = new int[10];
+	private boolean isFrist = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_home);
 		initUI();
-		bindAudioService();
+		// bindAudioService();
 		FragmentManager fragMgr = getSupportFragmentManager();
 		FragmentTransaction fragTrans = fragMgr.beginTransaction();
 		// TODO 替换frament
@@ -70,6 +74,7 @@ public class HomeActivity extends FragmentActivity {
 		m_NowMaxY = m_maxY;
 		fragTrans.replace(R.id.menu_frame, new BottomFragment(), "");
 		fragTrans.commit();
+
 	}
 
 	private void bindAudioService() {
@@ -77,71 +82,77 @@ public class HomeActivity extends FragmentActivity {
 		bindService(service, audioConn, BIND_AUTO_CREATE);
 	}
 
-//	@Override
-//	public boolean onTouchEvent(MotionEvent event) {
-//		float x = event.getX();
-//		float y = event.getY();
-//		Toast.makeText(this, "x=" + x + "y=" + y, Toast.LENGTH_SHORT).show();
-//		if (event.getAction() == MotionEvent.ACTION_UP) {
-//			for (int i = 0; i < name.length; i++) {
-//				if (x < m_NowMaxX[i] && x > m_NowMinX[i] && y < m_NowMaxY[i]
-//						&& y > m_NowMinY[i]) {
-//					FragmentManager fragMgr = this.getSupportFragmentManager();
-//					FragmentTransaction fragTrans = fragMgr.beginTransaction();
-//					// TODO 替换frament
-//					Fragment fragment = null;
-//					switch (i) {
-//					case 0:
-//						fragment = new ShijinyulanFragment();
-//						break;
-//					case 1:
-//						fragment = new FudaoFragment();
-//						break;
-//					case 2:
-//						fragment = new YantuFragment();
-//						break;
-//					case 3:
-//						fragment = new BianminFragment();
-//						break;
-//					case 4:
-//						fragment = new BianminFragment();
-//						break;
-//					case 5:
-//						fragment = new MapserchFragment();
-//						break;
-//
-//					default:
-//						break;
-//					}
-//					fragTrans.replace(R.id.menu_frame, fragment, "");
-//					fragTrans.addToBackStack(null);
-//					fragTrans.commit();
-//				}
-//			}
-//		}
-//		return false;
-//	}
+	// @Override
+	// public boolean onTouchEvent(MotionEvent event) {
+	// float x = event.getX();
+	// float y = event.getY();
+	// Toast.makeText(this, "x=" + x + "y=" + y, Toast.LENGTH_SHORT).show();
+	// return false;
+	// }
 
 	private void processPlay() {
 
-		runOnUiThread(new Runnable() {
-			public void run() {
+		if (!isFrist) {
+			start.setBackgroundResource(R.drawable.ic_play);
 
-				if (isPlaying) {
+			File file = new File(Environment.getExternalStorageDirectory(),
+					filename);
+			
+			try {
+				mediaPlayer.reset();// 重置为初始状态
+				mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);// 设置音乐流的类型
+				mediaPlayer.setDisplay(surfaceView.getHolder());// 设置video影片以surfaceviewholder播放
+				mediaPlayer.setDataSource(file.getAbsolutePath());
+				mediaPlayer.setVolume(1, 1);
+				mediaPlayer.prepareAsync();
+				mediaPlayer.setOnPreparedListener(new OnPreparedListener() {
 
-				} else {
-					File file = new File(
-							Environment.getExternalStorageDirectory(), filename);
-					audioBinder.audioPlay(surfaceView, file.getAbsolutePath());
-					// boolean hasProcessd = hasProcessedMap.get(id);
-					// if (!hasProcessd) {
-					// lastTriggerTime = System.currentTimeMillis();
-					// imgplay.setEnabled(true);
-					// processPlay(id, true);
-					// }
-				}
+					@Override
+					public void onPrepared(MediaPlayer mp) {
+						mediaPlayer.start();
+						isFrist = true;
+						isPlaying = true;
+						start.setBackgroundResource(R.drawable.ic_pause);
+					}
+				});
+				mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
+
+					@Override
+					public void onCompletion(MediaPlayer mp) {
+						mediaPlayer.release();
+						isFrist = false;
+						isPlaying = false;
+						start.setBackgroundResource(R.drawable.ic_play);
+					}
+				});
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalStateException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}// 设置路径
+		} else {
+
+			if (isPlaying) {
+				start.setBackgroundResource(R.drawable.ic_play);
+				mediaPlayer.pause();
+				isPlaying = false;
+				// 设置为true后，暂停服务后不会被kill掉
+				// stopForeground(true);
+
+			} else {
+				start.setBackgroundResource(R.drawable.ic_pause);
+				mediaPlayer.start();
+				isPlaying = true;
 			}
-		});
+		}
 
 	}
 
@@ -179,6 +190,7 @@ public class HomeActivity extends FragmentActivity {
 
 	};
 
+	@SuppressWarnings("deprecation")
 	private void initUI() {
 		// toplay = (RelativeLayout) findViewById(R.id.toplay);
 		// sufacelay = (LinearLayout) findViewById(R.id.sufacelay);
@@ -191,19 +203,19 @@ public class HomeActivity extends FragmentActivity {
 		mediaPlayer = new MediaPlayer();
 
 		ButtonOnClikListiner buttonOnClikListinero = new ButtonOnClikListiner();
-		start = (ImageButton) findViewById(R.id.play);
+		start = (ImageButton) findViewById(R.id.playOnHome);
 		// ImageButton pause = (ImageButton) findViewById(R.id.pause);
 		start.setOnClickListener(buttonOnClikListinero);
 		// pause.setOnClickListener(buttonOnClikListinero);
 	}
 
-	@Override
-	protected void onDestroy() {
-		// TODO Auto-generated method stub
-		super.onDestroy();
-		unbindService(audioConn);
-		// Activity销毁时停止播放，释放资源。不做这个操作，即使退出还是能听到视频播放的声音
-	}
+	// @Override
+	// protected void onDestroy() {
+	// // TODO Auto-generated method stub
+	// super.onDestroy();
+	// unbindService(audioConn);
+	// // Activity销毁时停止播放，释放资源。不做这个操作，即使退出还是能听到视频播放的声音
+	// }
 
 	private final class ButtonOnClikListiner implements View.OnClickListener {
 		@Override
@@ -214,24 +226,29 @@ public class HomeActivity extends FragmentActivity {
 				return;
 			}
 			filename = "2793299.mp4";
-			switch (v.getId()) {
-			case R.id.play:
-
-				// if (CommonUtils.isFastDoubleClick()) {
-				// return;
-				// }
-				isPlaying = !isPlaying;
-				if (isPlaying) {
-					start.setBackgroundResource(R.drawable.ic_pause);
-					audioBinder.audioStart();
-				} else {
-					start.setBackgroundResource(R.drawable.ic_play);
-					audioBinder.audioPause();
-				}
-				break;
-
-			}
+			// switch (v.getId()) {
+			// case R.id.play:
+			// processPlay();
+			// // if (CommonUtils.isFastDoubleClick()) {
+			// // return;
+			// // }
+			//
+			// break;
+			//
+			// }
+			processPlay();
 		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		if (mediaPlayer.isPlaying()) {
+			mediaPlayer.stop();
+		}
+		mediaPlayer.release();
+		// Activity销毁时停止播放，释放资源。不做这个操作，即使退出还是能听到视频播放的声音
 	}
 
 	private void play() {
