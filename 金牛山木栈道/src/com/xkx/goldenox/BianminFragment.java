@@ -15,11 +15,10 @@ import android.widget.Toast;
 public class BianminFragment extends Fragment {
 	private View rootView;// ª∫¥ÊFragment view
 	private ImageView GifView1;
-	private int[] m_minX = { 8, 213, 600, 784, 699, 801 };
-	private int[] m_minY = { 498, 213, 55, 218, 513, 710 };
-	private int[] m_maxX = { 224, 356, 734, 973, 850, 996 };
-	private int[] m_maxY = { 642, 397, 226, 339, 623, 828 };
-	
+	private int[] m_minX = { 48, 96 };
+	private int[] m_minY = { 467, 11 };
+	private int[] m_maxX = { 519, 169 };
+	private int[] m_maxY = { 717, 63 };
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -68,10 +67,10 @@ public class BianminFragment extends Fragment {
 							Fragment fragment = null;
 							switch (i) {
 							case 0:
-								fragment = new ShijinyulanFragment();
+								fragment = new RexianFragment();
 								break;
 							case 1:
-								fragment = new FudaoFragment();
+								fragment = new ShiWuFragment();
 								break;
 							case 2:
 								fragment = new YantuFragment();

@@ -12,13 +12,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-public class RexianFragment extends Fragment {
+public class YantuParkFragment extends Fragment {
 	private View rootView;// 缓存Fragment view
 	private ImageView GifView1;
-	private int[] m_minX = { 48, 96 };
-	private int[] m_minY = { 467, 11 };
-	private int[] m_maxX = { 519, 169 };
-	private int[] m_maxY = { 717, 63 };
+	private int[] m_minX = { 481, 213, 600, 784, 699, 801 };
+	private int[] m_minY = { 603, 213, 55, 218, 513, 710 };
+	private int[] m_maxX = { 724, 356, 734, 973, 850, 996 };
+	private int[] m_maxY = { 791, 397, 226, 339, 623, 828 };
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -29,7 +29,7 @@ public class RexianFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		if (rootView == null) {
-			rootView = inflater.inflate(R.layout.fragment_rexian, null);
+			rootView = inflater.inflate(R.layout.fragment_shiwu, null);
 		}
 		// 缓存的rootView需要判断是否已经被加过parent，
 		// 如果有parent需要从parent删除，要不然会发生这个rootview已经有parent的错误。
@@ -37,7 +37,7 @@ public class RexianFragment extends Fragment {
 		if (parent != null) {
 			parent.removeView(rootView);
 		}
-		initUI(rootView);
+//		initUI(rootView);
 
 		return rootView;
 	}
@@ -68,22 +68,17 @@ public class RexianFragment extends Fragment {
 							Fragment fragment = null;
 							switch (i) {
 							case 0:
-								fragment = new RexianFragment();
+								fragment = new ShijinyulanFragment();
 								break;
 							case 1:
-								fragment = new FudaoFragment();
 								break;
 							case 2:
-								fragment = new YantuFragment();
 								break;
 							case 3:
-								fragment = new BianminFragment();
 								break;
 							case 4:
-								fragment = new YoukehudongFragment();
 								break;
 							case 5:
-								fragment = new MapserchFragment();
 								break;
 
 							default:

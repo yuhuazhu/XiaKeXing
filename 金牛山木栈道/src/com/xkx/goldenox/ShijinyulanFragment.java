@@ -15,10 +15,11 @@ import android.widget.Toast;
 public class ShijinyulanFragment extends Fragment implements OnTouchListener{
 	private View rootView;// ª∫¥ÊFragment view
 	private ImageView GifView1;
-	private int[] m_minX = { 8, 213, 600, 784, 699, 801 };
-	private int[] m_minY = { 498, 213, 55, 218, 513, 710 };
-	private int[] m_maxX = { 224, 356, 734, 973, 850, 996 };
-	private int[] m_maxY = { 642, 397, 226, 339, 623, 828 };
+	private int[] m_minX = { 8, 96 };
+	private int[] m_minY = { 9, 11 };
+	private int[] m_maxX = { 69, 169 };
+	private int[] m_maxY = { 57, 63 };
+	private Bundle bundle;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -37,8 +38,8 @@ public class ShijinyulanFragment extends Fragment implements OnTouchListener{
 		if (parent != null) {
 			parent.removeView(rootView);
 		}
-//		initUI(rootView);
-
+		initUI(rootView);
+		bundle = savedInstanceState;
 		return rootView;
 	}
 	
@@ -70,22 +71,16 @@ public class ShijinyulanFragment extends Fragment implements OnTouchListener{
 							Fragment fragment = null;
 							switch (i) {
 							case 0:
-								fragment = new ShijinyulanFragment();
 								break;
 							case 1:
-								fragment = new FudaoFragment();
 								break;
 							case 2:
-								fragment = new YantuFragment();
 								break;
 							case 3:
-								fragment = new BianminFragment();
 								break;
 							case 4:
-								fragment = new YoukehudongFragment();
 								break;
 							case 5:
-								fragment = new MapserchFragment();
 								break;
 
 							default:
