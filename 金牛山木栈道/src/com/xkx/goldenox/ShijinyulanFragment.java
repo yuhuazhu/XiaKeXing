@@ -8,8 +8,9 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
-public class ShijinyulanFragment extends Fragment {
+public class ShijinyulanFragment extends Fragment implements OnTouchListener{
 	private View rootView;// ª∫¥ÊFragment view
 	private ImageView GifView1;
 
@@ -30,10 +31,12 @@ public class ShijinyulanFragment extends Fragment {
 		if (parent != null) {
 			parent.removeView(rootView);
 		}
-		initUI(rootView);
+//		initUI(rootView);
 
 		return rootView;
 	}
+	
+	
 
 	private void initUI(View rootView) {
 
@@ -122,5 +125,11 @@ public class ShijinyulanFragment extends Fragment {
 			}
 		});
 
+	}
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event) {
+		Toast.makeText(getActivity(), "123456789", Toast.LENGTH_SHORT).show();
+		return true;
 	}
 }

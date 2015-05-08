@@ -10,6 +10,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -44,6 +45,15 @@ public class HomeActivity extends FragmentActivity {
 	private FrameLayout menu_frame;
 	private ImageButton start;
 	private Boolean isPlaying= false;
+	private String[] name = { "实景游览", "福道印象", "沿途风景", "便民服务", "游客互动", "地图查询" };
+	private int[] m_minX = { 13, 213, 611, 778, 698, 801 };
+	private int[] m_maxX = { 228, 360, 735, 973, 865, 1000 };
+	private int[] m_minY = { 1181, 900, 727, 886, 1158, 1376 };
+	private int[] m_maxY = { 1307, 1073, 895, 1026, 1315, 1524 };
+	private int[] m_NowMinX = new int[10];
+	private int[] m_NowMaxX = new int[10];
+	private int[] m_NowMinY = new int[10];
+	private int[] m_NowMaxY = new int[10];
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +64,12 @@ public class HomeActivity extends FragmentActivity {
 		FragmentManager fragMgr = getSupportFragmentManager();
 		FragmentTransaction fragTrans = fragMgr.beginTransaction();
 		// TODO 替换frament
-
+		m_NowMinX = m_minX;
+		m_NowMaxX = m_maxX;
+		m_NowMinY = m_minY;
+		m_NowMaxY = m_maxY;
 		fragTrans.replace(R.id.menu_frame, new BottomFragment(), "");
 		fragTrans.commit();
-
 	}
 
 	private void bindAudioService() {
@@ -65,13 +77,50 @@ public class HomeActivity extends FragmentActivity {
 		bindService(service, audioConn, BIND_AUTO_CREATE);
 	}
 
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		float x = event.getX();
-		float y = event.getY();
-		Toast.makeText(this, "x=" + x + "y=" + y, Toast.LENGTH_SHORT).show();
-		return false;
-	}
+//	@Override
+//	public boolean onTouchEvent(MotionEvent event) {
+//		float x = event.getX();
+//		float y = event.getY();
+//		Toast.makeText(this, "x=" + x + "y=" + y, Toast.LENGTH_SHORT).show();
+//		if (event.getAction() == MotionEvent.ACTION_UP) {
+//			for (int i = 0; i < name.length; i++) {
+//				if (x < m_NowMaxX[i] && x > m_NowMinX[i] && y < m_NowMaxY[i]
+//						&& y > m_NowMinY[i]) {
+//					FragmentManager fragMgr = this.getSupportFragmentManager();
+//					FragmentTransaction fragTrans = fragMgr.beginTransaction();
+//					// TODO 替换frament
+//					Fragment fragment = null;
+//					switch (i) {
+//					case 0:
+//						fragment = new ShijinyulanFragment();
+//						break;
+//					case 1:
+//						fragment = new FudaoFragment();
+//						break;
+//					case 2:
+//						fragment = new YantuFragment();
+//						break;
+//					case 3:
+//						fragment = new BianminFragment();
+//						break;
+//					case 4:
+//						fragment = new BianminFragment();
+//						break;
+//					case 5:
+//						fragment = new MapserchFragment();
+//						break;
+//
+//					default:
+//						break;
+//					}
+//					fragTrans.replace(R.id.menu_frame, fragment, "");
+//					fragTrans.addToBackStack(null);
+//					fragTrans.commit();
+//				}
+//			}
+//		}
+//		return false;
+//	}
 
 	private void processPlay() {
 

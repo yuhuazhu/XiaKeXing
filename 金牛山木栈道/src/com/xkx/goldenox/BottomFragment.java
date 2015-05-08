@@ -9,10 +9,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 public class BottomFragment extends Fragment {
 	private View rootView;// ª∫¥ÊFragment view
 	private GifView GifView1;
+	private int[] m_minX = { 8, 213, 600, 784, 699, 801 };
+	private int[] m_minY = { 498, 213, 55, 218, 513, 710 };
+	private int[] m_maxX = { 224, 356, 734, 973, 850, 996 };
+	private int[] m_maxY = { 642, 397, 226, 339, 623, 828 };
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -31,12 +36,11 @@ public class BottomFragment extends Fragment {
 		if (parent != null) {
 			parent.removeView(rootView);
 		}
-//		initUI(rootView);
+		initUI(rootView);
 
 		return rootView;
 	}
 
-	
 	private void initUI(View rootView) {
 
 		GifView1 = (GifView) rootView.findViewById(R.id.GifView1);
@@ -44,113 +48,52 @@ public class BottomFragment extends Fragment {
 
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				int x = (int) event.getX();
-				int topleftx = x - 10;
+				float x = event.getX();
+				float y = event.getY();
+				Toast.makeText(getActivity(), "x=" + x + "y=" + y,
+						Toast.LENGTH_SHORT).show();
+					for (int i = 0; i < m_minX.length; i++) {
+						int x1 = m_minX[i];
+						int x2 = m_maxX[i];
+						int y1 = m_minY[i];
+						int y2 = m_maxY[i];
+						if (x < m_maxX[i] && x > m_minX[i] && y < m_maxY[i]
+								&& y > m_minY[i]) {
+							FragmentManager fragMgr = getActivity()
+									.getSupportFragmentManager();
+							FragmentTransaction fragTrans = fragMgr
+									.beginTransaction();
+							// TODO ÃÊªªframent
+							Fragment fragment = null;
+							switch (i) {
+							case 0:
+								fragment = new ShijinyulanFragment();
+								break;
+							case 1:
+								fragment = new FudaoFragment();
+								break;
+							case 2:
+								fragment = new YantuFragment();
+								break;
+							case 3:
+								fragment = new BianminFragment();
+								break;
+							case 4:
+								fragment = new YoukehudongFragment();
+								break;
+							case 5:
+								fragment = new MapserchFragment();
+								break;
 
-				// left, top, right, bottom
-				int y = (int) event.getY();
-				int toplefty = y - 10;
-				//textView1.setText("x=" + x + ",y=" + y);
-				// ”“…œΩ«
-				int topRightx = x + 10;
-				int topRighty = y - 10;
-
-				// ◊Ûœ¬Ω«
-				int bottomleftx = x - 10;
-				int bottomlefty = y + 10;
-
-				// ”“…œΩ«
-				int bottomRightx = x + 10;
-				int bottomRighty = y + 10;
-
-				// LayoutParams lp = new lay
-				// textView1.setLayoutParams())
-				if (event.getAction() == MotionEvent.ACTION_UP) {
-
-					String title = "";
-
-					if (x >= x - 20
-							&& x <= x + 20
-							&& y >= y - 20
-							&& y <= y + 20) {
-
-						title = " µæ∞”Œ¿¿";
-						FragmentManager fragMgr =getActivity().getSupportFragmentManager();
-						FragmentTransaction fragTrans = fragMgr.beginTransaction();
-						// TODO ÃÊªªframent
-						fragTrans.replace(R.id.menu_frame, new ShijinyulanFragment(), "");
-						fragTrans.commit();
+							default:
+								break;
+							}
+							fragTrans.replace(R.id.menu_frame, fragment, "");
+							fragTrans.addToBackStack(null);
+							fragTrans.commit();
+						}
 					}
-					if (x >= x - 20
-							&& x <= x + 20
-							&& y >= y - 20
-							&& y <= y + 20) {
-
-						title = "∏£µΩ”°œÛ";
-						FragmentManager fragMgr =getActivity().getSupportFragmentManager();
-						FragmentTransaction fragTrans = fragMgr.beginTransaction();
-						// TODO ÃÊªªframent
-						fragTrans.replace(R.id.menu_frame, new BottomFragment(), "");
-						fragTrans.commit();
-					}
-					if (x >= x - 20
-							&& x <= x + 20
-							&& y >= y - 20
-							&& y <= y + 20) {
-
-						title = "—ÿÕæ∑Áæ∞";
-						FragmentManager fragMgr =getActivity().getSupportFragmentManager();
-						FragmentTransaction fragTrans = fragMgr.beginTransaction();
-						// TODO ÃÊªªframent
-						fragTrans.replace(R.id.menu_frame, new YantuFragment(), "");
-						fragTrans.commit();
-					}
-
-					if (x >= x - 20
-							&& x <= x + 20
-							&& y >= y - 20
-							&& y <= y + 20) {
-
-						title = "±„√Ò∑˛ŒÒ";
-						FragmentManager fragMgr =getActivity().getSupportFragmentManager();
-						FragmentTransaction fragTrans = fragMgr.beginTransaction();
-						// TODO ÃÊªªframent
-						fragTrans.replace(R.id.menu_frame, new BianminFragment(), "");
-						fragTrans.commit();
-					}
-					if (x >= x - 20
-							&& x <= x + 20
-							&& y >= y - 20
-							&& y <= y + 20) {
-
-						title = "”ŒøÕª•∂Ø";
-						FragmentManager fragMgr =getActivity().getSupportFragmentManager();
-						FragmentTransaction fragTrans = fragMgr.beginTransaction();
-						// TODO ÃÊªªframent
-						fragTrans.replace(R.id.menu_frame, new YoukehudongFragment(), "");
-						fragTrans.commit();
-					}
-					if (x >= x - 20
-							&& x <= x + 20
-							&& y >= y - 20
-							&& y <= y + 20) {
-						title = "µÿÕº≤È—Ø";
-						FragmentManager fragMgr =getActivity().getSupportFragmentManager();
-						FragmentTransaction fragTrans = fragMgr.beginTransaction();
-						// TODO ÃÊªªframent
-						fragTrans.replace(R.id.menu_frame, new MapserchFragment(), "");
-						fragTrans.commit();
-					}
-					// if (event.getX() >= Integer.parseInt(xMap.get(2))
-					// && event.getY() < Integer.parseInt(xMap.get(2))) {
-					//
-					// mapID = 1;
-					// title = "“˝µºÃ®";
-					// process(mapID, title);
-					// }
-
-				}
-				return true;
+				return false;
 			}
 		});
 
