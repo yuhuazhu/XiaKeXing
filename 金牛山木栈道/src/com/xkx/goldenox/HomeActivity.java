@@ -153,6 +153,7 @@ public class HomeActivity extends FragmentActivity {
 			} else {
 				start.setBackgroundResource(R.drawable.ic_pause);
 				mediaPlayer.start();
+				start.setVisibility(View.GONE);
 				isPlaying = true;
 			}
 		}
