@@ -86,6 +86,11 @@ public class MainApp extends Activity implements OnClickListener {
 	 * 下载准备工作，获取SD卡路径、开启线程
 	 */
 	private void doDownload() {
+		if (Environment.getExternalStorageState() == Environment.MEDIA_UNMOUNTED) {
+			Toast.makeText(MainApp.this, "sd卡不存在", Toast.LENGTH_SHORT)
+					.show();
+			return;
+		}
 		// 获取SD卡路径
 		String path = Environment.getExternalStorageDirectory()
 				+ "/amosdownload/";
