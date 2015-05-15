@@ -1,14 +1,23 @@
 package com.baimao.download;
 
+import java.io.File;
 import java.util.HashMap;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.xkx.yjxm.activity.RouteActivity;
+import com.xkx.yjxm.base.Constants;
+import com.xkx.yjxm.utils.HttpUtil;
+
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
+import android.view.View;
+import android.widget.Toast;
 
 public class LoginService {
 	private static SQLiteDatabase mDB;
-
 	/**
 	 * ·µ»ØµÇÂ¼ÐÅÏ¢
 	 * 

@@ -1,11 +1,18 @@
 package com.xkx.yjxm.service;
 
+import java.util.HashMap;
+
+import org.json.JSONException;
+
+import com.xkx.yjxm.bean.MacInfo;
+
 import android.annotation.TargetApi;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothAdapter.LeScanCallback;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
@@ -35,6 +42,7 @@ public class BLEService extends Service {
 	private BluetoothDevice proximityBleDevice = null;
 
 	private BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+	private HashMap<Integer, MacInfo> MacMap = new HashMap<Integer, MacInfo>();// macÐÅÏ¢
 
 	public BLEService() {
 	}
@@ -117,19 +125,19 @@ public class BLEService extends Service {
 		isScanning = false;
 		if (!shake) {
 			String addr = proximityBleDevice.getAddress();
-			if (addr.equals("CF:01:01:00:02:E6")
-					|| addr.equals("CF:01:01:00:02:FC")
-					|| addr.equals("CF:01:01:00:02:F8")) {
-				if (maxRssi > -78) {
-					listener.onConditionTriggerSuccess(proximityBleDevice,
-							maxRssi);
-				}
-			} else {
-				if (maxRssi >= rssiFilter) {
-					listener.onConditionTriggerSuccess(proximityBleDevice,
-							maxRssi);
+			for (int i = 1; i < MacMap.size() + 1; i++) {
+				if (addr.equals(MacMap.get(i).getMacname())) {
+					if (addr.equals("CF:01:01:00:02:E6")
+							|| addr.equals("CF:01:01:00:02:FC")
+							|| addr.equals("CF:01:01:00:02:F8")) {
+						if (maxRssi >= MacMap.get(i).getPower()) {
+							listener.onConditionTriggerSuccess(
+									proximityBleDevice, maxRssi);
+						}
+					}
 				}
 			}
+
 		} else {
 			try {
 				Thread.sleep(50);
@@ -173,6 +181,11 @@ public class BLEService extends Service {
 	public void setOnProximityBleChangedListener(
 			OnProximityBleChangedListener listener) {
 		this.listener = listener;
+	}
+
+	// set
+	public void setMacList(HashMap MacMap) {
+		this.MacMap = MacMap;
 	}
 
 	private LeScanCallback callback = new LeScanCallback() {

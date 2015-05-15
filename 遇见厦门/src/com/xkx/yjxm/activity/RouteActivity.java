@@ -13,6 +13,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -23,10 +24,19 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -49,11 +59,13 @@ import android.widget.Toast;
 
 import com.baimao.download.FileDownloadThread;
 import com.baimao.download.HttpService;
+import com.baimao.download.JsonResponse;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.xkx.yjxm.R;
 import com.xkx.yjxm.adpater.BaseListAdapter;
 import com.xkx.yjxm.base.Constants;
+import com.xkx.yjxm.db.MySqlite;
 import com.xkx.yjxm.utils.HttpUtil;
 
 //导游路线
@@ -83,7 +95,7 @@ public class RouteActivity extends Activity implements OnClickListener {
 	private FrameLayout txtlay;
 	private Map<Integer, String> textMap;
 	private String TAG = "RouteActivity";
-	private Boolean finstate = false;
+	private Boolean finstate = false;// 是否完成下载
 
 	public void home(View v) {
 		Intent intent = null;
@@ -101,10 +113,17 @@ public class RouteActivity extends Activity implements OnClickListener {
 	private ProgressBar mProgressbar;
 	private URL connectURL;
 	private String path;
-	private String response;
+
 	private String fistr;
-	private boolean downstate = false;
+	private boolean downstate = false;// 判断下载的位置
 	String strFileName;
+	private SQLiteDatabase mDB;
+	private String Macresponse;// MacJSON
+	JSONArray Macjsonarray = new JSONArray();// MacJSONArray
+	private String Resresponse;// 资源JSON
+	JSONArray Resjsonarray = new JSONArray();// 资源JSONArray
+
+	private File[] filelist; // 获取resouce下的文件名列表
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -179,6 +198,8 @@ public class RouteActivity extends Activity implements OnClickListener {
 	}
 
 	private void initData() {
+		MySqlite mySqlite = new MySqlite(RouteActivity.this, "yjxm.db", null, 1);
+		mDB = mySqlite.getReadableDatabase();
 		getData();
 		// 配置图片加载及显示选项（还有一些其他的配置，查阅doc文档吧）
 		options = new DisplayImageOptions.Builder()
@@ -253,8 +274,17 @@ public class RouteActivity extends Activity implements OnClickListener {
 		findViewById(R.id.download_btn).setEnabled(true);
 		mMessageView = (TextView) findViewById(R.id.download_message);
 		mProgressbar = (ProgressBar) findViewById(R.id.download_progress);
+
+		// 发送请求
+		sendRequest();
+	}
+
+	private void sendRequest() {
+		// 向服务器请求mac，判断是否需要下载mac
+		requestMacInfo();
 		// 向服务器请求资源，判断是否需要下载资源
-		downloadrequest();
+		requestRes();
+
 	}
 
 	/**
@@ -272,8 +302,8 @@ public class RouteActivity extends Activity implements OnClickListener {
 
 			int progress = (int) (temp * 100);
 			if (progress == 100) {
-				Toast.makeText(RouteActivity.this, "下载完成,你现在可以进入地图享受自动讲解乐趣了！", Toast.LENGTH_LONG)
-						.show();
+				Toast.makeText(RouteActivity.this, "下载完成,你现在可以进入地图享受自动讲解乐趣了！",
+						6000).show();
 				// 获取SD卡路径
 				String path = Environment.getExternalStorageDirectory()
 						+ "/resource/" + fistr;
@@ -290,9 +320,9 @@ public class RouteActivity extends Activity implements OnClickListener {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				downloadlay.setVisibility(View.GONE);
 			}
 			mMessageView.setText("下载进度:" + progress + " %");
-			downloadlay.setVisibility(View.GONE);
 
 		}
 	};
@@ -599,7 +629,18 @@ public class RouteActivity extends Activity implements OnClickListener {
 		}
 	}
 
-	private void downloadrequest() {
+	// Mac请求
+	private void requestMacInfo() {
+
+		Macresponse = HttpUtil.queryStringForPost(Constants.MACREQURL
+				+ "scenicid=1");
+		JsonResponse resp = new JsonResponse();
+		JSONObject json = resp.getjson(Macresponse);
+		Macjsonarray = json.optJSONArray("result");
+	}
+
+	// 资源请求
+	private void requestRes() {
 		if (Environment.getExternalStorageState() == Environment.MEDIA_UNMOUNTED) {
 			Toast.makeText(RouteActivity.this, "sd卡不存在", Toast.LENGTH_SHORT)
 					.show();
@@ -611,37 +652,15 @@ public class RouteActivity extends Activity implements OnClickListener {
 				if (!file.exists()) {
 					file.mkdir();
 				}
-				File[] file2 = file.listFiles();
-				if (file2 == null) {
-					HttpService http = new HttpService(Constants.RESOURCEREQURL);
-					response = http.fetchContent();
-					downloadlay.setVisibility(View.VISIBLE);
-					// 设置progressBar初始化
-					mProgressbar.setProgress(0);
-					downstate = true;
+				filelist = file.listFiles();
+				if (filelist.length == 0) {
+					//首次下载
+					isNOhasResFolder();
 				} else {
-					String strFileName = "";
-					for (int i = 0; i < file2.length; i++) {
-						if (file2[i].isDirectory()) {
-						} else {
-							strFileName = file2[i].getAbsolutePath()
-									.toLowerCase();
-						}
-					}
-
-					// HttpService http = new
-					// HttpService(Constants.RESOURCEREQURL+"FDFD="+K+"&FDF="+P);
-					// HashMap<String, String> parmes = new HashMap<String,
-					// String>();
-					// parmes.put("name", strFileName);
-					// http.addParameter(parmes);
-					response = HttpUtil
-							.queryStringForPost(Constants.RESOURCEREQURL
-									+ "name=" + strFileName);
-					String str[] = response.split(",");
-					response = str[0] + str[1];
-					fistr = str[1];
+					// 不是首次下载
+					ishasResFolder();
 				}
+				downstate = true;
 			}
 		} else {
 			// 获取SD卡路径
@@ -651,124 +670,102 @@ public class RouteActivity extends Activity implements OnClickListener {
 			if (!file.exists()) {
 				file.mkdir();
 			}
-			File[] file2 = file.listFiles();
-			if (file2.length == 0) {
-
-				new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-
-						response = HttpUtil
-								.queryStringForPost(Constants.RESOURCEREQURL);
-						String str[] = response.split(",");
-						response = str[0] + str[1];
-						fistr = str[1];
-					}
-				}).start();
-
-				downloadlay.setVisibility(View.VISIBLE);
-				// 设置progressBar初始化
-				mProgressbar.setProgress(0);
-				downstate = false;
+			filelist = file.listFiles();
+			if (filelist.length == 0) {
+				//首次下载
+				isNOhasResFolder();
 			} else {
-				strFileName = "";
-				for (int i = 0; i < file2.length; i++) {
-					if (file2[i].isDirectory()) {
-					} else {
-						strFileName = file2[i].getName();
+				// 不是首次下载
+				ishasResFolder();
+			}
+			downstate = false;
+		}
+	}
+
+	// 首次下载
+	public void isNOhasResFolder() {
+		if (isNetworkConnected(this)) {
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					Resresponse = HttpUtil
+							.queryStringForPost(Constants.RESOURCEREQURL);
+					JsonResponse resp = new JsonResponse();
+					JSONObject json = resp.getjson(Resresponse);
+					try {
+						Resresponse = json.getString("url")
+								+ json.getString("zip");
+						fistr = json.getString("zip");
+
+						Resjsonarray = json.optJSONArray("result");
+
+					} catch (JSONException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
 					}
 				}
-				new Thread(new Runnable() {
+			}).start();
+		}
+		downloadlay.setVisibility(View.VISIBLE);
+		// 设置progressBar初始化
+		mProgressbar.setProgress(0);
 
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
+	}
 
-						response = HttpUtil
-								.queryStringForPost(Constants.RESOURCEREQURL
-										+ "?name=" + strFileName);
-						if (!response.equals("false")) {
-							String str[] = response.split(",");
-							response = str[0] + str[1];
-							fistr = str[1];
-							finstate = false;
-							
-						}
-						else
-						{
-							finstate = true;
-						}
-					}
-				}).start();
-
+	// 不是首次下载
+	public void ishasResFolder() {
+		strFileName = "";
+		for (int i = 0; i < filelist.length; i++) {
+			if (filelist[i].isDirectory()) {
+			} else {
+				strFileName = filelist[i].getName();
 			}
 		}
+		if (isNetworkConnected(this)) {
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					Resresponse = HttpUtil
+							.queryStringForPost(Constants.RESOURCEREQURL
+									+ "?name=" + strFileName);
+					if (!Resresponse.equals("false")
+							&& !Resresponse.equals("网络异常！")) {
+						JsonResponse resp = new JsonResponse();
+						JSONObject json = resp.getjson(Resresponse);
+						try {
+							Resresponse = json.getString("url")
+									+ json.getString("zip");
+							fistr = json.getString("zip");
+
+							Resjsonarray = json.optJSONArray("result");
+							finstate = false;
+						} catch (JSONException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+
+					} else {
+						finstate = true;
+					}
+				}
+			}).start();
+		}
 	}
 
-	/**
-	 * 下载准备工作，获取SD卡路径、开启线程
-	 */
-	private void doDownloadlocal(String url, String filestr) {
-
-		// 获取本地路径
-
-		String path = Environment.getRootDirectory() + "/resource/";
-		File file = new File(path);
-		// 如果本地目录不存在创建
-		if (!file.exists()) {
-			file.mkdir();
+	public boolean isNetworkConnected(Context context) {
+		if (context != null) {
+			ConnectivityManager mConnectivityManager = (ConnectivityManager) context
+					.getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo mNetworkInfo = mConnectivityManager
+					.getActiveNetworkInfo();
+			if (mNetworkInfo != null) {
+				return mNetworkInfo.isAvailable();
+			}
 		}
-		File file2 = new File(path + "观音山resource2.0.rar");
-		if (!file2.exists()) {
-			downloadlay.setVisibility(View.VISIBLE);
-			// 设置progressBar初始化
-			mProgressbar.setProgress(0);
-
-			// 简单起见，我先把URL和文件名称写死，其实这些都可以通过HttpHeader获取到
-			String downloadUrl = url;
-			String fileName = filestr;
-			int threadNum = 5;
-			String filepath = path + fileName;
-			Log.d(TAG, "download file  path:" + filepath);
-			task2 = new downloadTask2(downloadUrl, threadNum, filepath,
-					fileName);
-
-			task2.start();
-		}
-
-	}
-
-	/**
-	 * 下载准备工作，获取SD卡路径、开启线程
-	 */
-	private void doDownloadSDka(String url, String filestr) {
-
-		// 获取SD卡路径
-		String path = Environment.getExternalStorageDirectory()
-				+ "/amosdownload/";
-		File file = new File(path);
-		// 如果SD卡目录不存在创建
-		if (!file.exists()) {
-			file.mkdir();
-		}
-		File file2 = new File(path + "观音山resource2.0.rar");
-		if (!file2.exists()) {
-			downloadlay.setVisibility(View.VISIBLE);
-			// 设置progressBar初始化
-			mProgressbar.setProgress(0);
-
-			String downloadUrl = url;
-			String fileName = filestr;
-			int threadNum = 5;
-			String filepath = path + fileName;
-			Log.d(TAG, "download file  path:" + filepath);
-			task = new downloadTask(downloadUrl, threadNum, filepath);
-
-			task.start();
-		}
-
+		return false;
 	}
 
 	private class MyAdapter extends BaseListAdapter {
@@ -846,6 +843,127 @@ public class RouteActivity extends Activity implements OnClickListener {
 
 	}
 
+	// 操作数据库
+	private void insertDB() {
+		// 开启事务
+		mDB.beginTransaction();
+		try {
+
+			for (int i = 0; i < Macjsonarray.length(); i++) {
+				String sql = "select * from MacInfo where ID=?";
+				Cursor cursor = null;
+				try {
+					cursor = mDB.rawQuery(sql, new String[] { Macjsonarray
+							.getJSONObject(i).optInt("ID") + "" });
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (cursor.getCount() == 0) {
+					ContentValues values = new ContentValues();
+					try {
+						values.put("ID",
+								Macjsonarray.getJSONObject(i).optInt("ID"));
+						values.put("macname", Macjsonarray.getJSONObject(i)
+								.optString("macname"));
+						values.put("scenicid", Macjsonarray.getJSONObject(i)
+								.optInt("scenicid"));
+						values.put("power", Macjsonarray.getJSONObject(i)
+								.optDouble("power"));
+						values.put("distance", Macjsonarray.getJSONObject(i)
+								.optDouble("distance"));
+						values.put("edittime", Macjsonarray.getJSONObject(i)
+								.optString("edittime"));
+						mDB.insert("MacInfo", null, values);
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				cursor.close();
+			}
+			for (int i = 0; i < Resjsonarray.length(); i++) {
+				String sql = "select * from ResInfo where ID=?";
+				Cursor cursor = null;
+				try {
+					cursor = mDB.rawQuery(sql, new String[] { Resjsonarray
+							.getJSONObject(i).optInt("ID") + "" });
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				if (cursor.getCount() == 0) {
+					ContentValues values = new ContentValues();
+					try {
+						values.put("ID",
+								Resjsonarray.getJSONObject(i).optInt("ID"));
+						values.put("title", Resjsonarray.getJSONObject(i)
+								.optString("title"));
+						values.put("content", Resjsonarray.getJSONObject(i)
+								.optString("content"));
+						values.put("bgname", Resjsonarray.getJSONObject(i)
+								.optString("bgname"));
+						values.put("musicname", Resjsonarray.getJSONObject(i)
+								.optString("musicname"));
+						values.put("mid",
+								Resjsonarray.getJSONObject(i).optInt("mid"));
+						values.put("edittime", Resjsonarray.getJSONObject(i)
+								.optString("edittime"));
+						mDB.insert("ResInfo", null, values);
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				cursor.close();
+			}
+			// 设置事务标志为成功，当结束事务时就会提交事务
+			mDB.setTransactionSuccessful();
+		} catch (Exception e) {
+			try {
+				throw (e);
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		} finally {
+			// 结束事务
+			mDB.endTransaction();
+		}
+
+	}
+
+	// 下载到SD卡并插入数据库
+	private void operSD() {
+		// 下载到SD卡
+		// 简单起见，我先把URL和文件名称写死，其实这些都可以通过HttpHeader获取到
+		String downloadUrl = Resresponse;
+		String fileName = fistr;
+		int threadNum = 5;
+		String filepath = path + fileName;
+		Log.d(TAG, "download file  path:" + filepath);
+		task2 = new downloadTask2(downloadUrl, threadNum, filepath, fileName);
+
+		task2.start();
+		insertDB();
+
+	}
+
+	// 下载到手机内存并插入数据库
+	private void operLoacl() {
+		findViewById(R.id.download_btn).setEnabled(false);
+		// 下载到手机本地
+		// 简单起见，我先把URL和文件名称写死，其实这些都可以通过HttpHeader获取到
+		String downloadUrl = Resresponse;
+		String fileName = fistr;
+		int threadNum = 5;
+		String filepath = path + fileName;
+		Log.d(TAG, "download file  path:" + filepath);
+		task = new downloadTask(downloadUrl, threadNum, filepath);
+
+		task.start();
+		insertDB();
+	}
+
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
@@ -868,42 +986,17 @@ public class RouteActivity extends Activity implements OnClickListener {
 			txtlay.setVisibility(View.GONE);
 			break;
 		case R.id.download_btn:
-			if(finstate)
-			{
-				Toast.makeText(RouteActivity.this, "该资源已经下载过了！", Toast.LENGTH_LONG)
-				.show();
+			if (finstate) {
+				Toast.makeText(RouteActivity.this, "该资源已经下载过了！",
+						Toast.LENGTH_LONG).show();
 				return;
 			}
-			
 			// 设置progressBar初始化
 			if (downstate) {
-				// 下载到SD卡
-				// 简单起见，我先把URL和文件名称写死，其实这些都可以通过HttpHeader获取到
-				String downloadUrl = response;
-				String fileName = fistr;
-				int threadNum = 5;
-				String filepath = path + fileName;
-				Log.d(TAG, "download file  path:" + filepath);
-
-				task2 = new downloadTask2(downloadUrl, threadNum, filepath,
-						fileName);
-
-				task2.start();
-				// 设置progressBar初始化
-				downstate = true;
+				operSD();
 			} else {
-				findViewById(R.id.download_btn).setEnabled(false);
-				// 下载到手机本地
-				// 简单起见，我先把URL和文件名称写死，其实这些都可以通过HttpHeader获取到
-				String downloadUrl = response;
-				String fileName = fistr;
-				int threadNum = 5;
-				String filepath = path + fileName;
-				Log.d(TAG, "download file  path:" + filepath);
-				task = new downloadTask(downloadUrl, threadNum, filepath);
-
-				task.start();
-				downstate = false;
+				// 下载到手机内存并插入数据库
+				operLoacl();
 			}
 			break;
 		default:

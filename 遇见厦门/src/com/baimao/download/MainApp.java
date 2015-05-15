@@ -1,13 +1,17 @@
 package com.baimao.download;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -81,7 +85,7 @@ public class MainApp extends Activity implements OnClickListener {
 
 		}
 	};
-
+	
 	/**
 	 * 下载准备工作，获取SD卡路径、开启线程
 	 */

@@ -57,7 +57,7 @@ public class HttpService {
 		batchParameterMap.put(key, value);
 	}
 	
-	void addParameter(Map<String, String> parameter) {
+	public void addParameter(Map<String, String> parameter) {
 		for (Map.Entry<String, String> each : parameter.entrySet()) {
 			parameterMap.put(each.getKey(), each.getValue());
 		}
@@ -71,7 +71,7 @@ public class HttpService {
 		return response.getjson(json);
 	}
 
-	private String fetchContent() {
+	public String fetchContent() {
 		String content = method == HttpMethodEnum.POST ?  post():get()  ;
 		
 		return content;
@@ -134,18 +134,28 @@ public class HttpService {
 
 	private String post() {
 		String content = null;
-		
+		HttpClient httpClient = new DefaultHttpClient();
 		try {
-			HttpClient httpClient = new DefaultHttpClient();
+			
 			HttpPost httppost = new HttpPost(url);
 			HttpEntity formEntity = buildPostEntity();
 			httppost.setEntity(formEntity);
 			HttpResponse response = httpClient.execute(httppost);
-			content = EntityUtils.toString(response.getEntity(), charset);
+			HttpEntity	httpEntity =  response.getEntity();
+			if (httpEntity != null) {
+				String str = httpEntity.getContent().toString();
+			content = EntityUtils.toString(httpEntity, charset);
+			}
+			 //有些教程里没有下面这行  
+			httppost.abort(); 
+			//content = EntityUtils.toString(response.getEntity(), charset);
 		} catch (Exception ignore) {
 			ignore.printStackTrace();
 		}
-		
+		finally {  
+            //关闭连接，释放资源  
+			httpClient.getConnectionManager().shutdown();  
+        }  
 		return content;
 	}
 	

@@ -51,7 +51,7 @@ public class UILApplication extends Application {
 	}
 
 	private void initCrashHandler() {
-		Thread.setDefaultUncaughtExceptionHandler(CrashHandler.getInstance());
+		//Thread.setDefaultUncaughtExceptionHandler(CrashHandler.getInstance());
 	}
 
 	public static void initImageLoader(Context context) {

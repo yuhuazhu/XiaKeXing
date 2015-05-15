@@ -1,5 +1,7 @@
 package com.xkx.yjxm.activity;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -10,7 +12,10 @@ import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -18,10 +23,12 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Vibrator;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -35,9 +42,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.xkx.yjxm.R;
 import com.xkx.yjxm.adpater.BaseListAdapter;
+import com.xkx.yjxm.bean.MacInfo;
+import com.xkx.yjxm.bean.ResInfo;
+import com.xkx.yjxm.db.MySqlite;
 import com.xkx.yjxm.service.AudioService;
 import com.xkx.yjxm.service.AudioService.AudioBinder;
 import com.xkx.yjxm.service.AudioService.OnPlayCompleteListener;
@@ -82,12 +93,12 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private ImageButton imgdownmouth;
 
 	private String TAG = "RouteMapActivity";
-	private boolean isPlaying = false;
-	private boolean down = false;
+	private boolean isPlaying = false;//是否播放
+	private boolean down = false;//是否显示文本
 	/**
 	 * 自动讲解是否开着
 	 */
-	private boolean openstate = false;
+	private boolean openstate = false;//自动讲解是否开着
 	private long lastTriggerTime;
 
 	private TextView tvTitle;
@@ -99,10 +110,11 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private Map<Integer, String> xMap = new HashMap<Integer, String>();
 	private Map<Integer, String> yMap = new HashMap<Integer, String>();
 
-	private HashMap<Integer, String> contentMap = new HashMap<Integer, String>();
-	private HashMap<Integer, String> titleMap = new HashMap<Integer, String>();
+	
+	private HashMap<Integer, ResInfo> ResMap = new HashMap<Integer, ResInfo>();//资源
 	private HashMap<Integer, Boolean> hasProcessedMap = new HashMap<Integer, Boolean>();
-	private HashMap<Integer, Integer> bgMap = new HashMap<Integer, Integer>();
+	
+	private HashMap<Integer, MacInfo> MacMap = new HashMap<Integer, MacInfo>();//mac地址
 	private CopyOnWriteArrayList<ItemData> titleList = new CopyOnWriteArrayList<ItemData>();
 	private HashMap<Integer, Long> idTriggerTimeMap = new HashMap<Integer, Long>();
 
@@ -110,6 +122,14 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 	private BLEService bleService;
 	private RelativeLayout soundlay;
+
+	private SQLiteDatabase mDB;
+
+	// /**
+	// * 存储音频地址
+	// */
+	// ArrayList<String> listImgPath;
+	// String[] imageUriArray;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -166,38 +186,100 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		// initXYMap();
 	}
 
+	/**
+	 * 
+	 * 获取图片地址列表
+	 * 
+	 * @return list
+	 */
+	private void getResource() {
+		
+		Cursor cursorRes = mDB
+				.query("ResInfo", null, null, null, null, null, null);
+		Log.e("cursor", cursorRes.getCount() + "");
+
+		boolean toResFirst = cursorRes.moveToFirst();
+
+		// Toast.makeText(getApplicationContext(),
+		// String.valueOf(cursor.getCount()), 3000).show();
+		while (toResFirst) {
+			ResInfo rs = new ResInfo(cursorRes.getString(cursorRes.getColumnIndex("title")),
+					cursorRes.getString(cursorRes.getColumnIndex("content")),
+					cursorRes.getString(cursorRes.getColumnIndex("bgname")),
+					cursorRes.getString(cursorRes.getColumnIndex("musicname")));
+			ResMap.put(cursorRes.getInt(cursorRes.getColumnIndex("ID")),
+					rs);// 将资源文件添加到list中
+			toResFirst = cursorRes.moveToNext();
+		}
+		cursorRes.close();
+		
+		Cursor cursorMac = mDB
+				.query("MacInfo", null, null, null, null, null, null);
+		Log.e("cursor", cursorMac.getCount() + "");
+
+		boolean toMacFirst = cursorMac.moveToFirst();
+		while (toMacFirst) {
+			
+			MacInfo rs = new MacInfo(cursorRes.getString(cursorRes.getColumnIndex("macname")),
+					cursorRes.getFloat(cursorRes.getColumnIndex("power")),
+					cursorRes.getFloat(cursorRes.getColumnIndex("musicname")));
+			MacMap.put(cursorRes.getInt(cursorRes.getColumnIndex("ID")),
+					rs);// 将mac信息添加到list中
+			toMacFirst = cursorMac.moveToNext();
+		}
+		cursorMac.close();
+
+	}
+
+	/**
+	 * 
+	 * 获取音频地址列表
+	 * 
+	 * @return list
+	 */
+	private ArrayList<String> getSoundPathList() {
+		ArrayList<String> list = new ArrayList<String>();
+		// 获取SD卡路径
+		String path = Environment.getExternalStorageDirectory()
+				+ "/resource/muisc";
+		File file = new File(path);
+		// 如果SD卡目录不存在创建
+		if (!file.exists()) {
+			file.mkdir();
+		}
+		File[] file2 = file.listFiles();
+		for (int i = 0; i < file2.length; i++) {
+			if (file2[i].isDirectory()) {
+			} else {
+				list.add(file2[i].getAbsolutePath());// 将图片路径添加到list中
+			}
+		}
+		return list;
+	}
+
 	private void initData() {
-		int[] bgRes = new int[] { R.drawable.img_map_zhi_hui_dao_lan,
-				R.drawable.img_map_xing_li_ji_cun_gui,
-				R.drawable.img_map_ti_yan_3d,
-				R.drawable.img_map_ying_yong_zhan_shi,
-				R.drawable.img_map_yin_dao_tai, R.drawable.img_map_first_floor,
-				R.drawable.img_map_first_floor, R.drawable.img_map_first_floor,
-				R.drawable.img_map_an_mo_qu,
-				R.drawable.img_map_ban_shou_li_chao_shi,
-				R.drawable.img_map_duo_gong_neng_ting,
-				R.drawable.img_map_you_ke_jie_dai,
-				R.drawable.img_map_hu_jiao_zhong_xin,
-				R.drawable.img_map_yu_jing_zhi_hui,
-				R.drawable.img_map_ban_gong_qu, R.drawable.img_map_yi_wu_shi,
-				R.drawable.img_map_xin_xi_bo_fang,
-				R.drawable.img_map_second_floor, R.drawable.img_map_first_floor };
-		String titleArray[] = getResources().getStringArray(R.array.title);
-		String contentArray[] = getResources().getStringArray(R.array.content);
+
+		// 扫描内存中图片并存入list
+		MySqlite mySqlite = new MySqlite(RouteMapActivity.this, "yjxm.db",
+				null, 1);
+		mDB = mySqlite.getReadableDatabase();
+		getResource();
 		for (int id = 1; id <= 19; id++) {
-			titleMap.put(id, titleArray[id - 1]);
-			contentMap.put(id, contentArray[id - 1]);
-			bgMap.put(id, bgRes[id - 1]);
+
 			hasProcessedMap.put(id, false);
 			idTriggerTimeMap.put(id, 0l);
 		}
 	}
-
+	/**
+	 * 更新界面
+	 * @param id  序号
+	 * @param play 是否播放
+	 */
 	private void updateHead(final int id, final boolean play) {
 		runOnUiThread(new Runnable() {
 			public void run() {
-				String title = titleMap.get(id);
-				String content = contentMap.get(id);
+				String title = ResMap.get(id).getTitle();
+				String content = ResMap.get(id).getContent();
 				if (play) {
 					imgplay.setBackgroundResource(R.drawable.ic_pause);
 				} else {
@@ -207,7 +289,15 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 				tvTitle.setText(title);
 				tvContent.setText(content);
 				tvContent.setVisibility(View.VISIBLE);
-				ivMap.setImageResource(bgMap.get(id));
+
+				// 获取SD卡路径
+				String path = Environment.getExternalStorageDirectory()
+						+ "/resource/map/";
+				BitmapFactory.Options options = new BitmapFactory.Options();
+				options.inSampleSize = 2;
+				Bitmap bm = BitmapFactory.decodeFile(path + ResMap.get(id).getBgname(), options);
+				ivMap.setImageBitmap(bm);
+				// ivMap.setBackgroundResource(bgMap.get(id));
 				imgdownmouth.setVisibility(View.VISIBLE);
 			}
 		});
@@ -229,7 +319,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		}
 		runOnUiThread(new Runnable() {
 			public void run() {
-				String title = titleMap.get(id);
+				String title = ResMap.get(id).getTitle();
 				ItemData data = new ItemData(title, id);
 				if (isPlaying) {
 					for (int i = 0; i < titleList.size(); i++) {
@@ -367,7 +457,11 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	}
 
 	private void processPlay(int id, boolean play) {
-		Uri uri = getUri(id);
+
+		// 获取SD卡路径
+		String path = Environment.getExternalStorageDirectory()
+				+ "/resource/muisc/";
+		Uri uri = Uri.parse(path + ResMap.get(id).getMusicname());
 		if (uri == null) {
 			CrashHandler.getInstance().logToFile(Thread.currentThread(),
 					new Exception("Uri null"));
@@ -377,6 +471,8 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		hasProcessedMap.put(id, true);
 		isPlaying = true;
 		soundlay.setVisibility(View.VISIBLE);
+		// getSoundPathList()
+
 		audioBinder.audioPlay(uri);
 	}
 
@@ -614,6 +710,8 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			BleBinder binder = (BleBinder) service;
 			bleService = binder.getService();
+			bleService.setMacList(MacMap);
+			//set
 			bleService
 					.setOnProximityBleChangedListener(new BLEService.OnProximityBleChangedListener() {
 						public void onProximityBleChanged(

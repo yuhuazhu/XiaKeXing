@@ -51,9 +51,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:textSize="@dimen/text_size_list"
                 android:layout_marginTop="@dimen/space_content_listview_vertical"
-                android:text="@string/title_autoplay" />
+                android:text="@string/title_autoplay"
+                android:textSize="@dimen/text_size_list" />
         </RelativeLayout>
     </RelativeLayout>
 
@@ -62,8 +62,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:visibility="gone"
-        android:paddingTop="@dimen/activity_vertical_margin" >
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:visibility="gone" >
 
         <ImageButton
             android:id="@+id/imgbtn_head"
@@ -94,11 +94,11 @@
             android:id="@+id/imgclose"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/btn_height"
-            android:layout_centerHorizontal="true"
-            android:onClick="hidesoundlay"
             android:layout_alignParentRight="true"
-            android:background="@drawable/img_txtclose" />
+            android:layout_centerHorizontal="true"
+            android:layout_marginRight="@dimen/btn_height"
+            android:background="@drawable/img_txtclose"
+            android:onClick="hidesoundlay" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -179,8 +179,10 @@
             android:layout_above="@+id/imgswitch"
             android:layout_alignLeft="@+id/imgswitch"
             android:layout_marginLeft="55dp"
-            android:visibility="gone"
-            android:text="" />
+            android:text=""
+            android:visibility="gone" />
     </RelativeLayout>
+
+    
 
 </FrameLayout>
