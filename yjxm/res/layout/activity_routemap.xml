@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/img_bg"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/iv_map"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/img_lou01por" />
+
+        <RelativeLayout
+            android:id="@+id/laytop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@color/ligwhite"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/margin_small"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/margin_small" >
+
+            <ImageButton
+                android:id="@+id/btnback"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:background="@drawable/ic_back" />
+
+            <ImageButton
+                android:id="@+id/btnhome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/btnback"
+                android:background="@drawable/ic_home"
+                android:onClick="home" />
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="@dimen/space_content_listview_vertical"
+                android:text="@string/title_autoplay"
+                android:textSize="@dimen/text_size_list" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/soundlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:visibility="gone" >
+
+        <ImageButton
+            android:id="@+id/imgbtn_head"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/ic_listen" />
+
+        <TextView
+            android:id="@+id/txt_ti"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="49dp"
+            android:text="" />
+
+        <ImageButton
+            android:id="@+id/imgplay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txt_ti"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/ic_play" />
+
+        <ImageButton
+            android:id="@+id/imgclose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginRight="@dimen/btn_height"
+            android:background="@drawable/img_txtclose"
+            android:onClick="hidesoundlay" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imgplay" >
+
+            <ImageButton
+                android:id="@+id/imgdown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="3dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/ic_mouthtextbg"
+                android:visibility="gone" />
+
+            <ScrollView
+                android:id="@+id/scrollView1"
+                android:layout_width="wrap_content"
+                android:layout_height="220dp"
+                android:layout_marginLeft="@dimen/content_soundmargin"
+                android:layout_marginRight="@dimen/content_soundmargin"
+                android:layout_marginTop="70dp" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/txtdetail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/imgplay"
+                        android:layout_centerHorizontal="true"
+                        android:text="没有介绍哦"
+                        android:textSize="@dimen/text_size_start"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </ScrollView>
+
+            <ImageButton
+                android:id="@+id/imgmouth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/ic_mouth" />
+        </FrameLayout>
+
+        <ListView
+            android:id="@+id/listView1"
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center_horizontal"
+            android:scrollbars="vertical" >
+        </ListView>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <ImageButton
+            android:id="@+id/imgswitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/img_autoexplain" />
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/imgswitch"
+            android:layout_alignLeft="@+id/imgswitch"
+            android:layout_marginLeft="55dp"
+            android:text=""
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    
+
+</FrameLayout>

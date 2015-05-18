@@ -1,0 +1,59 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/img_choice_bg"
+    tools:context=".ChoiceActivity" >
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="#3effffff"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/margin_small"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/margin_small" >
+
+            <ImageButton
+                android:id="@+id/btnback"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:onClick="Back"
+                android:background="@drawable/ic_back" />
+            
+        </RelativeLayout>
+    <ImageButton
+        android:id="@+id/imageButton2"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:layout_alignRight="@+id/imageButton1"
+        android:layout_alignTop="@+id/imageButton3"
+        android:layout_marginRight="46dp"
+        android:layout_marginTop="79dp"
+        android:background="@drawable/img_btn_hulishan" 
+        android:onClick="StartHuLiShan"/>
+
+    <ImageButton
+        android:id="@+id/imageButton1"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_alignBottom="@+id/imageButton3"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="40dp"
+        android:layout_marginRight="60dp"
+        android:background="@drawable/img_btn_guanyinshan"
+        android:onClick="StartGuanYinShan" />
+
+    <ImageButton
+        android:id="@+id/imageButton3"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/imageButton1"
+        android:background="@drawable/img_btn_gulangyu"
+        android:onClick="StartGuLangYu" />
+
+</RelativeLayout>

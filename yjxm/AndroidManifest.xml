@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.xkx.yjxm"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="18" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+  
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+
+    <application
+        android:name="com.xkx.yjxm.bean.UILApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.xkx.yjxm.activity.PhotoActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.xkx.yjxm.activity.WelcomeActivity"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.NoTitleBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.xkx.yjxm.activity.LeftActivity"
+            android:label="@string/title_activity_left"
+            android:theme="@android:style/Theme.Light.NoTitleBar" >
+        </activity>
+        <activity
+            android:name="com.xkx.yjxm.activity.MainActivity"
+            android:theme="@android:style/Theme.Light.NoTitleBar"
+            android:launchMode="singleTask" >
+            <intent-filter>
+                <action android:name="xkx" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.xkx.yjxm.activity.PhotoWashActivity"
+            android:label="@string/title_activity_left" >
+        </activity>
+        <activity
+            android:name="com.xkx.yjxm.activity.RouteActivity"
+            android:label="@string/title_activity_left" >
+        </activity>
+        <activity
+            android:name="com.xkx.yjxm.activity.ReflexActivity"
+            android:label="@string/title_activity_reflex" >
+        </activity>
+        <activity
+            android:name="com.xkx.yjxm.activity.ShoppingGuideActivity"
+            android:label="@string/title_activity_shopping_guide" >
+        </activity>
+        <activity
+            android:name="com.xkx.yjxm.activity.NavigationActivity"
+            android:label="@string/title_activity_navigation" >
+        </activity>
+        <activity
+            android:name="com.xkx.yjxm.activity.GuideActivity"
+            android:label="@string/title_activity_guide" >
+        </activity>
+        <activity
+            android:name="com.xkx.yjxm.activity.ActivitiesActivity"
+            android:label="@string/title_activity_activities" >
+        </activity>
+        <activity
+            android:name="com.xkx.yjxm.activity.RouteMapActivity"
+            android:label="@string/title_activity_activities"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.xkx.yjxm.activity.PhotoUploadActivity"
+            android:label="@string/title_activity_activities" >
+        </activity>
+        <activity
+            android:name="com.xkx.yjxm.activity.PhotoScanningActivity"
+            android:label="@string/title_activity_activities" >
+        </activity>
+        <activity
+            android:name="com.xkx.yjxm.activity.MassageActivity"
+            android:label="@string/title_activity_massage" >
+        </activity>
+        <activity
+            android:name="com.xkx.yjxm.activity.PhotoTakeActivity"
+            android:label="@string/title_activity_massage" >
+        </activity>
+        <activity
+            android:name="com.xkx.yjxm.activity.TestSensorActivity"
+            android:label="@string/title_activity_massage" >
+        </activity>
+        <activity
+            android:name="com.xkx.yjxm.activity.SearchActivity"
+            android:label="@string/title_activity_search" >
+        </activity>
+
+        <service
+            android:name="com.xkx.yjxm.service.BLEService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+        <service
+            android:name="com.xkx.yjxm.service.AudioService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+
+        <activity
+            android:name="com.xkx.yjxm.activity.ChoiceActivity"
+            android:label="@string/title_activity_choice" >
+        </activity>
+        <activity
+            android:name="com.xkx.yjxm.activity.BRTBeaconManagerListBeaconsActivity"
+            android:label="@string/title_activity_choice" >
+        </activity>
+    </application>
+
+</manifest>

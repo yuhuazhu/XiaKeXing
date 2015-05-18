@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">meet XiaMen</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_welcome">WelcomeActivity</string>
+    <string name="title_activity_left">LeftActivity</string>
+    
+     <!-- left_title -->
+    <string name="left_title0">Buy Tickets  </string>
+    <string name="left_title1">Photo prints</string>
+    <string name="left_title2">Full Body Massage</string>
+    <string name="left_title3">Emergency Relief</string>
+    <string name="left_title4">Consulting Complaints</string>
+    <string name="left_title5">About Us</string>
+    <string name="left_title6">Settings</string>
+    
+    <!-- 照片冲印 -->
+    <string name="contentPH_title">免费体验照片冲印</string>
+    <string name="contentPH_date">活动日期:2015-5-1~2015年5月30日</string>
+    <string name="contentPH_detail">活动详情：请用户自行下载APP</string>
+    <string name="viewPH_title">免费体验照片冲印</string>
+    <string name="viewPhws_title">照片冲印</string>
+    <string name="viewPhws_btn">立即免费体验</string>
+    <string name="photo_sel">选择照片</string>
+    <string name="photo_scan">扫描照片</string>
+    <string name="contentPHws_title">新用户可以免费体验冲印照片2张</string>
+    <string name="contentPHws_detail">通过app上传照片,在景区、酒店、机场、车站等地的旅游电子信息屏冲印</string>
+    <string name="contentPHws_btnsee">查看离我最近的冲印点</string>
+    <string name="contentPHws_btnsel">相册选择</string>
+    <string name="contentPHws_btnph">拍照</string>
+    <string name="upload">上传</string>
+    <string name="cancel">取消</string>
+    <!-- 活动信息 -->
+    <string name="title_activities">活动信息</string>
+    <!-- 自动讲解 -->
+    <string name="title_autoplay">自动讲解</string>
+    <!-- 经典线路 -->
+    <string name="R_toptitle">经典线路1</string>
+    <string name="R_maplong">全长三公里</string>
+    <string name="R_title1">鼓浪屿风情博物馆</string>
+    <string name="R_title2">日光岩</string>
+    <string name="R_title3">百鸟岩</string>
+    <string name="R_title4">叔莊花园</string>
+    <string name="R_title5">皓月园</string>
+    <string name="R_time">浏览时长：10分钟</string>
+    <string name="R_dis1">100m</string>
+    <string name="R_dis2">150m</string>
+    <string name="R_dis3">200m</string>
+    <string name="R_dis4">500m</string>
+    <string name="R_dis5">670m</string>
+    <string name="title_activity_reflex">MainActivity</string>
+    <string name="title_activity_shopping_guide">ShoppingGuideActivity</string>
+    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="title_activity_guide">GuideActivity</string>
+    <string name="title_activity_activities">ActivitiesActivity</string>
+    <string name="title_activity_massage">MassageActivity</string>
+    <string name="title_activity_search">SearchActivity</string>
+    <string name="title_activity_choice">ChoiceActivity</string>
+
+    <!-- 热点 -->
+    <string name="point1x">563</string>
+    <string name="point1y">1208</string>
+    <string name="point2x">659</string>
+    <string name="point2y">1164</string>
+    <string name="point3x">115</string>
+    <string name="point3y">1248</string>
+    <string name="point4x">146</string>
+    <string name="point4y">1106</string>
+    <string name="point5x">203</string>
+    <string name="point5y">811</string>
+    <string name="point6x">427</string>
+    <string name="point6y">681</string>
+    <string name="point7x">590</string>
+    <string name="point7y">834</string>
+    <string name="point8x">893</string>
+    <string name="point8y">824</string>
+    <string name="point9x">863</string>
+    <string name="point9y">545</string>
+    <string name="point10x">630</string>
+    <string name="point10y">363</string>
+    <string name="point11x">345</string>
+    <string name="point11y">305</string>
+</resources>
