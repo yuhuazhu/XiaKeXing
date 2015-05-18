@@ -19,6 +19,7 @@ public class BaseActivity extends Activity {
 		PreferenceUtil.init(this);
 		// 根据上次的语言设置，重新设置语言
 		switchLanguage(PreferenceUtil.getString("language", "zh"));
+		//在切换语言的事件下,把语言保存到prefs里,启动首页.
 	}
 
 	/**
