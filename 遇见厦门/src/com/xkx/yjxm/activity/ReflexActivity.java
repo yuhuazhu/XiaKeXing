@@ -50,7 +50,7 @@ public class ReflexActivity extends Activity {
 			LayoutInflater layoutInflater = getLayoutInflater();
 			View view = layoutInflater.inflate(R.layout.viewpager_item, null);
 			m_tv_title = (TextView) view.findViewById(R.id.textView1);
-			m_tv_title.setText(m_title[i]);
+			m_tv_title.setText(R.string.reflex_title0 + i);
 			ImageView imageView = (ImageView) view.findViewById(R.id.imageView_content);
 			LinearLayout layout = (LinearLayout) view.findViewById(R.id.viewpager_bg);
 			layout.setBackgroundResource(m_ImgIdX.get(i));

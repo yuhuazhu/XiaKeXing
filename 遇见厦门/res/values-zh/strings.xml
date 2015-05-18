@@ -16,6 +16,11 @@
     <string name="left_title5">关于我们</string>
     <string name="left_title6">设置</string>
     
+    <!-- 映像标题 -->
+    <string name="reflex_title0">观音山</string>
+    <string name="reflex_title1">胡里山</string>
+    <string name="reflex_title2">鼓浪屿</string>
+    
     <!-- 照片冲印 -->
     <string name="contentPH_title">免费体验照片冲印</string>
     <string name="contentPH_date">活动日期:2015-5-1~2015年5月30日</string>
