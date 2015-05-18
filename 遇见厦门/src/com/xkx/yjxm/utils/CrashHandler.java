@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import android.annotation.SuppressLint;
 import android.os.Environment;
 import android.util.Log;
 
@@ -31,6 +33,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
 		}
 	}
 
+	@SuppressLint("SimpleDateFormat")
 	public void logToFile(Thread thread, Throwable ex) {
 		String state = Environment.getExternalStorageState();
 		if (!state.equals(Environment.MEDIA_MOUNTED)) {
@@ -44,7 +47,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
 		if (!dir.exists()) {
 			try {
 				dir.mkdirs();
-				
+
 				f.createNewFile();
 			} catch (IOException e) {
 				Log.e("yjxm", e.getLocalizedMessage());
@@ -55,10 +58,11 @@ public class CrashHandler implements UncaughtExceptionHandler {
 		FileWriter writer = null;
 		try {
 			f = new File(path + File.separator + "ex.log");
-			writer = new FileWriter(f, false);
+			writer = new FileWriter(f, true);
 			StringBuffer sb = new StringBuffer();
 			StackTraceElement[] trace = ex.getStackTrace();
-			sb.append(new Date().toLocaleString()+"\n");
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			sb.append(sdf.format(new Date()) + "\n");
 			sb.append(ex.getMessage() + "\n");
 			for (int i = 0; i < trace.length; i++) {
 				sb.append(trace[i] + "\n");
