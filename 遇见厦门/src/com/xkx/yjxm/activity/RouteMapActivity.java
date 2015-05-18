@@ -58,7 +58,7 @@ import com.xkx.yjxm.utils.CommonUtils;
 import com.xkx.yjxm.utils.CrashHandler;
 
 @SuppressLint({ "HandlerLeak", "DefaultLocale", "UseSparseArrays" })
-public class RouteMapActivity extends Activity implements OnClickListener {
+public class RouteMapActivity extends BaseActivity implements OnClickListener {
 
 	protected static final int DIMEN = 20;
 	private final int ID_ZHI_HUI_DAO_LAN = 1;

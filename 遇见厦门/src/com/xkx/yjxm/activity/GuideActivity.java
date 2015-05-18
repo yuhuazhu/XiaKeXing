@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.Window;
 
 //µº¿¿
-public class GuideActivity extends Activity {
+public class GuideActivity extends BaseActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

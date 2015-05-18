@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import com.xkx.yjxm.R;
 
-public class TestSensorActivity extends Activity {
+public class TestSensorActivity extends BaseActivity {
 	private SensorManager sensorManager; 
     private Vibrator vibrator; 
  

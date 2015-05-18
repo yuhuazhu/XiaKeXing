@@ -26,7 +26,7 @@ import com.xkx.yjxm.R;
 import com.xkx.yjxm.custom.MySurfaceView;
 
 //µ¼º½
-public class NavigationActivity extends Activity {
+public class NavigationActivity extends BaseActivity {
 
 	private MySurfaceView mySurfaceView;
 	private ImageView imageView;

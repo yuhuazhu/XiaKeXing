@@ -13,7 +13,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 //µ¼¹º
-public class ShoppingGuideActivity extends Activity {
+public class ShoppingGuideActivity extends BaseActivity {
 
 	private WebView webView;
 	private String  url = "http://sz.himall.kuaidiantong.cn/m-Weixin/";

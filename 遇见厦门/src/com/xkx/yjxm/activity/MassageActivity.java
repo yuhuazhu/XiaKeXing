@@ -8,7 +8,7 @@ import android.view.Menu;
 import android.view.Window;
 
 //°´Ä¦
-public class MassageActivity extends Activity {
+public class MassageActivity extends BaseActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

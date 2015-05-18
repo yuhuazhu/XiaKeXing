@@ -26,7 +26,7 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 //Ó³Ïñ
-public class ReflexActivity extends Activity {
+public class ReflexActivity extends BaseActivity {
 	private ArrayList<View> m_ViewList = new ArrayList<View>();
 	private ArrayList<Integer> m_ImgIdX = new ArrayList<Integer>();
 	private ArrayList<Integer> m_ImgIdY = new ArrayList<Integer>();

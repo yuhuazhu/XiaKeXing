@@ -48,7 +48,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
-public class PhotoUploadActivity extends Activity implements OnClickListener {
+public class PhotoUploadActivity extends BaseActivity implements OnClickListener {
 	private GridView gridphoto;
 	DisplayImageOptions options; // 配置图片加载及显示选项
 	private MyAdapter myAdapter;

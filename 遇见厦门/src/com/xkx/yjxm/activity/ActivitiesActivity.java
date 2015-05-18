@@ -13,7 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 //活动资讯
-public class ActivitiesActivity extends Activity {
+public class ActivitiesActivity extends BaseActivity {
 
 	
 

@@ -23,7 +23,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.RelativeLayout.LayoutParams;
 
-public class MainActivity extends Activity {
+public class MainActivity extends BaseActivity {
 	private boolean isExit;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

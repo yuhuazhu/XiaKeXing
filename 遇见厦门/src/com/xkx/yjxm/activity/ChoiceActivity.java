@@ -17,7 +17,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 //—°‘ÒΩÁ√Ê
-public class ChoiceActivity extends Activity {
+public class ChoiceActivity extends BaseActivity {
 
 	private boolean isList;
 	private ImageButton imageButton3;

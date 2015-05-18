@@ -26,7 +26,7 @@ import android.widget.LinearLayout;
 
 import com.xkx.yjxm.R;
 
-public class PhotoWashActivity extends Activity implements OnClickListener {
+public class PhotoWashActivity extends BaseActivity implements OnClickListener {
 	private ImageButton btnback;
 	private LinearLayout laybtn01;
 	private LinearLayout laybtn02;

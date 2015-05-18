@@ -9,7 +9,7 @@ import android.content.Intent;
 import android.view.Menu;
 import android.view.Window;
 
-public class WelcomeActivity extends Activity {
+public class WelcomeActivity extends BaseActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

@@ -25,7 +25,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 //×ó²à½çÃæ
-public class LeftActivity extends Activity implements OnItemClickListener {
+public class LeftActivity extends BaseActivity implements OnItemClickListener {
 
 	private Integer[] imgeIDs = { R.drawable.ic_left_ticket,
 			R.drawable.ic_left_photo, R.drawable.ic_left_massage,

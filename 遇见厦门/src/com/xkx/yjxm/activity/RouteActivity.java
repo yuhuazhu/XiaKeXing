@@ -69,7 +69,7 @@ import com.xkx.yjxm.db.MySqlite;
 import com.xkx.yjxm.utils.HttpUtil;
 
 //导游路线
-public class RouteActivity extends Activity implements OnClickListener {
+public class RouteActivity extends BaseActivity implements OnClickListener {
 	private ImageButton btnlist;
 	private ImageButton btndlist;
 	private ImageButton btnback;

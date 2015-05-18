@@ -13,7 +13,7 @@ import android.view.Window;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 
-public class SearchActivity extends Activity {
+public class SearchActivity extends BaseActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

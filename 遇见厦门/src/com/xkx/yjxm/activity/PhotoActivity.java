@@ -11,7 +11,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 
-public class PhotoActivity extends Activity implements OnClickListener {
+public class PhotoActivity extends BaseActivity implements OnClickListener {
 	private Button btnty;
 	private ImageButton btnback;
 

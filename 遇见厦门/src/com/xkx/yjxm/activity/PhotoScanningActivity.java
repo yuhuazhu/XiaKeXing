@@ -23,7 +23,7 @@ import com.xkx.yjxm.R;
 import com.xkx.yjxm.utils.imgUtils;
 import com.xkx.yjxm.utils.imgUtils.OnLoadImageListener;
 
-public class PhotoScanningActivity extends Activity implements OnClickListener {
+public class PhotoScanningActivity extends BaseActivity implements OnClickListener {
 	private String url;
 	private ImageView img;
 	private ImageButton btnback;
