@@ -3,12 +3,12 @@ package com.xkx.yjxm.activity;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -28,7 +28,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Vibrator;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -42,8 +41,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.brtbeacon.sdk.BRTBeacon;
 import com.xkx.yjxm.R;
 import com.xkx.yjxm.adpater.BaseListAdapter;
 import com.xkx.yjxm.bean.MacInfo;
@@ -52,14 +51,16 @@ import com.xkx.yjxm.db.MySqlite;
 import com.xkx.yjxm.service.AudioService;
 import com.xkx.yjxm.service.AudioService.AudioBinder;
 import com.xkx.yjxm.service.AudioService.OnPlayCompleteListener;
-import com.xkx.yjxm.service.BLEService;
-import com.xkx.yjxm.service.BLEService.BleBinder;
+import com.xkx.yjxm.service.BleScanService;
+import com.xkx.yjxm.service.BleScanService.BleBinder;
+import com.xkx.yjxm.service.BleScanService.OnBleScanListener;
 import com.xkx.yjxm.utils.CommonUtils;
 import com.xkx.yjxm.utils.CrashHandler;
 
 @SuppressLint({ "HandlerLeak", "DefaultLocale", "UseSparseArrays" })
 public class RouteMapActivity extends Activity implements OnClickListener {
 
+	protected static final int DIMEN = 20;
 	private final int ID_ZHI_HUI_DAO_LAN = 1;
 	private final int ID_XING_LI_JI_CUN = 2;
 	private final int ID_3D_HU_DONG = 3;
@@ -93,12 +94,12 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	private ImageButton imgdownmouth;
 
 	private String TAG = "RouteMapActivity";
-	private boolean isPlaying = false;//是否播放
-	private boolean down = false;//是否显示文本
+	private boolean isPlaying = false;
+	private boolean down = false;
 	/**
 	 * 自动讲解是否开着
 	 */
-	private boolean openstate = false;//自动讲解是否开着
+	private boolean isAuto = true;
 	private long lastTriggerTime;
 
 	private TextView tvTitle;
@@ -120,7 +121,6 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 	private BaseAdapter adapter;
 
-	private BLEService bleService;
 	private RelativeLayout soundlay;
 
 	private SQLiteDatabase mDB;
@@ -137,12 +137,12 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		// 移除ActionBar，在setContent之前调用下面这句，保证没有ActionBar
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_routemap);
+		bindBleScanService();
+		bindAudioService();
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 		vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 		initData();
 		initUI();
-		bindBleScanService();
-		bindAudioService();
 	}
 
 	public void hidesoundlay(View v) {
@@ -151,13 +151,19 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		soundlay.setVisibility(View.GONE);
 	}
 
+	public void home(View v) {
+		Intent intent = null;
+		intent = new Intent(this, MainActivity.class);
+		startActivity(intent);
+	}
+
 	private void bindAudioService() {
 		Intent service = new Intent(RouteMapActivity.this, AudioService.class);
 		bindService(service, audioConn, BIND_AUTO_CREATE);
 	}
 
 	private void bindBleScanService() {
-		Intent service = new Intent(RouteMapActivity.this, BLEService.class);
+		Intent service = new Intent(RouteMapActivity.this, BleScanService.class);
 		bindService(service, conn, BIND_AUTO_CREATE);
 	}
 
@@ -303,18 +309,19 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		});
 	}
 
-	private void trigger(BluetoothDevice device) {
+	private void trigger(BRTBeacon beacon) {
 		if (System.currentTimeMillis() - lastTriggerTime < 2000) {
 			return;
 		}
-		final String address = device.getAddress().trim();
+		final String address = beacon.macAddress.trim();
 		Log.e("address", address);
 		final int id = getId(address);
 		if (id < 1 || id > 19) {
 			return;
 		}
 		long idLastTriggerTime = idTriggerTimeMap.get(id);
-		if (System.currentTimeMillis() - idLastTriggerTime < 60 * 1000) {// 一分钟内不触发
+		if (isAuto
+				&& System.currentTimeMillis() - idLastTriggerTime < 60 * 1000) {// 自动讲解，一分钟内不触发
 			return;
 		}
 		runOnUiThread(new Runnable() {
@@ -552,14 +559,13 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.imgswitch:
-			if (openstate) {
-				// 取消摇一摇
+			isAuto = !isAuto;
+			if (isAuto) {
+				// 自动讲解
 				imgswitch.setBackgroundResource(R.drawable.img_autoexplain);
 				sensorManager.unregisterListener(sensorEventListener);
-				bleService.setShakeScan(false);
-				openstate = false;
 			} else {
-				// 注册摇一摇
+				// 摇一摇
 				imgswitch.setBackgroundResource(R.drawable.img_shake);
 				if (sensorManager != null) {// 注册监听器
 					sensorManager
@@ -570,8 +576,6 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 									SensorManager.SENSOR_DELAY_NORMAL);
 					// 第一个参数是Listener，第二个参数是所得传感器类型，第三个参数值获取传感器信息的频率
 				}
-				bleService.setShakeScan(true);
-				openstate = true;
 			}
 			break;
 		case R.id.imgmouth:
@@ -658,9 +662,10 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 		}
 
 		private void processAfterShake() {
-			BluetoothDevice device = bleService.getProximityBleDevice();
-			if (device != null) {
-				trigger(device);
+			// BluetoothDevice device = bleService.getProximityBleDevice();
+			BRTBeacon beacon = bleBinder.getProximityBeacon();
+			if (beacon != null) {
+				trigger(beacon);
 			}
 		}
 	};
@@ -699,6 +704,7 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 	};
 
+	private BleBinder bleBinder;
 	private ServiceConnection conn = new ServiceConnection() {
 
 		@Override
@@ -708,29 +714,31 @@ public class RouteMapActivity extends Activity implements OnClickListener {
 
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			BleBinder binder = (BleBinder) service;
-			bleService = binder.getService();
-			bleService.setMacList(MacMap);
-			//set
-			bleService
-					.setOnProximityBleChangedListener(new BLEService.OnProximityBleChangedListener() {
-						public void onProximityBleChanged(
-								BluetoothDevice original,
-								BluetoothDevice current) {
-						}
+			Log.e("scan", "onServiceConnected");
+			bleBinder = (BleBinder) service;
+			bleBinder.setRegion(null);
+			bleBinder.setOnBleScanListener(new OnBleScanListener() {
 
-						@Override
-						public void onConditionTriggerSuccess(
-								BluetoothDevice device, int rssi) {
-							trigger(device);
-						}
+				@Override
+				public void onPeriodScan(List<BRTBeacon> scanResultList) {
+					Log.e("scan", "onPeriodScan,size:" + scanResultList.size());
+				}
 
-						@Override
-						public void onConditionTriggerFailed(
-								BluetoothDevice device, int rssi) {
-						}
-					});
-			bleService.startScanBLE();
+				@Override
+				public void onNearBleChanged(BRTBeacon oriBeacon,
+						BRTBeacon desBeacon) {
+					Log.e("scan", "onPeriodScan,current:"
+							+ desBeacon.macAddress);
+				}
+
+				@Override
+				public void onNearBle(BRTBeacon brtBeacon) {
+					Log.e("scan", "onNearBle");
+					if (isAuto) {
+						trigger(brtBeacon);
+					}
+				}
+			});
 		}
 	};
 
