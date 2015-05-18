@@ -16,6 +16,27 @@
     <string name="left_title5">About Us</string>
     <string name="left_title6">Settings</string>
     
+    <!-- route_title -->
+    <string name="route_title0">Wisdom Tour</string>
+    <string name="route_title1">Guide the machine</string>
+    <string name="route_title2">Great sense of interactive 3D resort area</string>
+    <string name="route_title3">Wisdom Travel Application Showcase</string>
+    <string name="route_title4">Integrated Service Area</string>
+    <string name="route_title5">Free massage experience zone</string>
+    <string name="route_title6">Free massage experience zone</string>
+    <string name="route_title7">Product information playback screen</string>
+    <string name="route_title8">Self-luggage lockers</string>
+    <string name="route_title9">Infirmary</string>
+    <string name="route_title10">Souvenir Supermarket</string>
+    <string name="route_title11">Multi-purpose conference hall</string>
+    <string name="route_title12">Computer room</string>
+    <string name="route_title13">Warning command center</string>
+    <string name="route_title14">Work Area</string>
+    <string name="route_title15">Wisdom tourism Screen</string>
+    <string name="route_title16">Bicycle rental</string>
+    <string name="route_title17">Passengers on the train at</string>
+    <string name="route_title18">Call center</string>
+    
     <!-- reflex_title -->
     <string name="reflex_title0">Buddha Mountain</string>
     <string name="reflex_title1">Hu Shan</string>
@@ -49,7 +70,8 @@
     <string name="R_title3">Rock birds</string>
     <string name="R_title4">Shu Zhuang Garden</string>
     <string name="R_title5">Haoyue Park</string>
-    <string name="R_time">Browsing time: 10 minutes</string>
+    <string name="R_time1">Browsing time: </string>
+    <string name="R_time2"> minutes</string>
     <string name="R_dis1">100m</string>
     <string name="R_dis2">150m</string>
     <string name="R_dis3">200m</string>

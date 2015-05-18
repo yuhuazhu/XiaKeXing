@@ -16,6 +16,27 @@
     <string name="left_title5">关于我们</string>
     <string name="left_title6">设置</string>
     
+    <!-- 路线标题 -->
+    <string name="route_title0">智慧导览</string>
+    <string name="route_title1">引导台</string>
+    <string name="route_title2">感互动3D景区推介区</string>
+    <string name="route_title3">智慧旅游应用展示区</string>
+    <string name="route_title4">综合服务区</string>
+    <string name="route_title5">按摩免费体验区</string>
+    <string name="route_title6">按摩免费体验区</string>
+    <string name="route_title7">产品信息播放屏幕</string>
+    <string name="route_title8">自助行李寄存柜</string>
+    <string name="route_title9">医务室</string>
+    <string name="route_title10">伴手礼超市</string>
+    <string name="route_title11">多功能会议厅</string>
+    <string name="route_title12">机房</string>
+    <string name="route_title13">预警指挥中心</string>
+    <string name="route_title14">办公区</string>
+    <string name="route_title15">智慧旅游视屏</string>
+    <string name="route_title16">单车租赁</string>
+    <string name="route_title17">旅客上车处</string>
+    <string name="route_title18">呼叫中心</string>
+    
     <!-- 映像标题 -->
     <string name="reflex_title0">观音山</string>
     <string name="reflex_title1">胡里山</string>
@@ -49,7 +70,8 @@
     <string name="R_title3">百鸟岩</string>
     <string name="R_title4">叔莊花园</string>
     <string name="R_title5">皓月园</string>
-    <string name="R_time">浏览时长：10分钟</string>
+    <string name="R_time1">浏览时长：</string>
+    <string name="R_time2"> 分钟</string>
     <string name="R_dis1">100m</string>
     <string name="R_dis2">150m</string>
     <string name="R_dis3">200m</string>

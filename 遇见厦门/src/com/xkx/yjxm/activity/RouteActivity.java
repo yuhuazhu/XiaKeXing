@@ -146,7 +146,7 @@ public class RouteActivity extends Activity implements OnClickListener {
 			random2 = new Random(nextInt);
 			times = random2.nextInt(10) + 5;
 
-			time[i] = "浏览时长：" + times + "分钟";
+			time[i] = getResources().getString(R.string.R_time1) + times + getResources().getString(R.string.R_time2);
 		}
 		for (int i = 0; i < img.length; i++) {
 			distances += 10;
@@ -276,7 +276,14 @@ public class RouteActivity extends Activity implements OnClickListener {
 		mProgressbar = (ProgressBar) findViewById(R.id.download_progress);
 
 		// 发送请求
-		sendRequest();
+		try 
+		{
+			sendRequest();
+		}
+		catch (Exception e)
+		{
+			
+		}
 	}
 
 	private void sendRequest() {
@@ -834,7 +841,7 @@ public class RouteActivity extends Activity implements OnClickListener {
 			// "drawable://" + (Integer) list.get(position).get("img"),
 			// holder.imageView1, options);
 
-			holder.txttitle.setText(title[position]);
+			holder.txttitle.setText(R.string.route_title0 + position);
 			holder.txttime.setText(time[position]);
 			holder.txtdistance.setText(distance[position]);
 
