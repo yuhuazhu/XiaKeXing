@@ -6,6 +6,16 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_welcome">WelcomeActivity</string>
     <string name="title_activity_left">LeftActivity</string>
+    
+     <!-- left_title -->
+    <string name="left_title0">Buy Tickets  </string>
+    <string name="left_title1">Photo prints</string>
+    <string name="left_title2">Full Body Massage</string>
+    <string name="left_title3">Emergency Relief</string>
+    <string name="left_title4">Consulting Complaints</string>
+    <string name="left_title5">About Us</string>
+    <string name="left_title6">Settings</string>
+    
     <!-- 照片冲印 -->
     <string name="contentPH_title">免费体验照片冲印</string>
     <string name="contentPH_date">活动日期:2015-5-1~2015年5月30日</string>

@@ -6,6 +6,16 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_welcome">WelcomeActivity</string>
     <string name="title_activity_left">LeftActivity</string>
+    
+    <!-- 左侧标题 -->
+    <string name="left_title0">门票购买</string>
+    <string name="left_title1">照片冲印</string>
+    <string name="left_title2">全身按摩</string>
+    <string name="left_title3">紧急救援</string>
+    <string name="left_title4">资讯投诉</string>
+    <string name="left_title5">关于我们</string>
+    <string name="left_title6">设置</string>
+    
     <!-- 照片冲印 -->
     <string name="contentPH_title">免费体验照片冲印</string>
     <string name="contentPH_date">活动日期:2015-5-1~2015年5月30日</string>

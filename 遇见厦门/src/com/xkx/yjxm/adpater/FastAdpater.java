@@ -71,8 +71,9 @@ public class FastAdpater extends BaseAdapter {
 		listItemView.img_left.setBackgroundResource((Integer) listItems.get(
 				position).get("image"));
 		listItemView.img_right.setBackgroundResource(R.drawable.ic_left_next);
-		listItemView.title.setText((String) listItems.get(position)
-				.get("title"));
+//		listItemView.title.setText((String) listItems.get(position)
+//				.get("title"));
+		listItemView.title.setText(R.string.left_title0 + position);
 		
 		return convertView;
 	}
