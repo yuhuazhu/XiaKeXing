@@ -154,6 +154,11 @@ public class LeftActivity extends BaseActivity implements OnItemClickListener {
 			intent.setClass(getApplication(), GuideActivity.class);
 			startActivity(intent);
 		}
+		else if (position == 6) {
+			// SettingsActivity
+			intent.setClass(getApplication(), SettingsActivity.class);
+			startActivity(intent);
+		}
 
 	}
 

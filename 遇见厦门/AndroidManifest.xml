@@ -18,7 +18,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-  
+  
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
@@ -57,8 +57,8 @@
         </activity>
         <activity
             android:name="com.xkx.yjxm.activity.MainActivity"
-            android:theme="@android:style/Theme.Light.NoTitleBar"
-            android:launchMode="singleTask" >
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Light.NoTitleBar" >
             <intent-filter>
                 <action android:name="xkx" />
 
@@ -141,6 +141,10 @@
         <activity
             android:name="com.xkx.yjxm.activity.BRTBeaconManagerListBeaconsActivity"
             android:label="@string/title_activity_choice" >
+        </activity>
+        <activity
+            android:name="com.xkx.yjxm.activity.SettingsActivity"
+            android:label="@string/title_activity_settings" >
         </activity>
     </application>
 

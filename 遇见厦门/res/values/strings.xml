@@ -72,4 +72,6 @@
     <string name="point10y">363</string>
     <string name="point11x">345</string>
     <string name="point11y">305</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
 </resources>

@@ -33,6 +33,19 @@ public class MainActivity extends BaseActivity {
 		setContentView(R.layout.activity_main);
 		StartPaoPao();
 	}
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		if (intent.getAction() == null) {
+			finish();
+			Intent i = new Intent(this, MainActivity.class);
+			startActivity(i);
+			// overridePendingTransition(0, 0);
+		} else {
+			// ÆäËûÂß¼­
+		}
+		super.onNewIntent(intent);
+	}
 
 	// ·µ»Ø
 	public void Backs(View v) {
