@@ -2,7 +2,9 @@ package com.xkx.yjxm.service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import android.app.Service;
@@ -17,7 +19,9 @@ import com.brtbeacon.sdk.BRTBeaconManager;
 import com.brtbeacon.sdk.BRTRegion;
 import com.brtbeacon.sdk.RangingListener;
 import com.brtbeacon.sdk.ServiceReadyCallback;
+import com.brtbeacon.sdk.Utils;
 import com.brtbeacon.sdk.service.RangingResult;
+import com.xkx.yjxm.bean.MacInfo;
 
 public class BleScanService extends Service {
 
@@ -29,8 +33,9 @@ public class BleScanService extends Service {
 	private BRTBeaconManager brtBeaconMgr;
 	private OnBleScanListener onBleScanListener;
 	private BleBinder bleBinder = new BleBinder();
-	private CopyOnWriteArrayList<BRTBeacon> rangedBeacon = new CopyOnWriteArrayList<BRTBeacon>();
 	private BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+	private HashMap<String, MacInfo> macMap = new HashMap<String, MacInfo>();
+	private CopyOnWriteArrayList<BRTBeacon> rangedBeacon = new CopyOnWriteArrayList<BRTBeacon>();
 
 	public BleScanService() {
 	}
@@ -74,11 +79,21 @@ public class BleScanService extends Service {
 				}
 				BRTBeacon nearBeacon = rangedBeacon.get(0);// 第0位是信号强度最高的
 				onBleScanListener.onNearBle(nearBeacon);
-				boolean isMacEqual = (freshBeacon == null ? true
-						: freshBeacon.macAddress
-								.equalsIgnoreCase(nearBeacon.macAddress));
-				if (!isMacEqual && nearBeacon.rssi > -73) {
-					onBleScanListener.onNearBleChanged(freshBeacon, nearBeacon);
+				boolean existMac = macMap.containsKey(nearBeacon.macAddress);
+				if (existMac) {
+					boolean isMacEqual = (freshBeacon == null ? true
+							: freshBeacon.macAddress
+									.equalsIgnoreCase(nearBeacon.macAddress));
+					MacInfo macInfo = macMap.get(nearBeacon.macAddress);
+					float triggerPower = macInfo.getPower();
+					float triggerDistance = macInfo.getDistince();
+					double estimatedDistance = Utils
+							.computeAccuracy(nearBeacon);
+					if (!isMacEqual && nearBeacon.rssi > triggerPower
+							&& triggerDistance >= estimatedDistance) {
+						onBleScanListener.onNearBleChanged(freshBeacon,
+								nearBeacon);
+					}
 				}
 				freshBeacon = nearBeacon;
 			}
@@ -122,12 +137,12 @@ public class BleScanService extends Service {
 	 */
 	public interface OnBleScanListener {
 		/**
-		 * 扫描的最近一个ble基站改变了，回调的方法。
+		 * 扫描的最近一个beacon基站改变了，回调的方法。
 		 * 
 		 * @param oriBeacon
-		 *            原来的最近的ble
+		 *            原来的最近的beacon
 		 * @param desBeacon
-		 *            现在的最近的ble
+		 *            现在的最近的beacon
 		 */
 		public void onNearBleChanged(BRTBeacon oriBeacon, BRTBeacon desBeacon);
 
@@ -140,7 +155,7 @@ public class BleScanService extends Service {
 		public void onPeriodScan(List<BRTBeacon> scanResultList);
 
 		/**
-		 * 周期性扫描提取最近的一个ble，回调方法
+		 * 周期性扫描提取最近的一个beacon，回调方法
 		 * 
 		 * @param brtBeacon
 		 */
@@ -148,6 +163,15 @@ public class BleScanService extends Service {
 	}
 
 	public class BleBinder extends Binder {
+
+		/**
+		 * 设置每个蓝牙触发的条件信息
+		 * 
+		 * @param mac
+		 */
+		public void setMacMap(HashMap<String, MacInfo> mac) {
+			macMap = mac;
+		}
 
 		/**
 		 * 设置扫描的条件
