@@ -11,6 +11,7 @@ import android.annotation.SuppressLint;
 import android.os.Environment;
 import android.util.Log;
 
+@SuppressLint("SimpleDateFormat")
 public class CrashHandler implements UncaughtExceptionHandler {
 
 	@Override
@@ -33,42 +34,33 @@ public class CrashHandler implements UncaughtExceptionHandler {
 		}
 	}
 
-	@SuppressLint("SimpleDateFormat")
 	public void logToFile(Thread thread, Throwable ex) {
-		String state = Environment.getExternalStorageState();
-		if (!state.equals(Environment.MEDIA_MOUNTED)) {
-			Log.e("yjxm", ex.getLocalizedMessage());
+		File file = createFileIfNotExist();
+		if (file == null) {
 			return;
 		}
-		File sdcard = Environment.getExternalStorageDirectory();
-		File f = null;
-		String path = sdcard.getAbsolutePath() + File.separator + "yjxm";
-		File dir = new File(path);
-		if (!dir.exists()) {
-			try {
-				dir.mkdirs();
+		String log = exceptionToString(ex);
+		writeStringToFile(log, file);
+	}
 
-				f.createNewFile();
-			} catch (IOException e) {
-				Log.e("yjxm", e.getLocalizedMessage());
-				return;
-			}
+	private String exceptionToString(Throwable ex) {
+		StackTraceElement[] trace = ex.getStackTrace();
+		StringBuffer sb = new StringBuffer();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		sb.append(sdf.format(new Date()) + "\n");
+		sb.append(ex.getMessage() + "\n");
+		for (int i = 0; i < trace.length; i++) {
+			sb.append(trace[i] + "\n");
 		}
+		sb.append("----------------------------------------------------------------------------\n");
+		return sb.toString();
+	}
 
+	private void writeStringToFile(String str, File file) {
 		FileWriter writer = null;
 		try {
-			f = new File(path + File.separator + "ex.log");
-			writer = new FileWriter(f, true);
-			StringBuffer sb = new StringBuffer();
-			StackTraceElement[] trace = ex.getStackTrace();
-			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			sb.append(sdf.format(new Date()) + "\n");
-			sb.append(ex.getMessage() + "\n");
-			for (int i = 0; i < trace.length; i++) {
-				sb.append(trace[i] + "\n");
-			}
-			sb.append("----------------------------------------------------------------------------\n");
-			writer.write(sb.toString());
+			writer = new FileWriter(file, true);
+			writer.write(str);
 		} catch (IOException e) {
 			Log.e("yjxm", e.getLocalizedMessage());
 		} finally {
@@ -80,5 +72,27 @@ public class CrashHandler implements UncaughtExceptionHandler {
 				}
 			}
 		}
+	}
+
+	private File createFileIfNotExist() {
+		String state = Environment.getExternalStorageState();
+		if (!state.equals(Environment.MEDIA_MOUNTED)) {
+			Log.e("yjxm", "sdcard not mounted");
+			return null;
+		}
+		File sdcard = Environment.getExternalStorageDirectory();
+		String path = sdcard.getAbsolutePath() + File.separator + "yjxm";
+		File f = new File(path + File.separator + "ex.log");
+		File dir = new File(path);
+		if (!dir.exists()) {
+			try {
+				dir.mkdirs();
+				f.createNewFile();
+			} catch (IOException e) {
+				Log.e("yjxm", e.getLocalizedMessage());
+				return null;
+			}
+		}
+		return f;
 	}
 }
