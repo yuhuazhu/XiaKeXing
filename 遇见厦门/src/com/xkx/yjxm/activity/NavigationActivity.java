@@ -62,11 +62,11 @@ public class NavigationActivity extends BaseActivity {
 		bitmapWidth = b.getWidth();
 		bitmapHeight = b.getHeight();
 		// 人的当前坐标
-		peopleX = iWidth / 2 - bitmapWidth / 2;
-		peopleY = iHeight / 2 - bitmapHeight;
+		peopleX = iWidth / 2;
+		peopleY = iHeight / 2;
 		RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(
 				LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		param.setMargins((int) peopleX, (int) peopleY, 0, 0);
+		param.setMargins((int) peopleX  - bitmapWidth / 2, (int) peopleY  - bitmapHeight, 0, 0);
 		imageView.setLayoutParams(param);
 		// 把画笔移动到人的脚下
 		mySurfaceView.MoveTo(iWidth / 2, iHeight / 2);
@@ -95,7 +95,7 @@ public class NavigationActivity extends BaseActivity {
 						Animation.RELATIVE_TO_SELF, 0.0f,
 						Animation.RELATIVE_TO_SELF, 0.0f,
 						Animation.RELATIVE_TO_SELF, -1.0f);
-				translateAnimation.setDuration(1500);
+				translateAnimation.setDuration(1300);
 				// 开始执行动画
 				imageView.startAnimation(translateAnimation);
 			}
@@ -104,9 +104,12 @@ public class NavigationActivity extends BaseActivity {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		float getX = mySurfaceView.GetX();
-		float getY = mySurfaceView.GetY();
-		StartPeople(getX, getY);
+		if(event.getAction() == MotionEvent.ACTION_UP)
+		{
+			float getX = mySurfaceView.GetX();
+			float getY = mySurfaceView.GetY();
+			StartPeople(getX, getY);
+		}
 		return false;
 	}
 
@@ -130,10 +133,7 @@ public class NavigationActivity extends BaseActivity {
 		// //创建一个AnimationSet对象淡出旋转二合一
 		distanceX = x - peopleX;
 		distanceY = y - peopleY;
-		TranslateAnimation translateAnimation = new TranslateAnimation(
-				Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF,
-				distanceX, Animation.RELATIVE_TO_SELF, 0.0f,
-				Animation.RELATIVE_TO_SELF, distanceY);
+		TranslateAnimation translateAnimation = new TranslateAnimation(0.0f, distanceX, 0.0f, distanceY);
 		peopleX = x;
 		peopleY = y;
 		// 将alphaAnimation对象添加到animationSet中
@@ -168,12 +168,6 @@ public class NavigationActivity extends BaseActivity {
 						}
 						lefts += distanceX / 10;
 						tops += distanceY / 10;
-						RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(
-								LayoutParams.WRAP_CONTENT,
-								LayoutParams.WRAP_CONTENT);
-						param.setMargins(lefts - bitmapWidth / 2, tops
-								- bitmapHeight, 0, 0);
-						imageView.setLayoutParams(param);
 						mySurfaceView.QuadTo(left, top, lefts, tops);
 						Log.e("lefts=" + lefts, "tops=" + tops + "distanceX="
 								+ distanceX + "distanceY=" + distanceY);
@@ -194,20 +188,18 @@ public class NavigationActivity extends BaseActivity {
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				imageView.clearAnimation();
-				// spaceshipImage.setBackgroundResource(R.drawable.ic_paopaos);
+//				// spaceshipImage.setBackgroundResource(R.drawable.ic_paopaos);
 				int left = imageView.getLeft();
 				left += 200;
 				int top = imageView.getTop();
 				top -= 1000;
 				RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(
 						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-				param.setMargins((int) peopleX - bitmapWidth / 2, (int) peopleY
+				param.setMargins((int) peopleX - bitmapWidth / 3, (int) peopleY
 						- bitmapHeight, 0, 0);
 				imageView.setLayoutParams(param);
 			}
 		});
-		peopleX = x;
-		peopleY = y;
 	}
 
 	@Override
