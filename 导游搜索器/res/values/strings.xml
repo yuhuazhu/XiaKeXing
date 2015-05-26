@@ -4,5 +4,11 @@
     <string name="app_name">导游搜索器</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_search">SearchActivity</string>
+    <string name="title_activity_destination_list">DestinationListActivity</string>
+    <string name="title_activity_more_destination">MoreDestinationActivity</string>
+    <string name="title_activity_route_details">RouteDetailsActivity</string>
+    <string name="title_activity_shake">ShakeActivity</string>
+    <string name="title_activity_personal_center">PersonalCenterActivity</string>
 
 </resources>

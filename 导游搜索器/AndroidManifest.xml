@@ -22,6 +22,30 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.xkx.dyssq.activity.SearchActivity"
+            android:label="@string/title_activity_search" >
+        </activity>
+        <activity
+            android:name="com.xkx.dyssq.activity.DestinationListActivity"
+            android:label="@string/title_activity_destination_list" >
+        </activity>
+        <activity
+            android:name="com.xkx.dyssq.activity.MoreDestinationActivity"
+            android:label="@string/title_activity_more_destination" >
+        </activity>
+        <activity
+            android:name="com.xkx.dyssq.activity.RouteDetailsActivity"
+            android:label="@string/title_activity_route_details" >
+        </activity>
+        <activity
+            android:name="com.xkx.dyssq.activity.ShakeActivity"
+            android:label="@string/title_activity_shake" >
+        </activity>
+        <activity
+            android:name="com.xkx.dyssq.activity.PersonalCenterActivity"
+            android:label="@string/title_activity_personal_center" >
+        </activity>
     </application>
 
 </manifest>

@@ -6,7 +6,9 @@ import com.xkx.dyssq.R.menu;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
+import android.view.View;
 
 public class MainActivity extends Activity {
 
@@ -16,11 +18,34 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
+	//Ìø×ªÒ³Ãæ
+	public void startIn(View v) 
+	{
+		Intent intent = null;
+		switch (v.getId()) 
+		{
+		case R.id.imageButton1:
+			intent = new Intent(this, SearchActivity.class);
+			break;
+		case R.id.imageButton2:
+			intent = new Intent(this, DestinationListActivity.class);
+			break;
+		case R.id.imageButton3:
+			intent = new Intent(this, MoreDestinationActivity.class);
+			break;
+		case R.id.imageButton4:
+			intent = new Intent(this, RouteDetailsActivity.class);
+			break;
+		case R.id.imageButton5:
+			intent = new Intent(this, ShakeActivity.class);
+			break;
+		case R.id.imageButton6:
+			intent = new Intent(this, PersonalCenterActivity.class);
+			break;
 
+		default:
+			break;
+		}
+		startActivity(intent);
+	}
 }
