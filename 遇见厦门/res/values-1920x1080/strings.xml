@@ -66,29 +66,6 @@
     <string name="txt_you_ke_shang_che">游客通过检票闸口，途经特别铺设遮阳顶棚的通道直达上车点，为特殊天气出行的游客提供贴心、细致的服务，免去上下车风吹日晒雨淋的烦恼。</string>
     <string name="txt_zi_xing_che_zu_lin">环岛路观光自行车观音山站地处观音山梦幻海岸休闲区，为游客提供便利的双人或三人自行车租赁业务，游客可从观音山至胡里山全程14公里的自行车骑行车道上骑行，骑行途经观音山沙雕公园、奥林匹克博物馆、会展中心、椰风寨、音乐广场、珍珠湾等厦门新二十名景。</string>
 
-    <!-- 热点 -->
-    <string name="point1x">563</string>
-    <string name="point1y">1208</string>
-    <string name="point2x">659</string>
-    <string name="point2y">1164</string>
-    <string name="point3x">115</string>
-    <string name="point3y">1248</string>
-    <string name="point4x">146</string>
-    <string name="point4y">1106</string>
-    <string name="point5x">203</string>
-    <string name="point5y">811</string>
-    <string name="point6x">427</string>
-    <string name="point6y">681</string>
-    <string name="point7x">590</string>
-    <string name="point7y">834</string>
-    <string name="point8x">893</string>
-    <string name="point8y">824</string>
-    <string name="point9x">863</string>
-    <string name="point9y">545</string>
-    <string name="point10x">630</string>
-    <string name="point10y">363</string>
-    <string name="point11x">345</string>
-    <string name="point11y">305</string>
-    <string name="title_activity_settings">SettingsActivity</string>
-	<string name="title_activity_base">BaseActivity</string>
+    
+
 </resources>

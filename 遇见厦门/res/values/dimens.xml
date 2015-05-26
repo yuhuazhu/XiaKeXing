@@ -15,7 +15,7 @@
     <dimen name="margin_small">10dp</dimen>
     <dimen name="margin_medium">15dp</dimen>
     <dimen name="margin_large">20dp</dimen>
-	<dimen name="btn_height">50dp</dimen>
+    <dimen name="btn_height">50dp</dimen>
     <!-- 圆角布局边距大小，  包括左右边距 -->
     <dimen name="margin_content">10dp</dimen>
     <!-- 标题栏左右按钮边距大小 -->
@@ -76,7 +76,7 @@
     <dimen name="text_size_main_title">25sp</dimen>
     <!-- 主界面宫格右上角数字文字大小 -->
     <dimen name="text_size_main_num">18sp</dimen>
-<!-- 主界面宫格右上角数字文字大小 -->
+    <!-- 主界面宫格右上角数字文字大小 -->
     <dimen name="text_size_main_num1">15sp</dimen>
     <!-- TAB文字大小 -->
     <dimen name="text_size_tab">16sp</dimen>
@@ -98,5 +98,7 @@
     <dimen name="main_menu_width">70dp</dimen>
     <!-- mainmenu -->
     <dimen name="main_menu_laywidth">150dp</dimen>
-     
+    
+    
+
 </resources>
