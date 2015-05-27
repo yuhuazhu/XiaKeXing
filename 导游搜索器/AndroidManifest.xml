@@ -46,6 +46,10 @@
             android:name="com.xkx.dyssq.activity.PersonalCenterActivity"
             android:label="@string/title_activity_personal_center" >
         </activity>
+        <activity
+            android:name="com.xkx.dyssq.activity.GuideActivity"
+            android:label="@string/title_activity_guide" >
+        </activity>
     </application>
 
 </manifest>
