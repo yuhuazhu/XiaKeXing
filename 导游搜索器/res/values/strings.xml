@@ -10,5 +10,6 @@
     <string name="title_activity_route_details">RouteDetailsActivity</string>
     <string name="title_activity_shake">ShakeActivity</string>
     <string name="title_activity_personal_center">PersonalCenterActivity</string>
+    <string name="title_activity_guide">GuideActivity</string>
 
 </resources>
