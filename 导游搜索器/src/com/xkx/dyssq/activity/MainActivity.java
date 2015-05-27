@@ -15,6 +15,7 @@ import android.hardware.SensorManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -49,6 +50,16 @@ public class MainActivity extends Activity {
 		m_im2 = (ImageView) findViewById(R.id.imageView2);
 		m_ll = (LinearLayout) findViewById(R.id.linearLayout);
 		m_ll.setVisibility(View.INVISIBLE);
+		m_ll.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) 
+			{
+				Intent intent = null;
+				intent = new Intent(MainActivity.this, GuideActivity.class);
+				startActivity(intent);
+			}
+		});
 	}
 	
 	@Override
