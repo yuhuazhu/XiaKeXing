@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/shake1" />
+            android:background="@drawable/shake1" />
 
     </RelativeLayout>
 
@@ -31,7 +31,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:onClick="startAnimation"
-            android:src="@drawable/people1" />
+            android:background="@drawable/people1" />
 
         <TextView
             android:id="@+id/textView1"
