@@ -56,7 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="7dp"
                 android:src="@drawable/head" />
 
             <LinearLayout
@@ -69,7 +69,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="2dp"
                     android:drawableRight="@drawable/female"
                     android:text="李晓华		"
                     android:textSize="20sp" />
