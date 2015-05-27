@@ -27,6 +27,7 @@ public class MainActivity extends Activity {
 	private boolean isStart;
 	private ImageView m_im1;
 	private ImageView m_im2;
+	private int animationCount = 5;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +47,10 @@ public class MainActivity extends Activity {
 		
 		if(isStart)
 		{
-			m_im1.setImageResource(R.drawable.shake2);
-			m_im2.setImageResource(R.drawable.people2);
+			m_im1.setBackgroundResource(R.drawable.shake2);
+			m_im2.setBackgroundResource(R.drawable.people2);
 			
-			AnimationSet animationSet = new AnimationSet(true);
+			final AnimationSet animationSet = new AnimationSet(true);
 			
 			TranslateAnimation animation1 = new TranslateAnimation(0, 30, 0, 0);
 			TranslateAnimation animation2 = new TranslateAnimation(0, -60, 0, 0);
@@ -57,23 +58,22 @@ public class MainActivity extends Activity {
 			TranslateAnimation animation4 = new TranslateAnimation(0, -30, 0, 0);
 			
 			//设置动画持续时间 
-			animation1.setDuration(250);
-			animation2.setDuration(500);
-			animation3.setDuration(500);
-			animation4.setDuration(250);
+			animation1.setDuration(70);
+			animation2.setDuration(140);
+			animation3.setDuration(140);
+			animation4.setDuration(70);
 			
 			//延迟播放
-//			animation1.setStartOffset(2500);  
-			animation2.setStartOffset(250);  
-			animation3.setStartOffset(500);  
-			animation4.setStartOffset(500);  
+//			animation1.setStartOffset();  
+			animation2.setStartOffset(70);  
+			animation3.setStartOffset(140);  
+			animation4.setStartOffset(140);  
 			
 			animationSet.addAnimation(animation1);
 			animationSet.addAnimation(animation2);
 			animationSet.addAnimation(animation3);
 			animationSet.addAnimation(animation4);
 			
-			animationSet.setRepeatCount(5);
 			animationSet.setInterpolator(new LinearInterpolator());
 			m_im2.startAnimation(animationSet);
 			animationSet.setAnimationListener(new AnimationListener() {
@@ -91,12 +91,22 @@ public class MainActivity extends Activity {
 				}
 				
 				@Override
-				public void onAnimationEnd(Animation animation) {
-					isStart = false;
-					m_im2.clearAnimation();
-					m_im1.setImageResource(R.drawable.shake1);
-					m_im2.setImageResource(R.drawable.people1);
-					m_im2.setClickable(true);
+				public void onAnimationEnd(Animation animation)
+				{
+//					m_im2.clearAnimation();
+					if(animationCount-- != 0)
+					{
+						m_im2.startAnimation(animationSet);
+					}
+					else
+					{
+						m_im2.clearAnimation();
+						isStart = false;
+						m_im1.setBackgroundResource(R.drawable.shake1);
+						m_im2.setBackgroundResource(R.drawable.people1);
+						m_im2.setClickable(true);
+						animationCount = 5;
+					}
 				}
 			});
 		}
