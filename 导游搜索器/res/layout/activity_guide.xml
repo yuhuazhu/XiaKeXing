@@ -50,7 +50,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/toplay"
-            android:visibility="gone" >
+             >
 
             <ImageView
                 android:id="@+id/imageView1"
@@ -60,10 +60,11 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/daolayout"
+            android:id="@+id/xclayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/toplay">
+            android:layout_below="@+id/toplay"
+            android:visibility="gone">
 
             <ScrollView
                 android:id="@+id/scrollView1"
@@ -86,17 +87,31 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/daolayout"
+            android:id="@+id/yklayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/toplay"
             android:visibility="gone" >
 
-            <ImageView
+            <ScrollView
+                android:id="@+id/scrollView3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" 
+                    android:gravity="center_horizontal">
+
+                <ImageView
                 android:id="@+id/imageView1"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/img_daoyou" />
+                android:background="@drawable/img_ykxz" />
+                </LinearLayout>
+            </ScrollView>
+            
         </RelativeLayout>
     </FrameLayout>
 
