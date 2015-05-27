@@ -1,59 +1,225 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/FrameLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg"
-    tools:context=".MainActivity" >
+    android:visibility="visible" >
 
-    <RelativeLayout
-        android:id="@+id/RelativeLayout1"
+    <FrameLayout
+        android:id="@+id/FrameLayout1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible" >
+        android:background="@drawable/bg"
+        tools:context=".MainActivity" >
 
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/RelativeLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="visible" >
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/yuan" />
+
+            <ImageButton
+                android:id="@+id/button1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/bt1"
+                android:onClick="startAnimation"
+                android:text="Button"
+                android:visibility="invisible" />
+
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/imageView2"
+                android:layout_alignRight="@+id/button1"
+                android:background="@drawable/line" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <com.example.rotate.CircleImageView
+                android:id="@+id/img_zhang"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_toLeftOf="@+id/imageButton1"
+                android:layout_marginTop="130dp"
+                android:visibility="gone"
+                android:background="@drawable/img_zhang" />
+            <com.example.rotate.CircleImageView
+                android:id="@+id/img_li"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="260dp"
+                android:layout_toLeftOf="@+id/imageButton1"
+                android:visibility="gone"
+                android:background="@drawable/img_li" />
+
+            <ImageButton
+                android:id="@+id/imageButton1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/bt1"
+                android:onClick="startAnimation" />
+            
+            <com.example.rotate.CircleImageView
+                android:id="@+id/img_liu"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_toRightOf="@+id/imageButton1"
+                android:layout_marginTop="130dp"
+                android:visibility="gone"
+                android:background="@drawable/img_liu" />
+            <com.example.rotate.CircleImageView
+                android:id="@+id/img_zhou"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="260dp"
+                android:visibility="gone"
+                android:layout_toRightOf="@+id/imageButton1"
+                android:background="@drawable/img_zhou" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/yuan" />
+            android:paddingTop="30dp" >
 
-        <ImageButton
-            android:id="@+id/button1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/bt1"
-            android:onClick="startAnimation"
-            android:visibility="invisible" 
-            android:text="Button" />
-
-        <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/imageView2"
-            android:layout_alignRight="@+id/button1"
-            android:background="@drawable/line" />
-
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="请点击按钮检测附近导游"
+                android:textColor="#ffffff"
+                android:textSize="17sp" />
+        </RelativeLayout>
+    </FrameLayout>
 
     <RelativeLayout
+        android:id="@+id/daolayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone" >
 
-        <ImageButton
-            android:id="@+id/imageButton1"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:onClick="startAnimation"
-            android:background="@drawable/bt1" />
+            android:layout_centerHorizontal="true" >
 
+            <RelativeLayout
+                android:id="@+id/relativeLayout2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <com.example.rotate.CircleImageView
+                    android:id="@+id/img_head"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginTop="15dp"
+                    android:background="@drawable/img_li" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="18dp"
+                android:layout_toRightOf="@+id/relativeLayout2"
+                android:text="李婉华"
+                android:textColor="#ffffff"
+                android:textSize="17sp" />
+
+            <ImageView
+                android:id="@+id/img3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_toRightOf="@+id/textView2"
+                android:background="@drawable/img_nv"
+                android:textColor="#ffffff" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView2"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="5dp"
+                android:layout_toRightOf="@+id/relativeLayout2"
+                android:text="13026140010"
+                android:textColor="#ffffff" />
+
+            <LinearLayout
+                android:id="@+id/txtlay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/relativeLayout2"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/txtdao"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textView2"
+                    android:layout_toRightOf="@+id/relativeLayout2"
+                    android:text="导游证类别:"
+                    android:textColor="#ffffff" />
+
+                <TextView
+                    android:id="@+id/txtd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textView2"
+                    android:layout_toRightOf="@+id/relativeLayout2"
+                    android:text="国导证"
+                    android:textColor="#ffffff" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txtlay"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:id="@+id/txtdao"
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textView2"
+                    android:layout_toRightOf="@+id/relativeLayout2"
+                    android:text="导游证号:"
+                    android:textColor="#ffffff" />
+
+                <TextView
+                    android:id="@+id/txtd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textView2"
+                    android:layout_toRightOf="@+id/relativeLayout2"
+                    android:text="D-3501-003469"
+                    android:textColor="#ffffff" />
+            </LinearLayout>
+        </RelativeLayout>
     </RelativeLayout>
 
-</FrameLayout>
+</RelativeLayout>
