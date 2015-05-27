@@ -32,16 +32,39 @@ public class MainActivity extends Activity implements OnClickListener {
 	private CircleImageView img_zhou;
 	private RelativeLayout daolayout;
 	private CircleImageView img_head;
+	private ImageButton imageButton1;
+	private RelativeLayout headlay;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
+		initUI();
 	}
 
 	public void initUI() {
+		headlay = (RelativeLayout) findViewById(R.id.headlay);
+		imageButton1= (ImageButton) findViewById(R.id.imageButton1);
+		CircleImageView cr = new CircleImageView(this);
+		android.widget.RelativeLayout.LayoutParams lp = new android.widget.RelativeLayout.LayoutParams(
+				80, 80);
+		lp.rightMargin = 40;
+		lp.topMargin = 400;
+		lp.addRule(RelativeLayout.LEFT_OF,imageButton1.getId());
+		cr.setLayoutParams(lp);
+		cr.setBackgroundResource(R.drawable.img_zhang);
+		headlay.addView(cr);
+		// <com.example.rotate.CircleImageView
+		// android:id="@+id/img_zhang"
+		// android:layout_width="40dp"
+		// android:layout_height="40dp"
+		// android:layout_marginRight="40dp"
+		// android:layout_toLeftOf="@+id/imageButton1"
+		// android:layout_marginTop="130dp"
+		//
+		// android:background="@drawable/img_zhang" />
+
 		m_im = (ImageView) findViewById(R.id.imageView1);
 		m_im.setVisibility(View.INVISIBLE);
 		textView1 = (TextView) findViewById(R.id.textView1);
@@ -136,41 +159,41 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		LayoutParams para; 
-		
+		LayoutParams para;
+
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.img_zhang:
 			daolayout.setVisibility(View.VISIBLE);
 			img_head.setBackgroundResource(R.drawable.img_zhang);
-			para = img_zhang.getLayoutParams();  
-	        para.height = 70;  
-	        para.width = 70; 
-	        img_zhang.setLayoutParams(para);  
+			para = img_zhang.getLayoutParams();
+			para.height = 70;
+			para.width = 70;
+			img_zhang.setLayoutParams(para);
 			break;
 		case R.id.img_li:
 			daolayout.setVisibility(View.VISIBLE);
 			img_head.setBackgroundResource(R.drawable.img_li);
-			para = img_li.getLayoutParams();  
-	        para.height = 70;  
-	        para.width = 70; 
-	        img_li.setLayoutParams(para);  
+			para = img_li.getLayoutParams();
+			para.height = 70;
+			para.width = 70;
+			img_li.setLayoutParams(para);
 			break;
 		case R.id.img_liu:
 			daolayout.setVisibility(View.VISIBLE);
 			img_head.setBackgroundResource(R.drawable.img_liu);
-			para = img_liu.getLayoutParams();  
-	        para.height = 70;  
-	        para.width = 70; 
-	        img_liu.setLayoutParams(para);  
+			para = img_liu.getLayoutParams();
+			para.height = 70;
+			para.width = 70;
+			img_liu.setLayoutParams(para);
 			break;
 		case R.id.img_zhou:
 			daolayout.setVisibility(View.VISIBLE);
 			img_head.setBackgroundResource(R.drawable.img_zhou);
-			para = img_zhou.getLayoutParams();  
-	        para.height = 70;  
-	        para.width = 70; 
-	        img_zhou.setLayoutParams(para);  
+			para = img_zhou.getLayoutParams();
+			para.height = 70;
+			para.width = 70;
+			img_zhou.setLayoutParams(para);
 			break;
 		default:
 			break;
