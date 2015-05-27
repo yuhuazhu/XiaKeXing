@@ -115,7 +115,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:visibility="gone" >
+        android:visibility="gone" 
+        android:background="#7f000000">
 
         <RelativeLayout
             android:layout_width="200dp"
