@@ -40,7 +40,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	private RelativeLayout headlay;
 
 	private BleBinder bleBinder;
-
+	private TextView textView1;
 	/**
 	 * 最多导游数
 	 */
@@ -138,11 +138,10 @@ public class MainActivity extends Activity implements OnClickListener {
 			cr[i].setBackgroundResource(heads[i]);
 			final int index = i;
 			cr[i].setOnClickListener(new OnClickListener() {
-				boolean isLarge = false;
 
 				@Override
 				public void onClick(View v) {
-					isLarge = !isLarge;
+
 					Animation scaleAnimation = new ScaleAnimation(1f, 2.0f, 1f,
 							2.0f);
 					scaleAnimation.setDuration(1000);
@@ -151,7 +150,7 @@ public class MainActivity extends Activity implements OnClickListener {
 					// TODO 跳转页面
 					// Intent intent = new Intent(MainActivity.this, cls);
 					// startActivity(intent);
-					processInfoShow(isLarge, index);
+					processInfoShow(index);
 				}
 			});
 			headlay.addView(cr[i], lp);
@@ -173,45 +172,43 @@ public class MainActivity extends Activity implements OnClickListener {
 		return -1;
 	}
 
-	private void processInfoShow(boolean show, int id) {
+	private void processInfoShow(int id) {
 		String name = "李晓华", phone = "15805934402", type = "国导证", num = "D-3501-003469";
 		int head = heads[0];
-		if (show) {
-			// TODO 更改信息
-			if (id == 0) {
-				name = "李晓华";
-				phone = "15805934402";
-				type = "国导证";
-				num = "D-3501-003469";
-				head = heads[0];
-			} else if (id == 1) {
-				name = "刘娜";
-				phone = "15805934402";
-				type = "国导证";
-				num = "D-3501-003469";
-				head = heads[1];
-			} else if (id == 2) {
-				name = "张阳";
-				phone = "15805934402";
-				type = "国导证";
-				num = "D-3501-003469";
-				head = heads[2];
-			} else if (id == 3) {
-				name = "周彤彤";
-				phone = "15805934402";
-				type = "国导证";
-				num = "D-3501-003469";
-				head = heads[3];
-			}
-			tvDaoyouName.setText(name);
-			tvDaoyouPhone.setText(phone);
-			tvCerType.setText(type);
-			tvCerNum.setText(num);
-			ivHead.setBackgroundResource(head);
-			rlDaoyouInfo.setVisibility(View.VISIBLE);
-		} else {
-			rlDaoyouInfo.setVisibility(View.INVISIBLE);
+
+		// TODO 更改信息
+		if (id == 0) {
+			name = "李晓华";
+			phone = "15805934402";
+			type = "国导证";
+			num = "D-3501-003469";
+			head = heads[0];
+		} else if (id == 1) {
+			name = "刘娜";
+			phone = "15805934402";
+			type = "国导证";
+			num = "D-3501-003469";
+			head = heads[1];
+		} else if (id == 2) {
+			name = "张阳";
+			phone = "15805934402";
+			type = "国导证";
+			num = "D-3501-003469";
+			head = heads[2];
+		} else if (id == 3) {
+			name = "周彤彤";
+			phone = "15805934402";
+			type = "国导证";
+			num = "D-3501-003469";
+			head = heads[3];
 		}
+		tvDaoyouName.setText(name);
+		tvDaoyouPhone.setText(phone);
+		tvCerType.setText(type);
+		tvCerNum.setText(num);
+		ivHead.setBackgroundResource(head);
+		rlDaoyouInfo.setVisibility(View.VISIBLE);
+
 	}
 
 	public void initUI() {
@@ -220,7 +217,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		tvCerType = (TextView) findViewById(R.id.txtd);
 		tvCerNum = (TextView) findViewById(R.id.tvCerNum);
 		ivHead = (CircleImageView) findViewById(R.id.img_head);
-
+		textView1 = (TextView) findViewById(R.id.textView1);
 		headlay = (RelativeLayout) findViewById(R.id.headlay);
 		imgbtnScan = (ImageButton) findViewById(R.id.imageButton1);
 		ivRadar = (ImageView) findViewById(R.id.imageView1);
@@ -230,6 +227,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	public void process(View v) {
 		// 更改状态
 		isScanning = !isScanning;
+		rlDaoyouInfo.setVisibility(View.GONE);
 		v.setBackgroundResource(isScanning ? R.drawable.bt2 : R.drawable.bt1);
 
 		if (isScanning) {
@@ -290,6 +288,7 @@ public class MainActivity extends Activity implements OnClickListener {
 					ivRadar.clearAnimation();
 					ivRadar.setVisibility(View.INVISIBLE);
 					unbindService(conn);
+					//textView1.setText(text);
 				} catch (Exception e) {
 					Log.e("ex", e.toString());
 				}
