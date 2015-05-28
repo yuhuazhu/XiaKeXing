@@ -94,11 +94,10 @@ public class MainActivity extends Activity {
 			if (Math.abs(x) > 15 || Math.abs(y) > 15 || Math.abs(z) > 15) {
 				Log.i("123123123123", "x轴" + x + "；y轴" + y + "；z轴" + z);
 			}
-			int medumValue = 19;// 三星 i9250怎么晃都不会超过20，没办法，只设置19了
+			int medumValue = 15;// 三星 i9250怎么晃都不会超过20，没办法，只设置19了
 			if (Math.abs(x) > medumValue || Math.abs(y) > medumValue
 					|| Math.abs(z) > medumValue) {
 				vibrator.vibrate(200);
-				Toast.makeText(MainActivity.this, "yao", Toast.LENGTH_SHORT).show();
 				Message msg = new Message();
 				msg.what = MSG_SENSOR_SHAKE;
 				handler.sendMessage(msg);
