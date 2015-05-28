@@ -37,7 +37,7 @@
             android:name="com.brtbeacon.sdk.service.BRTBeaconService"
             android:exported="false" />
         <service
-            android:name="com.xkx.yjxm.service.BleScanService"
+            android:name="com.example.rotate.BleScanService"
             android:enabled="true"
             android:exported="false" >
         </service>
