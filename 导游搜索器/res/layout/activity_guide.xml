@@ -35,7 +35,7 @@
             android:layout_height="40dp"
             android:layout_weight="0.33"
             android:background="#ffffff"
-            android:text="游客须知"
+            android:text="更多项目"
             android:textColor="#ff4081" />
     </LinearLayout>
 
@@ -86,6 +86,11 @@
                         android:layout_width="315dp"
                         android:layout_height="450dp"
                         android:background="@drawable/img_jt" />
+                     <ImageView
+                        android:id="@+id/imgzk2"
+                        android:layout_width="315dp"
+                        android:layout_height="600dp"
+                        android:background="@drawable/img_ykxz" />
                 </LinearLayout>
             </ScrollView>
         </RelativeLayout>
@@ -111,8 +116,8 @@
                     <ImageView
                         android:id="@+id/imageView1"
                         android:layout_width="315dp"
-                        android:layout_height="1600dp"
-                        android:background="@drawable/img_ykxz" />
+                        android:layout_height="600dp"
+                        android:background="@drawable/img_more" />
                 </LinearLayout>
             </ScrollView>
         </RelativeLayout>
