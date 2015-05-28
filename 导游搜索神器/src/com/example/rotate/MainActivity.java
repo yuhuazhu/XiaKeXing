@@ -160,11 +160,11 @@ public class MainActivity extends Activity implements OnClickListener {
 	private int getID(String mac) {
 		mac = mac.trim();
 		// TODO 蓝牙和导游匹配
-		if (mac.equalsIgnoreCase("")) {// 李晓华
+		if (mac.equalsIgnoreCase("54:4A:16:2D:9B:21")) {// 李晓华
 			return 0;
-		} else if (mac.equalsIgnoreCase("")) {// 刘娜
+		} else if (mac.equalsIgnoreCase("54:4A:16:2D:A0:DC")) {// 刘娜
 			return 1;
-		} else if (mac.equalsIgnoreCase("")) {// 张阳
+		} else if (mac.equalsIgnoreCase("54:4A:16:2D:AD:F9")) {// 张阳
 			return 2;
 		} else if (mac.equalsIgnoreCase("")) {// 周彤彤
 			return 3;
