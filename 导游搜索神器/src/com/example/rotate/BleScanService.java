@@ -123,14 +123,14 @@ public class BleScanService extends Service {
 					BRTBeacon beacon = beacons.get(i);
 					int index = saveList.indexOf(beacon);
 					if (index == -1) {
-						if (beacon.name != null
-								&& !beacon.name.equalsIgnoreCase("estimote")
-								&& !beacon.macAddress.equalsIgnoreCase("AB:9A")
+						if (!beacon.macAddress.equalsIgnoreCase("AB:9A")
 								&& !beacon.macAddress.endsWith("29:A5")
 								&& !beacon.macAddress.endsWith("02:EF")
 								&& !beacon.macAddress.endsWith("9B:21")
 								&& !beacon.macAddress.endsWith("8F:A8")) {
 							saveList.add(beacon);
+						} else if (beacon.name == null) {
+							// saveList.add(beacon);
 						}
 					} else {
 						BRTBeacon savedBeacon = saveList.get(index);
@@ -255,26 +255,24 @@ public class BleScanService extends Service {
 				// Log.e("count", "optimized:" + optimizedList.size());
 				Collections.sort(optimizedList, rssiComparator);
 				if (optimizedList.size() >= 0) {
-					// sb.append("个数:" + optimizedList.size() + "\n");
-					// for (int i = 0; i < optimizedList.size() && i <= 2; i++)
-					// {
-					// BRTBeacon beacon = optimizedList.get(i);
-					// sb.append(getTitle(beacon.macAddress) + ","
-					// + beacon.rssi + "\n");
-					// }
-					// sb.append("----------------\n");
-					// for (int i = 0; i < allScannedList.size() && i <= 2; i++)
-					// {
-					// BeaconData data = allScannedList.get(i);
-					// sb.append(getTitle(data.beacon.macAddress) + ","
-					// + data.sumRssi / data.selfScanCount + "\n");
-					// }
-					// if (t == null) {
-					// t = Toast.makeText(BleScanService.this, "",
-					// Toast.LENGTH_LONG);
-					// }
-					// t.setText(sb.toString());
-					// t.show();
+					sb.append("个数:" + optimizedList.size() + "\n");
+					for (int i = 0; i < optimizedList.size() && i <= 2; i++) {
+						BRTBeacon beacon = optimizedList.get(i);
+						sb.append(getTitle(beacon.macAddress) + ","
+								+ beacon.rssi + "\n");
+					}
+					sb.append("----------------\n");
+					for (int i = 0; i < allScannedList.size() && i <= 2; i++) {
+						BeaconData data = allScannedList.get(i);
+						sb.append(getTitle(data.beacon.macAddress) + ","
+								+ data.sumRssi / data.selfScanCount + "\n");
+					}
+					if (t == null) {
+						t = Toast.makeText(BleScanService.this, "",
+								Toast.LENGTH_LONG);
+					}
+					t.setText(sb.toString());
+					t.show();
 					// TODO
 					if (optimizedList.size() >= 1) {
 						onBleScanListener.onPeriodScan(optimizedList);
