@@ -40,7 +40,6 @@ public class MainActivity extends Activity implements OnClickListener {
 	private RelativeLayout headlay;
 
 	private BleBinder bleBinder;
-	private TextView textView1;
 	/**
 	 * 最多导游数
 	 */
@@ -58,7 +57,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			Log.e("scan", "onServiceConnected");
 			bleBinder = (BleBinder) service;
 
-			bleBinder.setRegion(null);// 空代表扫描所有
+			bleBinder.setRegion("E2C56DB5-DFFB-48D2-B060-D0F5A71096E0");// 空代表扫描所有
 			bleBinder.setOnBleScanListener(new OnBleScanListener() {
 
 				@Override
@@ -93,8 +92,9 @@ public class MainActivity extends Activity implements OnClickListener {
 	};
 
 	private void processScanResult(List<BRTBeacon> scanResultList) {
-		int count = scanResultList.size() > 4 ? 4 : scanResultList.size();
-		drawBeacons(count);
+		tvTip.setText("已搜索到附近" + scanResultList.size() + "位导游");
+		drawBeacons(scanResultList);
+
 	}
 
 	@Override
@@ -117,12 +117,12 @@ public class MainActivity extends Activity implements OnClickListener {
 	private TextView tvCerType;
 	private TextView tvCerNum;
 	private CircleImageView ivHead;
+	private TextView tvTip;
 
-	private void drawBeacons(int count) {
-		headlay = (RelativeLayout) findViewById(R.id.headlay);
-		cr = new CircleImageView[count];
+	private void drawBeacons(final List<BRTBeacon> list) {
+		cr = new CircleImageView[list.size()];
 
-		for (int i = 0; i < count; i++) {
+		for (int i = 0; i < list.size() && i <= 3; i++) {
 			RelativeLayout.LayoutParams lp = new android.widget.RelativeLayout.LayoutParams(
 					100, 100);
 			cr[i] = new CircleImageView(this);
@@ -135,7 +135,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				lp.addRule(RelativeLayout.BELOW, R.id.imageButton1);
 			}
 			cr[i].setLayoutParams(lp);
-			cr[i].setBackgroundResource(heads[i]);
+			cr[i].setBackgroundResource(heads[getID(list.get(i).macAddress)]);
 			final int index = i;
 			cr[i].setOnClickListener(new OnClickListener() {
 
@@ -145,12 +145,12 @@ public class MainActivity extends Activity implements OnClickListener {
 					Animation scaleAnimation = new ScaleAnimation(1f, 2.0f, 1f,
 							2.0f);
 					scaleAnimation.setDuration(1000);
-					scaleAnimation.setFillAfter(false);
+					scaleAnimation.setFillAfter(true);
 					cr[index].startAnimation(scaleAnimation);
 					// TODO 跳转页面
 					// Intent intent = new Intent(MainActivity.this, cls);
 					// startActivity(intent);
-					processInfoShow(index);
+					processInfoShow(getID(list.get(index).macAddress));
 				}
 			});
 			headlay.addView(cr[i], lp);
@@ -160,13 +160,13 @@ public class MainActivity extends Activity implements OnClickListener {
 	private int getID(String mac) {
 		mac = mac.trim();
 		// TODO 蓝牙和导游匹配
-		if (mac.equalsIgnoreCase("54:4A:16:2D:9B:21")) {// 李晓华
+		if (mac.equalsIgnoreCase("54:4A:16:2D:B0:7D")) {// 李晓华
 			return 0;
 		} else if (mac.equalsIgnoreCase("54:4A:16:2D:A0:DC")) {// 刘娜
 			return 1;
 		} else if (mac.equalsIgnoreCase("54:4A:16:2D:AD:F9")) {// 张阳
 			return 2;
-		} else if (mac.equalsIgnoreCase("")) {// 周彤彤
+		} else if (mac.equalsIgnoreCase("54:4A:16:2D:AA:3C")) {// 周彤彤
 			return 3;
 		}
 		return -1;
@@ -213,11 +213,11 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	public void initUI() {
 		tvDaoyouName = (TextView) findViewById(R.id.textView2);
+		tvTip = (TextView) findViewById(R.id.textView1);
 		tvDaoyouPhone = (TextView) findViewById(R.id.textView3);
 		tvCerType = (TextView) findViewById(R.id.txtd);
 		tvCerNum = (TextView) findViewById(R.id.tvCerNum);
 		ivHead = (CircleImageView) findViewById(R.id.img_head);
-		textView1 = (TextView) findViewById(R.id.textView1);
 		headlay = (RelativeLayout) findViewById(R.id.headlay);
 		imgbtnScan = (ImageButton) findViewById(R.id.imageButton1);
 		ivRadar = (ImageView) findViewById(R.id.imageView1);
@@ -272,6 +272,7 @@ public class MainActivity extends Activity implements OnClickListener {
 						Log.e("ex", "" + e.toString());
 					}
 				}
+				tvTip.setText("正在搜索...");
 				rlDaoyouInfo.setVisibility(View.INVISIBLE);
 				imgbtnScan.setBackgroundResource(R.drawable.bt2);
 			}
@@ -288,7 +289,6 @@ public class MainActivity extends Activity implements OnClickListener {
 					ivRadar.clearAnimation();
 					ivRadar.setVisibility(View.INVISIBLE);
 					unbindService(conn);
-					//textView1.setText(text);
 				} catch (Exception e) {
 					Log.e("ex", e.toString());
 				}
