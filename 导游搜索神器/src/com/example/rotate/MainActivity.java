@@ -33,15 +33,18 @@ import com.example.rotate.BleScanService.OnBleScanListener;
 
 public class MainActivity extends Activity implements OnClickListener {
 
-	private ImageView m_im;
-	private boolean isStart;
+	private ImageView ivRadar;
+	private boolean isScanning = false;
 	private boolean isBack;
-	private TextView textView1;
-	private RelativeLayout daolayout;
-	private ImageButton imageButton1;
+	private RelativeLayout rlDaoyouInfo;
 	private RelativeLayout headlay;
 
 	private BleBinder bleBinder;
+
+	/**
+	 * 最多导游数
+	 */
+	int maxDrawCount = 4;
 
 	private ServiceConnection conn = new ServiceConnection() {
 
@@ -60,11 +63,11 @@ public class MainActivity extends Activity implements OnClickListener {
 
 				@Override
 				public void onPeriodScan(List<BRTBeacon> scanResultList) {
-					isStart = false;
-					m_im.clearAnimation();
-					m_im.setVisibility(View.INVISIBLE);
-					imgbtnScan.setBackgroundResource(R.drawable.bt1);
-					processScanResult(scanResultList);
+					if (scanResultList.size() != 0) {
+						isScanning = false;
+						ivRadar.clearAnimation();
+						processScanResult(scanResultList);
+					}
 				}
 
 				@Override
@@ -81,11 +84,6 @@ public class MainActivity extends Activity implements OnClickListener {
 		}
 	};
 
-	/**
-	 * 最多导游数
-	 */
-	int maxDrawCount = 4;
-
 	Comparator<? super BRTBeacon> rssiComparator = new Comparator<BRTBeacon>() {
 
 		@Override
@@ -95,7 +93,8 @@ public class MainActivity extends Activity implements OnClickListener {
 	};
 
 	private void processScanResult(List<BRTBeacon> scanResultList) {
-		drawBeacons(4);
+		int count = scanResultList.size() > 4 ? 4 : scanResultList.size();
+		drawBeacons(count);
 	}
 
 	@Override
@@ -106,18 +105,22 @@ public class MainActivity extends Activity implements OnClickListener {
 		initUI();
 	}
 
-	int[] heads = new int[] { R.drawable.img_li, R.drawable.img_liu,
-			R.drawable.img_zhang, R.drawable.img_zhou };
+	int[] heads = new int[] { R.drawable.img_lixiaohua, R.drawable.img_liuna,
+			R.drawable.img_zhangyang, R.drawable.img_zhoutongtong };
 
 	int[] rights = new int[] { 50, 500, -300, -500 };
 	int[] tops = new int[] { 75, -140, 500, 200 };
 	CircleImageView[] cr;
 	private ImageButton imgbtnScan;
+	private TextView tvDaoyouName;
+	private TextView tvDaoyouPhone;
+	private TextView tvCerType;
+	private TextView tvCerNum;
+	private CircleImageView ivHead;
 
 	private void drawBeacons(int count) {
 		headlay = (RelativeLayout) findViewById(R.id.headlay);
-		imageButton1 = (ImageButton) findViewById(R.id.imageButton1);
-		cr = new CircleImageView[4];
+		cr = new CircleImageView[count];
 
 		for (int i = 0; i < count; i++) {
 			RelativeLayout.LayoutParams lp = new android.widget.RelativeLayout.LayoutParams(
@@ -125,11 +128,11 @@ public class MainActivity extends Activity implements OnClickListener {
 			cr[i] = new CircleImageView(this);
 			lp.rightMargin = rights[i];
 			lp.topMargin = tops[i];
-			lp.addRule(RelativeLayout.LEFT_OF, imageButton1.getId());
+			lp.addRule(RelativeLayout.LEFT_OF, R.id.imageButton1);
 			if (i % 2 == 0) {
-				lp.addRule(RelativeLayout.ABOVE, imageButton1.getId());
+				lp.addRule(RelativeLayout.ABOVE, R.id.imageButton1);
 			} else {
-				lp.addRule(RelativeLayout.BELOW, imageButton1.getId());
+				lp.addRule(RelativeLayout.BELOW, R.id.imageButton1);
 			}
 			cr[i].setLayoutParams(lp);
 			cr[i].setBackgroundResource(heads[i]);
@@ -140,76 +143,100 @@ public class MainActivity extends Activity implements OnClickListener {
 				@Override
 				public void onClick(View v) {
 					isLarge = !isLarge;
-					if (isLarge) {
-						// 放大头像
-						Animation scaleAnimation = new ScaleAnimation(1f, 2.0f,
-								1f, 2.0f);
-						scaleAnimation.setDuration(1000);
-						scaleAnimation.setFillAfter(false);
-						cr[index].startAnimation(scaleAnimation);
-						// TODO 显示信息
-					} else {
-						// 还原
-						Animation scaleAnimation = new ScaleAnimation(2f, 1f,
-								2f, 1f);
-						scaleAnimation.setDuration(500);
-						scaleAnimation.setFillAfter(true);
-						cr[index].startAnimation(scaleAnimation);
-						// TODO 隐藏信息
-					}
+					Animation scaleAnimation = new ScaleAnimation(1f, 2.0f, 1f,
+							2.0f);
+					scaleAnimation.setDuration(1000);
+					scaleAnimation.setFillAfter(false);
+					cr[index].startAnimation(scaleAnimation);
+					// TODO 跳转页面
+					// Intent intent = new Intent(MainActivity.this, cls);
+					// startActivity(intent);
+					processInfoShow(isLarge, index);
 				}
 			});
 			headlay.addView(cr[i], lp);
 		}
 	}
 
+	private int getID(String mac) {
+		mac = mac.trim();
+		// TODO 蓝牙和导游匹配
+		if (mac.equalsIgnoreCase("")) {// 李晓华
+			return 0;
+		} else if (mac.equalsIgnoreCase("")) {// 刘娜
+			return 1;
+		} else if (mac.equalsIgnoreCase("")) {// 张阳
+			return 2;
+		} else if (mac.equalsIgnoreCase("")) {// 周彤彤
+			return 3;
+		}
+		return -1;
+	}
+
+	private void processInfoShow(boolean show, int id) {
+		String name = "李晓华", phone = "15805934402", type = "国导证", num = "D-3501-003469";
+		int head = heads[0];
+		if (show) {
+			// TODO 更改信息
+			if (id == 0) {
+				name = "李晓华";
+				phone = "15805934402";
+				type = "国导证";
+				num = "D-3501-003469";
+				head = heads[0];
+			} else if (id == 1) {
+				name = "刘娜";
+				phone = "15805934402";
+				type = "国导证";
+				num = "D-3501-003469";
+				head = heads[1];
+			} else if (id == 2) {
+				name = "张阳";
+				phone = "15805934402";
+				type = "国导证";
+				num = "D-3501-003469";
+				head = heads[2];
+			} else if (id == 3) {
+				name = "周彤彤";
+				phone = "15805934402";
+				type = "国导证";
+				num = "D-3501-003469";
+				head = heads[3];
+			}
+			tvDaoyouName.setText(name);
+			tvDaoyouPhone.setText(phone);
+			tvCerType.setText(type);
+			tvCerNum.setText(num);
+			ivHead.setBackgroundResource(head);
+			rlDaoyouInfo.setVisibility(View.VISIBLE);
+		} else {
+			rlDaoyouInfo.setVisibility(View.INVISIBLE);
+		}
+	}
+
 	public void initUI() {
-		imgbtnScan = (ImageButton) findViewById(R.id.button1);
-		m_im = (ImageView) findViewById(R.id.imageView1);
-		m_im.setVisibility(View.INVISIBLE);
-		textView1 = (TextView) findViewById(R.id.textView1);
-		daolayout = (RelativeLayout) findViewById(R.id.daolayout);
+		tvDaoyouName = (TextView) findViewById(R.id.textView2);
+		tvDaoyouPhone = (TextView) findViewById(R.id.textView3);
+		tvCerType = (TextView) findViewById(R.id.txtd);
+		tvCerNum = (TextView) findViewById(R.id.tvCerNum);
+		ivHead = (CircleImageView) findViewById(R.id.img_head);
+
+		headlay = (RelativeLayout) findViewById(R.id.headlay);
+		imgbtnScan = (ImageButton) findViewById(R.id.imageButton1);
+		ivRadar = (ImageView) findViewById(R.id.imageView1);
+		rlDaoyouInfo = (RelativeLayout) findViewById(R.id.daolayout);
 	}
 
 	public void process(View v) {
 		// 更改状态
-		isStart = !isStart;
-		v.setBackgroundResource(isStart ? R.drawable.bt2 : R.drawable.bt1);
-		final ImageButton button = (ImageButton) v;
+		isScanning = !isScanning;
+		v.setBackgroundResource(isScanning ? R.drawable.bt2 : R.drawable.bt1);
 
-		if (isStart) {
+		if (isScanning) {
 			// 开启蓝牙扫描
 			Intent service = new Intent(MainActivity.this, BleScanService.class);
 			bindService(service, conn, BIND_AUTO_CREATE);
-			AnimationSet animationSet = new AnimationSet(true);
-			RotateAnimation animation = new RotateAnimation(0f, 360f, 0, 0);
-			animation.setRepeatCount(3);
-			animation.setDuration(4000);// 设置动画持续时间
-			animationSet.addAnimation(animation);
-			animationSet.setInterpolator(new LinearInterpolator());
-			m_im.startAnimation(animationSet);
-			m_im.setVisibility(View.VISIBLE);
-			animationSet.setAnimationListener(new AnimationListener() {
-
-				@Override
-				public void onAnimationStart(Animation animation) {
-					// TODO Auto-generated method stub
-
-				}
-
-				@Override
-				public void onAnimationRepeat(Animation animation) {
-					// TODO Auto-generated method stub
-				}
-
-				@Override
-				public void onAnimationEnd(Animation animation) {
-					isStart = false;
-					m_im.clearAnimation();
-					m_im.setVisibility(View.INVISIBLE);
-					button.setBackgroundResource(R.drawable.bt1);
-				}
-			});
+			playAnimation();
 		} else {
 			// 解绑服务,取消扫描.
 			unbindService(conn);
@@ -219,9 +246,55 @@ public class MainActivity extends Activity implements OnClickListener {
 					headlay.removeView(cr[i]);
 				}
 			}
-			m_im.clearAnimation();
-			m_im.setVisibility(View.INVISIBLE);
+			ivRadar.clearAnimation();
+			ivRadar.setVisibility(View.INVISIBLE);
 		}
+	}
+
+	private void playAnimation() {
+		AnimationSet animationSet = new AnimationSet(true);
+		RotateAnimation animation = new RotateAnimation(0f, 360f, 0, 0);
+		animation.setRepeatCount(3);
+		animation.setDuration(4000);// 设置动画持续时间
+		animationSet.addAnimation(animation);
+		animationSet.setInterpolator(new LinearInterpolator());
+		ivRadar.startAnimation(animationSet);
+		ivRadar.setVisibility(View.VISIBLE);
+		animationSet.setAnimationListener(new AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+				// TODO 移除头像
+				// 启动扫描
+				Log.e("size", "size :" + headlay.getChildCount());
+				for (int i = 0; i <= headlay.getChildCount() + 2; i++) {
+					try {
+						headlay.removeViewAt(1);
+					} catch (Exception e) {
+						Log.e("ex", "" + e.toString());
+					}
+				}
+				rlDaoyouInfo.setVisibility(View.INVISIBLE);
+				imgbtnScan.setBackgroundResource(R.drawable.bt2);
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				try {
+					imgbtnScan.setBackgroundResource(R.drawable.bt1);
+					isScanning = false;
+					ivRadar.clearAnimation();
+					ivRadar.setVisibility(View.INVISIBLE);
+					unbindService(conn);
+				} catch (Exception e) {
+					Log.e("ex", e.toString());
+				}
+			}
+		});
 	}
 
 	@Override
@@ -234,7 +307,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				isBack = true;
 				Toast.makeText(MainActivity.this, "再按一次退出程序",
 						Toast.LENGTH_SHORT).show();
-				m_im.postDelayed(new Runnable() {
+				ivRadar.postDelayed(new Runnable() {
 					public void run() {
 						isBack = false;
 					}
