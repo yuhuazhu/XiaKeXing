@@ -7,9 +7,18 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="18" />
-    
-	<uses-permission android:name="android.permission.VIBRATE"/>  
-	
+
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -52,6 +61,16 @@
             android:name="com.xkx.dyssq.activity.GuideActivity"
             android:label="@string/title_activity_guide" >
         </activity>
+
+        <!-- BrightBeacon 扫描服务. -->
+        <service
+            android:name="com.brtbeacon.sdk.service.BRTBeaconService"
+            android:exported="false" />
+        <service
+            android:name="com.xkx.dyssq.activity.BleScanService"
+            android:enabled="true"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>
