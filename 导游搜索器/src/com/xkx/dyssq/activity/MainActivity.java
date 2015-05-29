@@ -3,8 +3,10 @@ package com.xkx.dyssq.activity;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.hardware.Sensor;
@@ -58,7 +60,7 @@ public class MainActivity extends Activity {
 		vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 		m_im1 = (ImageView) findViewById(R.id.imageView1);
 		m_im2 = (ImageView) findViewById(R.id.imageView2);
-		m_im2.setEnabled(false);
+		// m_im2.setEnabled(false);
 		m_ll = (LinearLayout) findViewById(R.id.linearLayout);
 		m_ll.setVisibility(View.INVISIBLE);
 		m_ll.setOnClickListener(new OnClickListener() {
@@ -195,6 +197,13 @@ public class MainActivity extends Activity {
 		}
 	};
 
+	// 产生震动
+	public static void playVibator(Context context, long timelong) {
+		Vibrator vib = (Vibrator) context
+				.getSystemService(Service.VIBRATOR_SERVICE);
+		vib.vibrate(timelong);
+	}
+
 	public void startPeople(View v) {
 		// 更改状态
 		isStart = !isStart;
@@ -232,6 +241,8 @@ public class MainActivity extends Activity {
 
 			animationSet.setInterpolator(new LinearInterpolator());
 			m_im2.startAnimation(animationSet);
+			// 产生震动
+			playVibator(this,1000);
 			animationSet.setAnimationListener(new AnimationListener() {
 
 				@Override
