@@ -205,6 +205,8 @@ public class MainActivity extends Activity {
 	}
 
 	public void startPeople(View v) {
+		Intent service = new Intent(MainActivity.this, BleScanService.class);
+		bindService(service, conn, BIND_AUTO_CREATE);
 		// ¸ü¸Ä×´Ì¬
 		isStart = !isStart;
 		v.setClickable(false);
