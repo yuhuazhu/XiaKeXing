@@ -89,26 +89,23 @@ public class GuideActivity extends Activity implements OnClickListener {
 
 					if (x >= 611 && x <= 1010 && y >= 43 && y <= 210) {
 						if (zkstate) {
-							imgzk.setBackgroundResource(R.drawable.img_zk);
-							LayoutParams lp = new LayoutParams(900, 5800);
+							imgzk.setBackgroundResource(R.drawable.img_ss);
+							LayoutParams lp = new LayoutParams(900, 900);
+
 							imgzk.setLayoutParams(lp);
 							zkstate = false;
 						} else {
-							imgzk.setBackgroundResource(R.drawable.img_ss);
-							LayoutParams lp = new LayoutParams(900, 900);
+							imgzk.setBackgroundResource(R.drawable.img_zk);
+
+							LayoutParams lp = new LayoutParams(900, 5800);
 							imgzk.setLayoutParams(lp);
 							zkstate = true;
-
 						}
 					}
-
 				}
-
 				return true;
 			}
-
 		});
-
 	}
 
 	@Override
