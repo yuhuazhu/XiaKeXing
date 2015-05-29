@@ -3,7 +3,6 @@ package com.example.rotate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -116,7 +115,6 @@ public class BleScanService extends Service {
 
 			@Override
 			public void onBeaconsDiscovered(RangingResult result) {
-				Log.e("time", "" + (System.currentTimeMillis() - startTime));
 				singleLoopCount++;
 				List<BRTBeacon> beacons = result.beacons;
 				for (int i = 0; i < beacons.size(); i++) {
@@ -252,27 +250,28 @@ public class BleScanService extends Service {
 					}
 				}
 
-				// Log.e("count", "optimized:" + optimizedList.size());
 				Collections.sort(optimizedList, rssiComparator);
 				if (optimizedList.size() >= 0) {
-					sb.append("个数:" + optimizedList.size() + "\n");
-					for (int i = 0; i < optimizedList.size() && i <= 2; i++) {
-						BRTBeacon beacon = optimizedList.get(i);
-						sb.append(getTitle(beacon.macAddress) + ","
-								+ beacon.rssi + "\n");
-					}
-					sb.append("----------------\n");
-					for (int i = 0; i < allScannedList.size() && i <= 2; i++) {
-						BeaconData data = allScannedList.get(i);
-						sb.append(getTitle(data.beacon.macAddress) + ","
-								+ data.sumRssi / data.selfScanCount + "\n");
-					}
-					if (t == null) {
-						t = Toast.makeText(BleScanService.this, "",
-								Toast.LENGTH_LONG);
-					}
-					t.setText(sb.toString());
-					t.show();
+					// sb.append("个数:" + optimizedList.size() + "\n");
+					// for (int i = 0; i < optimizedList.size() && i <= 2; i++)
+					// {
+					// BRTBeacon beacon = optimizedList.get(i);
+					// sb.append(getTitle(beacon.macAddress) + ","
+					// + beacon.rssi + "\n");
+					// }
+					// sb.append("----------------\n");
+					// for (int i = 0; i < allScannedList.size() && i <= 2; i++)
+					// {
+					// BeaconData data = allScannedList.get(i);
+					// sb.append(getTitle(data.beacon.macAddress) + ","
+					// + data.sumRssi / data.selfScanCount + "\n");
+					// }
+					// if (t == null) {
+					// t = Toast.makeText(BleScanService.this, "",
+					// Toast.LENGTH_LONG);
+					// }
+					// t.setText(sb.toString());
+					// t.show();
 					// TODO
 					if (optimizedList.size() >= 1) {
 						onBleScanListener.onPeriodScan(optimizedList);
@@ -290,11 +289,6 @@ public class BleScanService extends Service {
 							freshBeacon = brtBeacon;
 						}
 					}
-				}
-
-				try {
-				} catch (Exception e) {
-					Log.e("ex", e.toString());
 				}
 			}
 		});
@@ -354,9 +348,6 @@ public class BleScanService extends Service {
 			e.printStackTrace();
 		}
 		brtBeaconMgr.disconnect();
-		// 关闭蓝牙
-		BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-		adapter.disable();
 		return super.onUnbind(intent);
 	}
 
