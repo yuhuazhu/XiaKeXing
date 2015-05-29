@@ -79,8 +79,8 @@
                     <ImageView
                         android:id="@+id/imgzk"
                         android:layout_width="315dp"
-                        android:layout_height="2000dp"
-                        android:background="@drawable/img_zk" />
+                        android:layout_height="300dp"
+                        android:background="@drawable/img_ss" />
                      <ImageView
                         android:id="@+id/imgzk2"
                         android:layout_width="315dp"
