@@ -4,6 +4,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -108,8 +109,8 @@ public class MainActivity extends Activity implements OnClickListener {
 	int[] heads = new int[] { R.drawable.img_lixiaohua, R.drawable.img_liuna,
 			R.drawable.img_zhangyang, R.drawable.img_zhoutongtong };
 
-	int[] rights = new int[] { 50, 500, -300, -500 };
-	int[] tops = new int[] { 75, -140, 500, 200 };
+	int[] rights = new int[] { 50, 150, -400, -300 };
+	int[] tops = new int[] { 750, -140, 200, 50 };
 	CircleImageView[] cr;
 	private ImageButton imgbtnScan;
 	private TextView tvDaoyouName;
@@ -141,7 +142,11 @@ public class MainActivity extends Activity implements OnClickListener {
 
 				@Override
 				public void onClick(View v) {
-
+					int childCount = headlay.getChildCount();
+					for (int j = 0; j < childCount; j++) {
+						View view = headlay.getChildAt(j);
+						view.clearAnimation();
+					}
 					Animation scaleAnimation = new ScaleAnimation(1f, 2.0f, 1f,
 							2.0f);
 					scaleAnimation.setDuration(1000);
@@ -155,6 +160,21 @@ public class MainActivity extends Activity implements OnClickListener {
 			});
 			headlay.addView(cr[i], lp);
 		}
+	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+		adapter.enable();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		// ¹Ø±ÕÀ¶ÑÀ
+		BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+		adapter.disable();
 	}
 
 	private int getID(String mac) {
