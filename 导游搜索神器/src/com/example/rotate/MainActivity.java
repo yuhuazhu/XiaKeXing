@@ -29,11 +29,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.brtbeacon.sdk.BRTBeacon;
+import com.brtbeacon.sdk.Utils;
 import com.example.rotate.BleScanService.BleBinder;
 import com.example.rotate.BleScanService.OnBleScanListener;
 
 public class MainActivity extends Activity implements OnClickListener {
 
+	/**
+	 * max distance in meters bluetooth in scan range.
+	 */
+	private static final int MAX_METERS = 6;
 	private ImageView ivRadar;
 	private boolean isScanning = false;
 	private boolean isBack;
@@ -121,20 +126,44 @@ public class MainActivity extends Activity implements OnClickListener {
 	private TextView tvTip;
 
 	private void drawBeacons(final List<BRTBeacon> list) {
+		if (list == null || list.size() == 0) {
+			return;
+		}
 		cr = new CircleImageView[list.size()];
+
+		int top = imgbtnScan.getTop();
+		int bottom = imgbtnScan.getBottom();
+		int left = imgbtnScan.getLeft();
+		int right = imgbtnScan.getRight();
+		// º∆À„æ‡¿Î
+		int pxDistance[] = new int[list.size()];
+		for (int i = 0; i < list.size(); i++) {
+			int metersDistance = (int) Utils.computeAccuracy(list.get(i));
+			pxDistance[i] = MathUtils.meters2px(this, metersDistance,
+					MAX_METERS);
+		}
+		int cx = (left + right) / 2;
+		int cy = (top + bottom) / 2;
+		List<Point> pointList = MathUtils.genPoint(cx, cy,
+				imgbtnScan.getHeight() / 2 * 4 / 3,
+				headlay.getWidth() / 2 * 3 / 4, pxDistance);
 
 		for (int i = 0; i < list.size() && i <= 3; i++) {
 			RelativeLayout.LayoutParams lp = new android.widget.RelativeLayout.LayoutParams(
 					100, 100);
+			// lp.rightMargin = rights[i];
+			// lp.topMargin = tops[i];
+			// lp.addRule(RelativeLayout.LEFT_OF, R.id.imageButton1);
+			// if (i % 2 == 0) {
+			// lp.addRule(RelativeLayout.ABOVE, R.id.imageButton1);
+			// } else {
+			// lp.addRule(RelativeLayout.BELOW, R.id.imageButton1);
+			// }
+			Point point = pointList.get(i);
+			lp.leftMargin = point.x;
+			lp.topMargin = point.y;
+			// lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 			cr[i] = new CircleImageView(this);
-			lp.rightMargin = rights[i];
-			lp.topMargin = tops[i];
-			lp.addRule(RelativeLayout.LEFT_OF, R.id.imageButton1);
-			if (i % 2 == 0) {
-				lp.addRule(RelativeLayout.ABOVE, R.id.imageButton1);
-			} else {
-				lp.addRule(RelativeLayout.BELOW, R.id.imageButton1);
-			}
 			cr[i].setLayoutParams(lp);
 			cr[i].setBackgroundResource(heads[getID(list.get(i).macAddress)]);
 			final int index = i;
@@ -161,7 +190,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			headlay.addView(cr[i], lp);
 		}
 	}
-	
+
 	@Override
 	protected void onStart() {
 		super.onStart();
