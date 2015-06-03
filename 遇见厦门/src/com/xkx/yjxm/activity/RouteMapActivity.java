@@ -227,7 +227,8 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 		boolean toMacFirst = cursorMac.moveToFirst();
 		while (toMacFirst) {
 
-			MacInfo rs = new MacInfo(cursorMac.getString(cursorMac
+			MacInfo rs = new MacInfo(cursorMac.getInt(cursorMac
+					.getColumnIndex("ID")),cursorMac.getString(cursorMac
 					.getColumnIndex("macName")), cursorMac.getFloat(cursorMac
 					.getColumnIndex("power")), cursorMac.getFloat(cursorMac
 					.getColumnIndex("distance")));
@@ -322,9 +323,9 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 			return;
 		}
 		final String address = beacon.macAddress.trim();
-		final int id = getId(address);
 		// 信号强度过滤,表待添加一个字段。
 		MacInfo macInfo = MacMap.get(beacon.macAddress);
+		final int id = macInfo.getID();
 		if (beacon.rssi < macInfo.getPower()) {// 此处非功率
 			return;
 		}
