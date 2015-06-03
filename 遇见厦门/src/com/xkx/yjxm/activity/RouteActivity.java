@@ -271,6 +271,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 			}
 		});
 		findViewById(R.id.download_btn).setOnClickListener(this);
+		findViewById(R.id.downcancel_btn).setOnClickListener(this);
 		findViewById(R.id.download_btn).setEnabled(true);
 		mMessageView = (TextView) findViewById(R.id.download_message);
 		mProgressbar = (ProgressBar) findViewById(R.id.download_progress);
@@ -980,9 +981,10 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		case R.id.btnback:
 			finish();
 			break;
-
+		case R.id.downcancel_btn:
+			downloadlay.setVisibility(View.GONE);
+			break;
 		case R.id.imgmap:
-
 			Intent intent = new Intent();
 			intent.setClass(this, RouteMapActivity.class);
 
