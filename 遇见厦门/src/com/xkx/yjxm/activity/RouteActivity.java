@@ -69,7 +69,7 @@ import com.xkx.yjxm.db.MySqlite;
 import com.xkx.yjxm.utils.HttpUtil;
 
 //导游路线
-public class RouteActivity extends BaseActivity implements OnClickListener {
+public class RouteActivity extends Activity implements OnClickListener {
 	private ImageButton btnlist;
 	private ImageButton btndlist;
 	private ImageButton btnback;
@@ -146,7 +146,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 			random2 = new Random(nextInt);
 			times = random2.nextInt(10) + 5;
 
-			time[i] = getResources().getString(R.string.R_time1) + times + getResources().getString(R.string.R_time2);
+			time[i] = "浏览时长：" + times + "分钟";
 		}
 		for (int i = 0; i < img.length; i++) {
 			distances += 10;
@@ -276,21 +276,15 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		mProgressbar = (ProgressBar) findViewById(R.id.download_progress);
 
 		// 发送请求
-		try 
-		{
+		
 			sendRequest();
-		}
-		catch (Exception e)
-		{
-			
-		}
+		
 	}
 
 	private void sendRequest() {
 		// 向服务器请求mac，判断是否需要下载mac
 		requestMacInfo();
-		// 向服务器请求资源，判断是否需要下载资源
-		requestRes();
+		
 
 	}
 
@@ -322,6 +316,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 					upZipFile(file, folderPath);
 				} catch (ZipException e) {
 					// TODO Auto-generated catch block
+					Log.e("fdfd", e.toString());
 					e.printStackTrace();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -638,16 +633,24 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 
 	// Mac请求
 	private void requestMacInfo() {
-
-		Macresponse = HttpUtil.queryStringForPost(Constants.MACREQURL
-				+ "scenicid=1");
-		JsonResponse resp = new JsonResponse();
-		JSONObject json = resp.getjson(Macresponse);
-		Macjsonarray = json.optJSONArray("result");
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				Macresponse = HttpUtil.queryStringForPost(Constants.MACREQURL
+						+ "?scenicid=1");
+				JsonResponse resp = new JsonResponse();
+				JSONObject json = resp.getjson(Macresponse);
+				Macjsonarray = json.optJSONArray("result");
+				// 向服务器请求资源，判断是否需要下载资源
+				requestRes();
+			}
+		}).start();
 	}
 
 	// 资源请求
 	private void requestRes() {
+
 		if (Environment.getExternalStorageState() == Environment.MEDIA_UNMOUNTED) {
 			Toast.makeText(RouteActivity.this, "sd卡不存在", Toast.LENGTH_SHORT)
 					.show();
@@ -661,7 +664,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 				}
 				filelist = file.listFiles();
 				if (filelist.length == 0) {
-					//首次下载
+					// 首次下载
 					isNOhasResFolder();
 				} else {
 					// 不是首次下载
@@ -679,7 +682,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 			}
 			filelist = file.listFiles();
 			if (filelist.length == 0) {
-				//首次下载
+				// 首次下载
 				isNOhasResFolder();
 			} else {
 				// 不是首次下载
@@ -687,14 +690,13 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 			}
 			downstate = false;
 		}
+
 	}
 
 	// 首次下载
 	public void isNOhasResFolder() {
 		if (isNetworkConnected(this)) {
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
+			
 					// TODO Auto-generated method stub
 					Resresponse = HttpUtil
 							.queryStringForPost(Constants.RESOURCEREQURL);
@@ -711,8 +713,8 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-				}
-			}).start();
+				
+			
 		}
 		downloadlay.setVisibility(View.VISIBLE);
 		// 设置progressBar初始化
@@ -730,10 +732,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 			}
 		}
 		if (isNetworkConnected(this)) {
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
+			
 					// TODO Auto-generated method stub
 					Resresponse = HttpUtil
 							.queryStringForPost(Constants.RESOURCEREQURL
@@ -757,8 +756,8 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 					} else {
 						finstate = true;
 					}
-				}
-			}).start();
+				
+			
 		}
 	}
 
@@ -841,7 +840,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 			// "drawable://" + (Integer) list.get(position).get("img"),
 			// holder.imageView1, options);
 
-			holder.txttitle.setText(R.string.route_title0 + position);
+			holder.txttitle.setText(title[position]);
 			holder.txttime.setText(time[position]);
 			holder.txtdistance.setText(distance[position]);
 
@@ -871,16 +870,16 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 					try {
 						values.put("ID",
 								Macjsonarray.getJSONObject(i).optInt("ID"));
-						values.put("macname", Macjsonarray.getJSONObject(i)
-								.optString("macname"));
-						values.put("scenicid", Macjsonarray.getJSONObject(i)
-								.optInt("scenicid"));
+						values.put("macName", Macjsonarray.getJSONObject(i)
+								.optString("macName"));
+						values.put("scenicId", Macjsonarray.getJSONObject(i)
+								.optInt("scenicId"));
 						values.put("power", Macjsonarray.getJSONObject(i)
 								.optDouble("power"));
 						values.put("distance", Macjsonarray.getJSONObject(i)
 								.optDouble("distance"));
-						values.put("edittime", Macjsonarray.getJSONObject(i)
-								.optString("edittime"));
+						values.put("editTime", Macjsonarray.getJSONObject(i)
+								.optString("editTime"));
 						mDB.insert("MacInfo", null, values);
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
@@ -907,14 +906,14 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 								.optString("title"));
 						values.put("content", Resjsonarray.getJSONObject(i)
 								.optString("content"));
-						values.put("bgname", Resjsonarray.getJSONObject(i)
-								.optString("bgname"));
-						values.put("musicname", Resjsonarray.getJSONObject(i)
-								.optString("musicname"));
+						values.put("bgName", Resjsonarray.getJSONObject(i)
+								.optString("bgName"));
+						values.put("musicName", Resjsonarray.getJSONObject(i)
+								.optString("musicName"));
 						values.put("mid",
 								Resjsonarray.getJSONObject(i).optInt("mid"));
-						values.put("edittime", Resjsonarray.getJSONObject(i)
-								.optString("edittime"));
+						values.put("editTime", Resjsonarray.getJSONObject(i)
+								.optString("editTime"));
 						mDB.insert("ResInfo", null, values);
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
@@ -948,9 +947,9 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		int threadNum = 5;
 		String filepath = path + fileName;
 		Log.d(TAG, "download file  path:" + filepath);
-		task2 = new downloadTask2(downloadUrl, threadNum, filepath, fileName);
+		task = new downloadTask(downloadUrl, threadNum, filepath);
 
-		task2.start();
+		task.start();
 		insertDB();
 
 	}
@@ -999,7 +998,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 				return;
 			}
 			// 设置progressBar初始化
-			if (downstate) {
+			if (!downstate) {
 				operSD();
 			} else {
 				// 下载到手机内存并插入数据库
