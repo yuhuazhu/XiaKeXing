@@ -199,9 +199,9 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 	 * @return list
 	 */
 	private void getResource() {
-		
-		Cursor cursorRes = mDB
-				.query("ResInfo", null, null, null, null, null, null);
+
+		Cursor cursorRes = mDB.query("ResInfo", null, null, null, null, null,
+				null);
 		Log.e("cursor", cursorRes.getCount() + "");
 
 		boolean toResFirst = cursorRes.moveToFirst();
@@ -209,28 +209,28 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 		// Toast.makeText(getApplicationContext(),
 		// String.valueOf(cursor.getCount()), 3000).show();
 		while (toResFirst) {
-			ResInfo rs = new ResInfo(cursorRes.getString(cursorRes.getColumnIndex("title")),
-					cursorRes.getString(cursorRes.getColumnIndex("content")),
-					cursorRes.getString(cursorRes.getColumnIndex("bgname")),
-					cursorRes.getString(cursorRes.getColumnIndex("musicname")));
-			ResMap.put(cursorRes.getInt(cursorRes.getColumnIndex("ID")),
-					rs);// 将资源文件添加到list中
+			ResInfo rs = new ResInfo(cursorRes.getString(cursorRes
+					.getColumnIndex("title")), cursorRes.getString(cursorRes
+					.getColumnIndex("content")), cursorRes.getString(cursorRes
+					.getColumnIndex("bgName")), cursorRes.getString(cursorRes
+					.getColumnIndex("musicName")));
+			ResMap.put(cursorRes.getInt(cursorRes.getColumnIndex("ID")), rs);// 将资源文件添加到list中
 			toResFirst = cursorRes.moveToNext();
 		}
 		cursorRes.close();
-		
-		Cursor cursorMac = mDB
-				.query("MacInfo", null, null, null, null, null, null);
+
+		Cursor cursorMac = mDB.query("MacInfo", null, null, null, null, null,
+				null);
 		Log.e("cursor", cursorMac.getCount() + "");
 
 		boolean toMacFirst = cursorMac.moveToFirst();
 		while (toMacFirst) {
-			
-			MacInfo rs = new MacInfo(cursorRes.getString(cursorRes.getColumnIndex("macname")),
-					cursorRes.getFloat(cursorRes.getColumnIndex("power")),
-					cursorRes.getFloat(cursorRes.getColumnIndex("musicname")));
-			MacMap.put(cursorRes.getInt(cursorRes.getColumnIndex("ID")),
-					rs);// 将mac信息添加到list中
+
+			MacInfo rs = new MacInfo(cursorMac.getString(cursorMac
+					.getColumnIndex("macName")), cursorMac.getFloat(cursorMac
+					.getColumnIndex("power")), cursorMac.getFloat(cursorMac
+					.getColumnIndex("distince")));
+			MacMap.put(cursorMac.getInt(cursorMac.getColumnIndex("ID")), rs);// 将mac信息添加到list中
 			toMacFirst = cursorMac.moveToNext();
 		}
 		cursorMac.close();
@@ -276,10 +276,14 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 			idTriggerTimeMap.put(id, 0l);
 		}
 	}
+
 	/**
 	 * 更新界面
-	 * @param id  序号
-	 * @param play 是否播放
+	 * 
+	 * @param id
+	 *            序号
+	 * @param play
+	 *            是否播放
 	 */
 	private void updateHead(final int id, final boolean play) {
 		runOnUiThread(new Runnable() {
