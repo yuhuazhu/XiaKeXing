@@ -1,16 +1,26 @@
 package com.xkx.yjxm.bean;
 
 public class MacInfo {
+	private int  ID;
 	private String macname;
 	private Float power;
 	private Float distince;
 	
-	public MacInfo(String macname,Float power,Float distince)
+	public MacInfo(int ID,String macname,Float power,Float distince)
 	{
+		this.ID = ID;
 		this.macname = macname;
 		this.power = power;
 		this.distince = distince;
 		
+	}
+
+	public int getID() {
+		return ID;
+	}
+
+	public void setID(int iD) {
+		ID = iD;
 	}
 
 	public String getMacname() {
