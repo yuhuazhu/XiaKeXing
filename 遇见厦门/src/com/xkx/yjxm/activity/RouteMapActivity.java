@@ -185,6 +185,8 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 		btnback.setOnClickListener(this);
 		// setIvMap();
 
+		initXYMap();
+		setIvMap();
 		adapter = new MyAdapter();
 		listView1.setAdapter(adapter);
 
@@ -545,11 +547,9 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 	private void processPlay(int id, boolean play) {
 		// 获取SD卡路径
 		String path = Environment.getExternalStorageDirectory()
-				+ "/resource/muisc/";
+				+ "/resource/music/";
 		Uri uri = Uri.parse(path + ResMap.get(id).getMusicname());
 		if (uri == null) {
-			CrashHandler.getInstance().logToFile(Thread.currentThread(),
-					new Exception("Uri null"));
 			CrashHandler.getInstance().logStringToFile("uri not exist");
 			return;
 		}
@@ -885,7 +885,8 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 							&& x <= Integer.parseInt(xMap.get(2)) + 20
 							&& y >= Integer.parseInt(yMap.get(2)) - 20
 							&& y <= Integer.parseInt(yMap.get(2)) + 20) {
-
+						
+						processPlay(2, true);
 						title = "引导台";
 					}
 					if (x >= Integer.parseInt(xMap.get(3)) - 20
