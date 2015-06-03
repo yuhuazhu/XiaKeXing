@@ -35,12 +35,8 @@ public class CrashHandler implements UncaughtExceptionHandler {
 	}
 
 	public void logToFile(Thread thread, Throwable ex) {
-		File file = createFileIfNotExist();
-		if (file == null) {
-			return;
-		}
 		String log = exceptionToString(ex);
-		writeStringToFile(log, file);
+		logStringToFile(log);
 	}
 
 	private String exceptionToString(Throwable ex) {
@@ -56,7 +52,8 @@ public class CrashHandler implements UncaughtExceptionHandler {
 		return sb.toString();
 	}
 
-	private void writeStringToFile(String str, File file) {
+	public void logStringToFile(String str) {
+		File file = createFileIfNotExist();
 		FileWriter writer = null;
 		try {
 			writer = new FileWriter(file, true);
