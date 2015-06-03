@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -41,6 +40,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.brtbeacon.sdk.BRTBeacon;
 import com.xkx.yjxm.R;
@@ -111,11 +111,10 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 	private Map<Integer, String> xMap = new HashMap<Integer, String>();
 	private Map<Integer, String> yMap = new HashMap<Integer, String>();
 
-	
-	private HashMap<Integer, ResInfo> ResMap = new HashMap<Integer, ResInfo>();//资源
+	private HashMap<Integer, ResInfo> ResMap = new HashMap<Integer, ResInfo>();// 资源
 	private HashMap<Integer, Boolean> hasProcessedMap = new HashMap<Integer, Boolean>();
-	
-	private HashMap<Integer, MacInfo> MacMap = new HashMap<Integer, MacInfo>();//mac地址
+
+	private HashMap<String, MacInfo> MacMap = new HashMap<String, MacInfo>();// mac地址
 	private CopyOnWriteArrayList<ItemData> titleList = new CopyOnWriteArrayList<ItemData>();
 	private HashMap<Integer, Long> idTriggerTimeMap = new HashMap<Integer, Long>();
 
@@ -230,7 +229,9 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 					.getColumnIndex("macName")), cursorMac.getFloat(cursorMac
 					.getColumnIndex("power")), cursorMac.getFloat(cursorMac
 					.getColumnIndex("distince")));
-			MacMap.put(cursorMac.getInt(cursorMac.getColumnIndex("ID")), rs);// 将mac信息添加到list中
+			MacMap.put(
+					cursorMac.getString(cursorMac.getColumnIndex("macName")),
+					rs);// 将mac信息添加到list中
 			toMacFirst = cursorMac.moveToNext();
 		}
 		cursorMac.close();
@@ -305,7 +306,8 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 						+ "/resource/map/";
 				BitmapFactory.Options options = new BitmapFactory.Options();
 				options.inSampleSize = 2;
-				Bitmap bm = BitmapFactory.decodeFile(path + ResMap.get(id).getBgname(), options);
+				Bitmap bm = BitmapFactory.decodeFile(path
+						+ ResMap.get(id).getBgname(), options);
 				ivMap.setImageBitmap(bm);
 				// ivMap.setBackgroundResource(bgMap.get(id));
 				imgdownmouth.setVisibility(View.VISIBLE);
@@ -318,35 +320,32 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 			return;
 		}
 		final String address = beacon.macAddress.trim();
-		Log.e("address", address);
 		final int id = getId(address);
-		if (id < 1 || id > 19) {
+		// 信号强度过滤,表待添加一个字段。
+		MacInfo macInfo = MacMap.get(beacon.macAddress);
+		if (beacon.rssi < macInfo.getPower()) {// 此处非功率
 			return;
 		}
+
 		long idLastTriggerTime = idTriggerTimeMap.get(id);
 		if (isAuto
 				&& System.currentTimeMillis() - idLastTriggerTime < 60 * 1000) {// 自动讲解，一分钟内不触发
 			return;
 		}
+		lastTriggerTime = System.currentTimeMillis();
+		idTriggerTimeMap.put(id, lastTriggerTime);
 		runOnUiThread(new Runnable() {
 			public void run() {
 				String title = ResMap.get(id).getTitle();
 				ItemData data = new ItemData(title, id);
 				if (isPlaying) {
-					for (int i = 0; i < titleList.size(); i++) {
-						ItemData listData = titleList.get(i);
-						if (listData.id == id) {
-							return;
-						}
-					}
 					// boolean hasProcess = hasProcessedMap.get(id);
-					if (titleList.size() < 3) {
+					boolean contains = titleList.contains(new ItemData("", id));
+					if (!contains && titleList.size() < 3) {
 						titleList.add(0, data);
 						adapter.notifyDataSetChanged();
 					}
 				} else {
-					lastTriggerTime = System.currentTimeMillis();
-					idTriggerTimeMap.put(id, lastTriggerTime);
 					processPlay(id, true);
 					// boolean hasProcessd = hasProcessedMap.get(id);
 					// if (!hasProcessd) {
@@ -419,6 +418,82 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 			this.title = title;
 			this.id = id;
 		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + id;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			ItemData other = (ItemData) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (id != other.id)
+				return false;
+			return true;
+		}
+
+		private RouteMapActivity getOuterType() {
+			return RouteMapActivity.this;
+		}
+
+	}
+
+	private String getTitle(String address) {
+		address = address.trim();
+		if (address.equalsIgnoreCase("CF:01:01:00:02:F0")) {
+			return "智慧导览";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F1")) {
+			return "行李寄存";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F2")) {
+			return "3D互动";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F3")) {
+			return "应用展示";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F4")) {
+			return "引导台";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:FB")) {
+			return "旅客上车处";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F6")) {
+			return "智慧旅游视屏";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F7")) {
+			return "自行车租赁";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F8")) {
+			return "休闲自助";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:FC")) {
+			return "伴手礼超市";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E1")) {
+			return "多功能厅";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E2")) {
+			return "综合服务区";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E4")) {
+			return "呼叫中心";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E7")) {
+			return "预警指挥中心";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E5")) {
+			return "办公区1";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E6")) {
+			return "医务室";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F5")) {
+			return "信息视屏";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E8")) {
+			return "机房";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:FD")) {
+			return "婚纱摄影";
+		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E3")) {
+			return "办公区2";
+		}
+		return address;
 	}
 
 	private int getId(String address) {
@@ -468,7 +543,6 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 	}
 
 	private void processPlay(int id, boolean play) {
-
 		// 获取SD卡路径
 		String path = Environment.getExternalStorageDirectory()
 				+ "/resource/muisc/";
@@ -476,6 +550,7 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 		if (uri == null) {
 			CrashHandler.getInstance().logToFile(Thread.currentThread(),
 					new Exception("Uri null"));
+			CrashHandler.getInstance().logStringToFile("uri not exist");
 			return;
 		}
 		updateHead(id, play);
@@ -483,7 +558,6 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 		isPlaying = true;
 		soundlay.setVisibility(View.VISIBLE);
 		// getSoundPathList()
-
 		audioBinder.audioPlay(uri);
 	}
 
@@ -720,24 +794,24 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			Log.e("scan", "onServiceConnected");
 			bleBinder = (BleBinder) service;
-			bleBinder.setRegion(null);
+
+			bleBinder.setRegion(null);// 空代表扫描所有
+			bleBinder.setMacMap(MacMap);
 			bleBinder.setOnBleScanListener(new OnBleScanListener() {
 
 				@Override
 				public void onPeriodScan(List<BRTBeacon> scanResultList) {
-					Log.e("scan", "onPeriodScan,size:" + scanResultList.size());
 				}
 
 				@Override
 				public void onNearBleChanged(BRTBeacon oriBeacon,
 						BRTBeacon desBeacon) {
-					Log.e("scan", "onPeriodScan,current:"
+					Log.e("scan", "onNearBleChanged,current:"
 							+ desBeacon.macAddress);
 				}
 
 				@Override
-				public void onNearBle(BRTBeacon brtBeacon) {
-					Log.e("scan", "onNearBle");
+				public void onNearBeacon(BRTBeacon brtBeacon) {
 					if (isAuto) {
 						trigger(brtBeacon);
 					}
