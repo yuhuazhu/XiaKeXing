@@ -144,11 +144,11 @@
         </activity>
         <activity
             android:name="com.xkx.yjxm.activity.SettingsActivity"
-            android:label="@string/title_activity_settings" >
+            >
         </activity>
         <activity
             android:name="com.xkx.yjxm.activity.BaseActivity"
-            android:label="@string/title_activity_base" >
+           >
         </activity>
     </application>
 
