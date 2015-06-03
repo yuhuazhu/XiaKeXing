@@ -228,7 +228,7 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 			MacInfo rs = new MacInfo(cursorMac.getString(cursorMac
 					.getColumnIndex("macName")), cursorMac.getFloat(cursorMac
 					.getColumnIndex("power")), cursorMac.getFloat(cursorMac
-					.getColumnIndex("distince")));
+					.getColumnIndex("distance")));
 			MacMap.put(
 					cursorMac.getString(cursorMac.getColumnIndex("macName")),
 					rs);// 将mac信息添加到list中
