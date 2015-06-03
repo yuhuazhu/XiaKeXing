@@ -35,19 +35,19 @@ public class MySqlite extends SQLiteOpenHelper {
 				+ "ID INTEGER(4),"
 				+ "title VARCHAR(30)," //标题
 				+ "content TEXT," //文字内容
-				+ "bgname VARCHAR(30)," //图片名称
-				+ "musicname VARCHAR(30),"//音乐名称
+				+ "bgName VARCHAR(30)," //图片名称
+				+ "musicName VARCHAR(30),"//音乐名称
 				+ "mid INTEGER(4),"  //mac地址序号
-				+ "edittime VARCHAR(30));"; //修改时间
+				+ "editTime VARCHAR(30));"; //修改时间
 
 
 		String str2 = "CREATE TABLE MacInfo(SID INTEGER PRIMARY KEY AUTOINCREMENT,"
 				+ "ID INTEGER(4),"
-				+ "macname VARCHAR(30)," //mac地址
-				+ "scenicid INTEGER(4)," //景区
-				+ "power NUMERIC(8,3)," //触发强度
-				+ "distance NUMERIC(8,3)," //触发距离
-				+ "edittime VARCHAR(30));";//修改时间
+				+ "macName VARCHAR(30)," //mac地址
+				+ "scenicId INTEGER(4)," //景区
+				+ "power Float(8,3)," //触发强度
+				+ "distance Float(8,3)," //触发距离
+				+ "editTime VARCHAR(30));";//修改时间
 		db.execSQL(str);
 		db.execSQL(str2);
 	}
