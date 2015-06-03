@@ -154,7 +154,7 @@
             android:id="@+id/download_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView" />
+            android:text="有新 的资源包,是否下载" />
 
         <Button
             android:id="@+id/download_btn"
