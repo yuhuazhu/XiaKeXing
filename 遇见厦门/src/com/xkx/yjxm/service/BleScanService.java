@@ -28,48 +28,39 @@ import com.xkx.yjxm.utils.CrashHandler;
 
 public class BleScanService extends Service {
 
-	/**
-	 * 这个值指示:蓝牙连续这个值没有被扫描到,将被从list中移除.
-	 */
+	/** 这个值指示:蓝牙连续这个值没有被扫描到,将被从list中移除. */
 	private static final int TIMES_NO_SCANNED = 10;
+	/** 一轮循环的次数 */
 	private static final int timesForLoop = 3;
 	private final int SCAN_WAIT_MILLIS = 0;
+	/** 一次扫描的持续时间 */
 	private final int SCAN_PERIOD_MILLIS = 1000;
 
 	private int scanCount;
 
+	/** 提取蓝牙是否使用优化过的算法 */
+	private boolean fetchOptimized = true;
+	/** 一轮循环内扫描计数 */
+	private int singleLoopCount = 0;
+
 	private BRTRegion region;
+
 	private BRTBeacon freshBeacon;
 	private BRTBeaconManager brtBeaconMgr;
 	private OnBleScanListener onBleScanListener;
 	private BleBinder bleBinder = new BleBinder();
 	private BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
 	private HashMap<String, MacInfo> macMap = new HashMap<String, MacInfo>();
+	/** 一轮循环扫描,保存的beacon数据 . */
 	private ArrayList<BRTBeacon> rangedList = new ArrayList<BRTBeacon>();
+	/** 一轮循环扫描,经过优化处理的beacon数据. */
 	private ArrayList<BRTBeacon> optimizedList = new ArrayList<BRTBeacon>();
+	/** 保存所有扫描到的beacon数据. */
 	private ArrayList<BeaconData> allScannedList = new ArrayList<BeaconData>();
+	/** 一轮扫描过去,临时保存的数据。赋给rangedList */
 	private ArrayList<BRTBeacon> saveList = new ArrayList<BRTBeacon>();
-	// TODO
-	private Handler handler = new Handler();
-
-	private Toast t;
-
-	/**
-	 * 提取蓝牙是否使用优化过的算法
-	 */
-	private boolean fetchOptimized = true;
 
 	public BleScanService() {
-	}
-
-	@Override
-	public void onCreate() {
-		super.onCreate();
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
 	}
 
 	private void enableBlueToothIfClosed() {
@@ -77,8 +68,6 @@ public class BleScanService extends Service {
 			adapter.enable();
 		}
 	}
-
-	private int singleLoopCount = 0;
 
 	private Comparator<? super BRTBeacon> rssiComparator = new Comparator<BRTBeacon>() {
 
@@ -109,8 +98,6 @@ public class BleScanService extends Service {
 		return bleBinder;
 	}
 
-	private long startTime = 0;
-
 	private void setBeaconManager() {
 		brtBeaconMgr = new BRTBeaconManager(this);
 		// brtBeaconMgr.setBackgroundScanPeriod(SCAN_PERIOD_MILLIS,
@@ -122,7 +109,6 @@ public class BleScanService extends Service {
 
 			@Override
 			public void onBeaconsDiscovered(RangingResult result) {
-				Log.e("time", "" + (System.currentTimeMillis() - startTime));
 				singleLoopCount++;
 				List<BRTBeacon> beacons = result.beacons;
 				for (int i = 0; i < beacons.size(); i++) {
@@ -157,7 +143,6 @@ public class BleScanService extends Service {
 					}
 					saveList.clear();
 				}
-				startTime = System.currentTimeMillis();
 			}
 
 			private void processRaw() {
