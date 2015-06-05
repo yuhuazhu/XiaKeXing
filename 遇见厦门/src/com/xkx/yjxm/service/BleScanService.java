@@ -11,11 +11,9 @@ import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.brtbeacon.sdk.BRTBeacon;
 import com.brtbeacon.sdk.BRTBeaconManager;
@@ -136,6 +134,7 @@ public class BleScanService extends Service {
 					Collections.sort(saveList, rssiComparator);
 					rangedList.clear();
 					rangedList.addAll(saveList);
+					Collections.sort(rangedList, rssiComparator);
 					if (fetchOptimized) {
 						processOptimized();
 					} else {
@@ -179,6 +178,7 @@ public class BleScanService extends Service {
 					}
 				}
 
+				// 删掉超过指定次数没有被扫描到的蓝牙
 				Iterator<BeaconData> iterator = allScannedList.iterator();
 				while (iterator.hasNext()) {
 					BeaconData next = iterator.next();
@@ -192,62 +192,15 @@ public class BleScanService extends Service {
 					return;
 				}
 
-				BeaconData allFirst = allScannedList.get(0);
-				BRTBeacon rangedFirst = rangedList.get(0);
-				// 是否一样
-				boolean isEqual = allFirst.beacon.equals(rangedFirst);
-				// 信号强度均值比较第一个高
-				boolean isRssiHigerThanRanged = allFirst.beacon.rssi > rangedFirst.rssi;
-				// 最近一次是否被扫描到
-				boolean isLastScanned = scanCount == allFirst.lastScanNum;
-
 				final StringBuffer sb = new StringBuffer();
 
-				if (!isEqual && isRssiHigerThanRanged && isLastScanned) {
-					CrashHandler.getInstance().logStringToFile(
-							allFirst.beacon.macAddress + " enter\n");
-					int index = rangedList.indexOf(allFirst.beacon);
-					BRTBeacon beacon = rangedList.get(index);
-					if (Math.abs(beacon.rssi - rangedFirst.rssi) <= 5) {
-						Log.e("remove", "" + beacon.macAddress + "挤进前列");
-						optimizedList.add(beacon);
-						sb.append(getTitle(beacon.macAddress) + "挤进前列\n");
-					}
-				}
+				fetchSec2FirstUseAverRssi();
 
-				for (int i = 0; i < rangedList.size(); i++) {
-					BRTBeacon rangedBeacon = rangedList.get(i);
-					BeaconData data = new BeaconData(rangedBeacon);
-					int index = allScannedList.indexOf(data);
-					data = allScannedList.get(index);
-					int averRssi = data.sumRssi / data.selfScanCount;
-					boolean rssiLower = rangedBeacon.rssi < averRssi;
-					rangedBeacon.rssi = rssiLower ? averRssi
-							: rangedBeacon.rssi;
-					if (!optimizedList.contains(rangedBeacon)) {
-						optimizedList.add(rangedBeacon);
-					}
-				}
+				filterRssiUseMaxRssi();
 
-				if (optimizedList.size() >= 2) {
-					BRTBeacon brtBeacon = optimizedList.get(0);
-					int index = allScannedList
-							.indexOf(new BeaconData(brtBeacon));
-					BeaconData data = allScannedList.get(index);
-					if (!brtBeacon.equals(freshBeacon)) {
-						// 不同,判断该值上次是否超过2,超过则移到第一位,上次归0.
-						if (scanCount - data.previousFirstCount > 1) {
-							optimizedList.remove(0);
-							optimizedList.add(1, brtBeacon);
-						}
-						data.previousFirstCount = scanCount;
-					} else {
-						data.previousFirstCount = scanCount;
-					}
-				}
+//				removeSuddenIrrationalBeacon();
 
 				// Log.e("count", "optimized:" + optimizedList.size());
-				Collections.sort(optimizedList, rssiComparator);
 				if (optimizedList.size() >= 0) {
 					// sb.append("个数:" + optimizedList.size() + "\n");
 					// for (int i = 0; i < optimizedList.size() && i <= 2; i++)
@@ -273,18 +226,111 @@ public class BleScanService extends Service {
 						// TODO
 						// onBleScanListener.onPeriodScan(optimizedList);
 						BRTBeacon brtBeacon = optimizedList.get(0);
-						// onBleScanListener.onNearBeacon(brtBeacon);
+						onBleScanListener.onNearBeacon(brtBeacon);
 						if (freshBeacon == null
 								|| !brtBeacon.equals(freshBeacon)) {
 							// onBleScanListener.onNearBleChanged(freshBeacon,
 							// brtBeacon);
 							// 蓝牙易主(信号强度最高的),清空掉被易的蓝牙信号总和,扫描次数.
-							if (!allFirst.beacon.equals(brtBeacon)) {
+							if (!allScannedList.get(0).beacon.equals(brtBeacon)) {
 								BeaconData data = new BeaconData(brtBeacon);
 								allScannedList.remove(data);
 							}
 							freshBeacon = brtBeacon;
 						}
+					}
+				}
+			}
+
+			/**
+			 * <pre>
+			 * 防止经常首位蓝牙被更改,巩固首位的位置. 做法:只有连续两次排名第一位的蓝牙,才排在第一位. 
+			 * 蓝牙 A 第一次被排在首位,其在这次扫描优化的列表中,第二位的来代替第一位的位置.
+			 * A被替换的条件:A的扫描值
+			 * </pre>
+			 */
+			private void removeSuddenIrrationalBeacon() {
+				if (optimizedList.size() >= 1) {
+					BRTBeacon brtBeacon = optimizedList.get(0);
+					int index = allScannedList
+							.indexOf(new BeaconData(brtBeacon));
+					BeaconData data = allScannedList.get(index);
+					if (optimizedList.size() >= 2) {
+						if (freshBeacon != null
+								&& !brtBeacon.equals(freshBeacon)) {
+							// TODO == 1按照扫描结果来，否则第一位和第二位交换位置。
+							if (scanCount - data.previousFirstCount > 1) {
+								optimizedList.remove(0);
+								optimizedList.add(1, brtBeacon);
+							}
+							// 如果在这次的扫描结果列表当中，能找到上一次的首位，并且上次首位跟现在的第一位相差不大的情况下。
+							// 把上次首位提到这次首位来。
+							int indexOfBeaconLastFirst = optimizedList
+									.indexOf(freshBeacon);
+							if (indexOfBeaconLastFirst != -1) {
+								BRTBeacon lastFirstBeacon = optimizedList
+										.get(indexOfBeaconLastFirst);
+								if (brtBeacon.rssi - lastFirstBeacon.rssi <= 4) {
+									optimizedList
+											.remove(indexOfBeaconLastFirst);
+									optimizedList.add(0, lastFirstBeacon);
+								}
+							}
+						}
+					}
+					// 只有等上面做替换处理了,再对其赋值.
+					data.previousFirstCount = scanCount;// 此语句是否也要执行。
+					BRTBeacon brtBeacon2 = optimizedList.get(0);
+					int indexOf = allScannedList.indexOf(new BeaconData(
+							brtBeacon2));
+					BeaconData beaconData = allScannedList.get(indexOf);
+					beaconData.previousFirstCount = scanCount;
+				}
+			}
+
+			/**
+			 * 对此次扫描到的蓝牙,对其信号强度采取最大值滤波. 如果蓝牙A此次扫描到的信号强度大于其平均值,则不变 否则其信号强度取其平均值.
+			 */
+			private void filterRssiUseMaxRssi() {
+				for (int i = 0; i < rangedList.size(); i++) {
+					BRTBeacon rangedBeacon = rangedList.get(i);
+					BeaconData data = new BeaconData(rangedBeacon);
+					int index = allScannedList.indexOf(data);
+					data = allScannedList.get(index);
+					int averRssi = data.sumRssi / data.selfScanCount;
+					boolean rssiLower = rangedBeacon.rssi < averRssi;
+					rangedBeacon.rssi = rssiLower ? averRssi
+							: rangedBeacon.rssi;
+					if (!optimizedList.contains(rangedBeacon)) {
+						optimizedList.add(rangedBeacon);
+					}
+				}
+			}
+
+			/**
+			 * 提取经常在第一位的蓝牙(根据信号强度平均值大小,为了避免某个蓝牙这一次没有被扫描到或者因为这次信号小了,而导致失去首位的情况),
+			 * 加入到此次的扫描结果列表.
+			 */
+			private void fetchSec2FirstUseAverRssi() {
+				BeaconData allFirst = allScannedList.get(0);
+				BRTBeacon rangedFirst = rangedList.get(0);
+				// 是否一样
+				boolean isEqual = allFirst.beacon.equals(rangedFirst);
+				// 信号强度均值比此轮搜到的所有蓝牙中的首位还高(按照信号强度从大到小排序)
+				boolean isRssiHigerThanRanged = allFirst.beacon.rssi > rangedFirst.rssi;
+				// 最近一次是否被扫描到
+				boolean isLastScanned = scanCount == allFirst.lastScanNum;
+				// 仅当此次扫描到的首位蓝牙在1米之外才可以被替换
+				boolean isRangedFirstOutImmediate = rangedFirst.rssi < -65;
+				if (!isEqual && isRssiHigerThanRanged && isLastScanned) {
+					CrashHandler.getInstance().logStringToFile(
+							allFirst.beacon.macAddress + " enter\n");
+					int index = rangedList.indexOf(allFirst.beacon);
+					BRTBeacon beacon = rangedList.get(index);
+					if (Math.abs(beacon.rssi - rangedFirst.rssi) <= 5// 并且两者信号强度不差过8
+							&& isRangedFirstOutImmediate) {
+						Log.e("remove", "" + beacon.macAddress + "挤进前列");
+						optimizedList.add(0, beacon);
 					}
 				}
 			}
