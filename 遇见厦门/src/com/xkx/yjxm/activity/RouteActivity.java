@@ -30,6 +30,9 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -54,6 +57,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -125,6 +129,10 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 
 	private File[] filelist; // 获取resouce下的文件名列表
 
+	// 通知栏进度条
+	private NotificationManager mNotificationManager = null;
+	private Notification mNotification;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -146,7 +154,8 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 			random2 = new Random(nextInt);
 			times = random2.nextInt(10) + 5;
 
-			time[i] = getResources().getString(R.string.R_time1) + times + getResources().getString(R.string.R_time2);
+			time[i] = getResources().getString(R.string.R_time1) + times
+					+ getResources().getString(R.string.R_time2);
 		}
 		for (int i = 0; i < img.length; i++) {
 			distances += 10;
@@ -270,6 +279,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 				txtlay.setVisibility(View.VISIBLE);
 			}
 		});
+		
 		findViewById(R.id.download_btn).setOnClickListener(this);
 		findViewById(R.id.downcancel_btn).setOnClickListener(this);
 		findViewById(R.id.download_btn).setEnabled(true);
@@ -277,15 +287,14 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		mProgressbar = (ProgressBar) findViewById(R.id.download_progress);
 
 		// 发送请求
-		
-			sendRequest();
-		
+
+		sendRequest();
+
 	}
 
 	private void sendRequest() {
 		// 向服务器请求mac，判断是否需要下载mac
 		requestMacInfo();
-		
 
 	}
 
@@ -697,25 +706,22 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 	// 首次下载
 	public void isNOhasResFolder() {
 		if (isNetworkConnected(this)) {
-			
-					// TODO Auto-generated method stub
-					Resresponse = HttpUtil
-							.queryStringForPost(Constants.RESOURCEREQURL);
-					JsonResponse resp = new JsonResponse();
-					JSONObject json = resp.getjson(Resresponse);
-					try {
-						Resresponse = json.getString("url")
-								+ json.getString("zip");
-						fistr = json.getString("zip");
 
-						Resjsonarray = json.optJSONArray("result");
+			// TODO Auto-generated method stub
+			Resresponse = HttpUtil.queryStringForPost(Constants.RESOURCEREQURL);
+			JsonResponse resp = new JsonResponse();
+			JSONObject json = resp.getjson(Resresponse);
+			try {
+				Resresponse = json.getString("url") + json.getString("zip");
+				fistr = json.getString("zip");
 
-					} catch (JSONException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-				
-			
+				Resjsonarray = json.optJSONArray("result");
+
+			} catch (JSONException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
 		}
 		downloadlay.setVisibility(View.VISIBLE);
 		// 设置progressBar初始化
@@ -733,33 +739,44 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 			}
 		}
 		if (isNetworkConnected(this)) {
-			
-					// TODO Auto-generated method stub
-					Resresponse = HttpUtil
-							.queryStringForPost(Constants.RESOURCEREQURL
-									+ "?name=" + strFileName);
-					if (!Resresponse.equals("false")
-							&& !Resresponse.equals("网络异常！")) {
-						JsonResponse resp = new JsonResponse();
-						JSONObject json = resp.getjson(Resresponse);
-						try {
-							Resresponse = json.getString("url")
-									+ json.getString("zip");
-							fistr = json.getString("zip");
 
-							Resjsonarray = json.optJSONArray("result");
-							finstate = false;
-						} catch (JSONException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
+			// TODO Auto-generated method stub
+			Resresponse = HttpUtil.queryStringForPost(Constants.RESOURCEREQURL
+					+ "?name=" + strFileName);
+			if (!Resresponse.equals("false") && !Resresponse.equals("网络异常！")) {
+				JsonResponse resp = new JsonResponse();
+				JSONObject json = resp.getjson(Resresponse);
+				try {
+					Resresponse = json.getString("url") + json.getString("zip");
+					fistr = json.getString("zip");
 
-					} else {
-						finstate = true;
-					}
-				
-			
+					Resjsonarray = json.optJSONArray("result");
+					finstate = false;
+				} catch (JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			} else {
+				finstate = true;
+			}
+
 		}
+	}
+
+	private void notificationInit() {
+		// 通知栏内显示下载进度条
+		Intent intent = new Intent(this, RouteMapActivity.class);// 点击进度条，进入程序
+		PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, 0);
+		mNotificationManager = (NotificationManager) this
+				.getSystemService(NOTIFICATION_SERVICE);
+		mNotification = new Notification();
+		mNotification.icon = R.drawable.ic_launcher;
+		mNotification.tickerText = "开始下载";
+		mNotification.contentView = new RemoteViews(getPackageName(),
+				R.layout.activity_notification);// 通知栏中进度布局
+		mNotification.contentIntent = pIntent;
+		// mNotificationManager.notify(0,mNotification);
 	}
 
 	public boolean isNetworkConnected(Context context) {
@@ -994,6 +1011,8 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 			txtlay.setVisibility(View.GONE);
 			break;
 		case R.id.download_btn:
+			findViewById(R.id.download_btn).setEnabled(false);
+			findViewById(R.id.downcancel_btn ).setEnabled(false);
 			if (finstate) {
 				Toast.makeText(RouteActivity.this, "该资源已经下载过了！",
 						Toast.LENGTH_LONG).show();
