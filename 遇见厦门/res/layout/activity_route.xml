@@ -187,6 +187,7 @@
         <ProgressBar
             android:id="@+id/download_progress"
             android:background="@color/white"
+            android:visibility="gone"
             android:layout_marginTop="30dp"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="fill_parent"
