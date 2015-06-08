@@ -128,7 +128,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 	JSONArray Resjsonarray = new JSONArray();// 资源JSONArray
 	private static int NOTIFICATIONS_ID = R.layout.activity_notification; // 当前页面的布局
 	private File[] filelist; // 获取resouce下的文件名列表
-
+	Cursor cursor;
 	// 通知栏进度条
 	private NotificationManager mNotificationManager = null;
 	private Notification mNotification;
@@ -164,6 +164,16 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 	}
 
 	private List<Map<String, Object>> getData() {
+
+		String sql = "select * from ResInfo";
+
+		try {
+			cursor = mDB.rawQuery(sql, null);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		// map.put(参数名字,参数值)
 		list = new ArrayList<Map<String, Object>>();
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -286,11 +296,8 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		mMessageView = (TextView) findViewById(R.id.download_message);
 		mProgressbar = (ProgressBar) findViewById(R.id.download_progress);
 
-		
 		sendRequest();
-		//判断是否已经下载过了
-		
-			
+		// 判断是否已经下载过了
 
 	}
 
@@ -743,8 +750,10 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		if (isNetworkConnected(this)) {
 
 			// TODO Auto-generated method stub
+			int aa = cursor.getCount();
+			String str = (aa > 0) ? strFileName : "";
 			Resresponse = HttpUtil.queryStringForPost(Constants.RESOURCEREQURL
-					+ "?name=" + strFileName);
+					+ "?name=" + str);
 			if (!Resresponse.equals("false") && !Resresponse.equals("网络异常！")) {
 				JsonResponse resp = new JsonResponse();
 				JSONObject json = resp.getjson(Resresponse);
@@ -1030,7 +1039,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 			startActivity(intent);
 			break;
 		case R.id.img_close:
-			
+
 			txtlay.setVisibility(View.GONE);
 			break;
 		case R.id.download_btn:
