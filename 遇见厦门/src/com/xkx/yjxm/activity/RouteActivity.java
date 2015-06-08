@@ -761,6 +761,8 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 			// TODO Auto-generated method stub
 			int cursorcount = cursor.getCount();
 			int maccount = cursormac.getCount();
+			cursor.close();
+			cursormac.close();
 			String str = (cursorcount > 0 && maccount>0) ? strFileName : "";
 			Resresponse = HttpUtil.queryStringForPost(Constants.RESOURCEREQURL
 					+ "?name=" + str);
@@ -780,6 +782,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 				
 				if(cursorcount == 0 && maccount == 0)
 				{
+					
 					insertDB();
 					downloadlay.setVisibility(View.GONE);
 				}
