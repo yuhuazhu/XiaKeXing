@@ -16,7 +16,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
 
 	@Override
 	public void uncaughtException(Thread thread, Throwable ex) {
-		logToFile(thread, ex);
+		logToFile(ex);
 	}
 
 	private static CrashHandler handler;
@@ -34,7 +34,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
 		}
 	}
 
-	public void logToFile(Thread thread, Throwable ex) {
+	public void logToFile(Throwable ex) {
 		String log = exceptionToString(ex);
 		logStringToFile(log);
 	}
@@ -44,7 +44,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
 		StringBuffer sb = new StringBuffer();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		sb.append(sdf.format(new Date()) + "\n");
-		sb.append(ex.getMessage() + "\n");
+		sb.append(ex.toString() + "\n");
 		for (int i = 0; i < trace.length; i++) {
 			sb.append(trace[i] + "\n");
 		}
@@ -56,7 +56,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
 		File file = createFileIfNotExist();
 		FileWriter writer = null;
 		try {
-			writer = new FileWriter(file, true);
+			writer = new FileWriter(file, false);
 			writer.write(str);
 		} catch (IOException e) {
 			Log.e("yjxm", e.getLocalizedMessage());
