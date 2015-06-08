@@ -129,6 +129,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 	private static int NOTIFICATIONS_ID = R.layout.activity_notification; // 当前页面的布局
 	private File[] filelist; // 获取resouce下的文件名列表
 	Cursor cursor;
+	Cursor cursormac;
 	// 通知栏进度条
 	private NotificationManager mNotificationManager = null;
 	private Notification mNotification;
@@ -169,6 +170,14 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 
 		try {
 			cursor = mDB.rawQuery(sql, null);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String sqlmac = "select * from MacInfo";
+
+		try {
+			cursormac = mDB.rawQuery(sqlmac, null);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -750,8 +759,9 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		if (isNetworkConnected(this)) {
 
 			// TODO Auto-generated method stub
-			int aa = cursor.getCount();
-			String str = (aa > 0) ? strFileName : "";
+			int cursorcount = cursor.getCount();
+			int maccount = cursormac.getCount();
+			String str = (cursorcount > 0 && maccount>0) ? strFileName : "";
 			Resresponse = HttpUtil.queryStringForPost(Constants.RESOURCEREQURL
 					+ "?name=" + str);
 			if (!Resresponse.equals("false") && !Resresponse.equals("网络异常！")) {
@@ -767,6 +777,9 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				
+				if(cursorcount == 0 && maccount == 0)
+					insertDB();
 
 			} else {
 				finstate = true;
