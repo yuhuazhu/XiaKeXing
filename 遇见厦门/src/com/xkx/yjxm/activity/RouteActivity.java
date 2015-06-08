@@ -779,7 +779,10 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 				}
 				
 				if(cursorcount == 0 && maccount == 0)
+				{
 					insertDB();
+					downloadlay.setVisibility(View.GONE);
+				}
 
 			} else {
 				finstate = true;
