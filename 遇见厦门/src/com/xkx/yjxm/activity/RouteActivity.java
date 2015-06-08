@@ -1041,6 +1041,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 						Toast.LENGTH_LONG).show();
 				return;
 			}
+			mProgressbar.setVisibility(View.VISIBLE);
 			// …Ë÷√progressBar≥ı ºªØ
 			if (!downstate) {
 				operSD();
