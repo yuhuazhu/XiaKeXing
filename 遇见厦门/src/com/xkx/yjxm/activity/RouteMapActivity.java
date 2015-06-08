@@ -217,7 +217,7 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 						cursorRes.getString(cursorRes.getColumnIndex("bgName")),
 						cursorRes.getString(cursorRes
 								.getColumnIndex("musicName")));
-				ResMap.put(cursorRes.getInt(cursorRes.getColumnIndex("ID")), rs);// 将资源文件添加到list中
+				ResMap.put(cursorRes.getInt(cursorRes.getColumnIndex("mid")), rs);// 将资源文件添加到list中
 				toResFirst = cursorRes.moveToNext();
 			}
 		}
