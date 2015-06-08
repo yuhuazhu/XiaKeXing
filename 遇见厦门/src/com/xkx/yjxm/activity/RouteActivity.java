@@ -126,7 +126,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 	JSONArray Macjsonarray = new JSONArray();// MacJSONArray
 	private String Resresponse;// 资源JSON
 	JSONArray Resjsonarray = new JSONArray();// 资源JSONArray
-
+	private static int NOTIFICATIONS_ID = R.layout.activity_notification; // 当前页面的布局
 	private File[] filelist; // 获取resouce下的文件名列表
 
 	// 通知栏进度条
@@ -279,16 +279,18 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 				txtlay.setVisibility(View.VISIBLE);
 			}
 		});
-		
+
 		findViewById(R.id.download_btn).setOnClickListener(this);
 		findViewById(R.id.downcancel_btn).setOnClickListener(this);
 		findViewById(R.id.download_btn).setEnabled(true);
 		mMessageView = (TextView) findViewById(R.id.download_message);
 		mProgressbar = (ProgressBar) findViewById(R.id.download_progress);
 
-		// 发送请求
-
+		
 		sendRequest();
+		//判断是否已经下载过了
+		
+			
 
 	}
 
@@ -759,9 +761,29 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 
 			} else {
 				finstate = true;
+				downloadlay.setVisibility(View.GONE);
 			}
 
 		}
+	}
+
+	private void setWeather(String tickerText, String title, String content,
+			int drawable) {
+
+		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE); // 初始化管理器
+		// 建立一个通知实例，第一个参数是图片，第二个标题栏上显示的文字，第三个是时间
+		Notification notification = new Notification(drawable, tickerText,
+				System.currentTimeMillis());
+
+		// 当单击下拉下来的标题内容时候做什么，这里是跳转到主界面。这里和下面是一起的。
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+				new Intent(this, RouteActivity.class), 0);
+
+		// Title 是拉下来的标题，Content也是下拉后的内容显示
+		notification.setLatestEventInfo(this, title, content, contentIntent);
+
+		// 显示这个通知
+		mNotificationManager.notify(NOTIFICATIONS_ID, notification);
 	}
 
 	private void notificationInit() {
@@ -776,7 +798,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		mNotification.contentView = new RemoteViews(getPackageName(),
 				R.layout.activity_notification);// 通知栏中进度布局
 		mNotification.contentIntent = pIntent;
-		// mNotificationManager.notify(0,mNotification);
+		mNotificationManager.notify(0, mNotification);
 	}
 
 	public boolean isNetworkConnected(Context context) {
@@ -1008,11 +1030,12 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 			startActivity(intent);
 			break;
 		case R.id.img_close:
+			
 			txtlay.setVisibility(View.GONE);
 			break;
 		case R.id.download_btn:
 			findViewById(R.id.download_btn).setEnabled(false);
-			findViewById(R.id.downcancel_btn ).setEnabled(false);
+			findViewById(R.id.downcancel_btn).setEnabled(false);
 			if (finstate) {
 				Toast.makeText(RouteActivity.this, "该资源已经下载过了！",
 						Toast.LENGTH_LONG).show();

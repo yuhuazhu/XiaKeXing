@@ -8,7 +8,6 @@
         android:id="@+id/downloadlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="160dp"
         android:orientation="vertical" >
 
         <TextView
@@ -21,7 +20,8 @@
             android:id="@+id/download_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="开始" />
+            android:text="开始"
+            android:textColor="@color/black" />
 
         <ProgressBar
             android:id="@+id/download_progress"
