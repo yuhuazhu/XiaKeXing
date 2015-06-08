@@ -112,7 +112,6 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 	private Map<Integer, String> yMap = new HashMap<Integer, String>();
 
 	private HashMap<Integer, ResInfo> ResMap = new HashMap<Integer, ResInfo>();// 资源
-	private HashMap<Integer, Boolean> hasProcessedMap = new HashMap<Integer, Boolean>();
 
 	private HashMap<String, MacInfo> MacMap = new HashMap<String, MacInfo>();// mac地址
 	private CopyOnWriteArrayList<ItemData> titleList = new CopyOnWriteArrayList<ItemData>();
@@ -187,14 +186,12 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 		tvTitle = (TextView) findViewById(R.id.txt_ti);
 		btnback = (ImageButton) findViewById(R.id.btnback);
 		btnback.setOnClickListener(this);
-		// setIvMap();
 
 		initXYMap();
 		setIvMap();
 		adapter = new MyAdapter();
 		listView1.setAdapter(adapter);
 
-		// initXYMap();
 	}
 
 	/**
@@ -232,7 +229,6 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 		if (cursorMac.getCount() > 0) {
 			boolean toMacFirst = cursorMac.moveToFirst();
 			while (toMacFirst) {
-
 				MacInfo rs = new MacInfo(
 						cursorMac.getInt(cursorMac.getColumnIndex("ID")),
 						cursorMac.getString(cursorMac.getColumnIndex("macName")),
@@ -244,7 +240,6 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 			}
 		}
 		cursorMac.close();
-
 	}
 
 	/**
@@ -280,9 +275,7 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 				null, 1);
 		mDB = mySqlite.getReadableDatabase();
 		getResource();
-		for (int id = 1; id <= 19; id++) {
-
-			hasProcessedMap.put(id, false);
+		for (int id = 1; id <= ResMap.size(); id++) {
 			idTriggerTimeMap.put(id, 0l);
 		}
 	}
@@ -328,43 +321,56 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 		if (System.currentTimeMillis() - lastTriggerTime < 2000) {
 			return;
 		}
-		final String address = beacon.macAddress.trim();
-		// 信号强度过滤,表待添加一个字段。
-		MacInfo macInfo = MacMap.get(beacon.macAddress);
-		final int id = macInfo.getID();
-		if (beacon.rssi < macInfo.getPower()) {// 此处非功率
-			return;
-		}
-
-		long idLastTriggerTime = idTriggerTimeMap.get(id);
-		if (isAuto
-				&& System.currentTimeMillis() - idLastTriggerTime < 60 * 1000) {// 自动讲解，一分钟内不触发
-			return;
-		}
-		lastTriggerTime = System.currentTimeMillis();
-		idTriggerTimeMap.put(id, lastTriggerTime);
-		runOnUiThread(new Runnable() {
-			public void run() {
-				String title = ResMap.get(id).getTitle();
-				ItemData data = new ItemData(title, id);
-				if (isPlaying) {
-					// boolean hasProcess = hasProcessedMap.get(id);
-					boolean contains = titleList.contains(new ItemData("", id));
-					if (!contains && titleList.size() < 3) {
-						titleList.add(0, data);
-						adapter.notifyDataSetChanged();
-					}
-				} else {
-					processPlay(id, true);
-					// boolean hasProcessd = hasProcessedMap.get(id);
-					// if (!hasProcessd) {
-					// lastTriggerTime = System.currentTimeMillis();
-					// imgplay.setEnabled(true);
-					// processPlay(id, true);
-					// }
+		try {
+			String address = beacon.macAddress.trim();
+			if (MacMap.containsKey(address)) {
+				MacInfo macInfo = MacMap.get(address);
+				final int id = macInfo.getID();
+				// TODO
+				// if (beacon.rssi < macInfo.getPower()) {// 此处非功率
+				// return;
+				// }
+				long idLastTriggerTime = idTriggerTimeMap.get(id);
+				try {
+					idLastTriggerTime = idTriggerTimeMap.get(id);
+				} catch (Exception e) {
+					idLastTriggerTime = 0l;
+					CrashHandler.getInstance().logToFile(e);
 				}
+				// if (isAuto
+				// && System.currentTimeMillis() - idLastTriggerTime < 60 *
+				// 1000)
+				// {//
+				// return;
+				// }
+				runOnUiThread(new Runnable() {
+					public void run() {
+						if (ResMap.containsKey(id)) {
+							String title = ResMap.get(id).getTitle();
+							ItemData data = new ItemData(title, id);
+							lastTriggerTime = System.currentTimeMillis();
+							idTriggerTimeMap.put(id, lastTriggerTime);
+							if (isPlaying) {
+								boolean contains = titleList
+										.contains(new ItemData("", id));
+								if (!contains && titleList.size() < 3) {
+									titleList.add(0, data);
+									adapter.notifyDataSetChanged();
+								}
+							} else {
+								processPlay(id, true);
+							}
+						} else {
+							// TODO 没有数据的基站
+						}
+					}
+				});
+			} else {
+				// TODO 检测到没有数据的基站
 			}
-		});
+		} catch (Exception e) {
+			CrashHandler.getInstance().logToFile(e);
+		}
 	}
 
 	private class MyAdapter extends BaseListAdapter {
@@ -561,7 +567,6 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 			return;
 		}
 		updateHead(id, play);
-		hasProcessedMap.put(id, true);
 		isPlaying = true;
 		soundlay.setVisibility(View.VISIBLE);
 		// getSoundPathList()
@@ -777,7 +782,7 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 				}
 			});
 			if (audioBinder == null) {
-				CrashHandler.getInstance().logToFile(Thread.currentThread(),
+				CrashHandler.getInstance().logToFile(
 						new Exception("audioBinder null"));
 			}
 		}
@@ -864,26 +869,8 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				int x = (int) event.getX();
-				int topleftx = x - 10;
-
-				// left, top, right, bottom
 				int y = (int) event.getY();
-				int toplefty = y - 10;
-				textView1.setText("x=" + x + ",y=" + y);
-				// 右上角
-				int topRightx = x + 10;
-				int topRighty = y - 10;
 
-				// 左下角
-				int bottomleftx = x - 10;
-				int bottomlefty = y + 10;
-
-				// 右上角
-				int bottomRightx = x + 10;
-				int bottomRighty = y + 10;
-
-				// LayoutParams lp = new lay
-				// textView1.setLayoutParams())
 				if (event.getAction() == MotionEvent.ACTION_UP) {
 
 					String title = "";
