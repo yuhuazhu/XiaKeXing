@@ -1063,7 +1063,6 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 			break;
 		case R.id.download_btn:
 			findViewById(R.id.download_btn).setEnabled(false);
-			findViewById(R.id.downcancel_btn).setEnabled(false);
 			if (finstate) {
 				Toast.makeText(RouteActivity.this, "该资源已经下载过了！",
 						Toast.LENGTH_LONG).show();
