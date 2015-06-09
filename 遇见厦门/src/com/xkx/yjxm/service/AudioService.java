@@ -2,6 +2,8 @@ package com.xkx.yjxm.service;
 
 import java.io.IOException;
 
+import com.xkx.yjxm.utils.CrashHandler;
+
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
@@ -52,13 +54,13 @@ public class AudioService extends Service {
 				}
 			});
 		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
+			CrashHandler.getInstance().logStringToFile(e.toString());
 		} catch (SecurityException e) {
-			e.printStackTrace();
+			CrashHandler.getInstance().logStringToFile(e.toString());
 		} catch (IllegalStateException e) {
-			e.printStackTrace();
+			CrashHandler.getInstance().logStringToFile(e.toString());
 		} catch (IOException e) {
-			e.printStackTrace();
+			CrashHandler.getInstance().logStringToFile(e.toString());
 		}
 		mediaPlayer.setOnCompletionListener(new OnCompletionListener() {
 

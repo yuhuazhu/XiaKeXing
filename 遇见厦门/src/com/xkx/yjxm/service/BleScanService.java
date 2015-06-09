@@ -29,15 +29,15 @@ public class BleScanService extends Service {
 	/** 这个值指示:蓝牙连续这个值没有被扫描到,将被从list中移除. */
 	private static final int TIMES_NO_SCANNED = 10;
 	/** 一轮循环的次数 */
-	private static final int timesForLoop = 3;
+	private static final int timesForLoop = 4;
 	private final int SCAN_WAIT_MILLIS = 0;
 	/** 一次扫描的持续时间 */
-	private final int SCAN_PERIOD_MILLIS = 1000;
+	private final int SCAN_PERIOD_MILLIS = 250;
 
 	private int scanCount;
 
 	/** 提取蓝牙是否使用优化过的算法 */
-	private boolean fetchOptimized = true;
+	private boolean fetchOptimized = false;
 	/** 一轮循环内扫描计数 */
 	private int singleLoopCount = 0;
 
@@ -152,8 +152,8 @@ public class BleScanService extends Service {
 					if (currNearBeacon != freshBeacon) {
 						onBleScanListener.onNearBleChanged(freshBeacon,
 								currNearBeacon);
-						freshBeacon = currNearBeacon;
 					}
+					freshBeacon = currNearBeacon;
 				}
 			}
 
@@ -198,7 +198,7 @@ public class BleScanService extends Service {
 
 				filterRssiUseMaxRssi();
 
-//				removeSuddenIrrationalBeacon();
+				// removeSuddenIrrationalBeacon();
 
 				// Log.e("count", "optimized:" + optimizedList.size());
 				if (optimizedList.size() >= 0) {
@@ -224,20 +224,20 @@ public class BleScanService extends Service {
 					// t.show();
 					if (optimizedList.size() >= 1) {
 						// TODO
-						// onBleScanListener.onPeriodScan(optimizedList);
+						onBleScanListener.onPeriodScan(optimizedList);
 						BRTBeacon brtBeacon = optimizedList.get(0);
 						onBleScanListener.onNearBeacon(brtBeacon);
 						if (freshBeacon == null
 								|| !brtBeacon.equals(freshBeacon)) {
-							// onBleScanListener.onNearBleChanged(freshBeacon,
-							// brtBeacon);
+							onBleScanListener.onNearBleChanged(freshBeacon,
+									brtBeacon);
 							// 蓝牙易主(信号强度最高的),清空掉被易的蓝牙信号总和,扫描次数.
 							if (!allScannedList.get(0).beacon.equals(brtBeacon)) {
 								BeaconData data = new BeaconData(brtBeacon);
 								allScannedList.remove(data);
 							}
-							freshBeacon = brtBeacon;
 						}
+						freshBeacon = brtBeacon;
 					}
 				}
 			}
