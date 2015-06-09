@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">遇见厦门</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_welcome">WelcomeActivity</string>
+    <string name="title_activity_left">LeftActivity</string>
+    <!-- 照片冲印 -->
+    <string name="contentPH_title">免费体验照片冲印</string>
+    <string name="contentPH_date">活动日期:2015-5-1~2015年5月30日</string>
+    <string name="contentPH_detail">活动详情：请用户自行下载APP</string>
+    <string name="viewPH_title">免费体验照片冲印</string>
+    <string name="viewPhws_title">照片冲印</string>
+    <string name="viewPhws_btn">立即免费体验</string>
+    <string name="photo_sel">选择照片</string>
+    <string name="photo_scan">扫描照片</string>
+    <string name="contentPHws_title">新用户可以免费体验冲印照片2张</string>
+    <string name="contentPHws_detail">通过app上传照片,在景区、酒店、机场、车站等地的旅游电子信息屏冲印</string>
+    <string name="contentPHws_btnsee">查看离我最近的冲印点</string>
+    <string name="contentPHws_btnsel">相册选择</string>
+    <string name="contentPHws_btnph">拍照</string>
+    <string name="upload">上传</string>
+    <string name="cancel">取消</string>
+    <!-- 经典线路 -->
+    <string name="R_toptitle">经典线路1</string>
+    <string name="R_maplong">全长三公里</string>
+    <string name="R_title1">鼓浪屿风情博物馆</string>
+    <string name="R_title2">日光岩</string>
+    <string name="R_title3">百鸟岩</string>
+    <string name="R_title4">叔莊花园</string>
+    <string name="R_title5">皓月园</string>
+    <string name="R_time">浏览时长：10分钟</string>
+    <string name="R_dis1">100m</string>
+    <string name="R_dis2">150m</string>
+    <string name="R_dis3">200m</string>
+    <string name="R_dis4">500m</string>
+    <string name="R_dis5">670m</string>
+    <string name="title_activity_reflex">MainActivity</string>
+    <string name="title_activity_shopping_guide">ShoppingGuideActivity</string>
+    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="title_activity_guide">GuideActivity</string>
+    <string name="title_activity_activities">ActivitiesActivity</string>
+    <string name="title_activity_massage">MassageActivity</string>
+    <string name="title_activity_search">SearchActivity</string>
+    <string name="title_activity_choice">ChoiceActivity</string>
+
+    <!-- 文字提示 -->
+    <string name="txt_anmo">基于物联网实现按摩椅的免费体验，设备通过智慧导览手机客户端驱动、控制，方便旅途劳累的游客在集散中心享受到全面、贴心的休闲服务</string>
+    <string name="txt_ban_gong_qu">厦门旅游集散中心员工、福建霞客行信息科技有限公司办公区；办公区内特别设置员工休息区，提供冰箱、微波炉、餐桌等设施设备，方便员工午餐、休息，让他们在忙碌的工作之余有个放松心情的地方,体现公司人性化管理,增加员工归属感。</string>
+    <string name="txt_ban_shou_li">售卖闽台特色产品，为旅客提供特色旅游商品便捷的订购，把当地的味道轻松带回家，轻松旅行。</string>
+    <string name="txt_zhi_hui_lv_you">您现在看到的是旅游智慧信息触摸屏，设备同智慧导览APP客户端保持联动，手机客户端上传景区拍摄照片生成的二维码地址，通过电子信息触摸屏上的二维码识别功能实现照片的快速冲印。</string>
+    <string name="txt_dao_lan_she_bei">您现在所在的位置主要展示的是针对旅游团客和散客量身定制的智能导览设备。首先为您介绍的是基于集群对讲技术，为旅行团游客配备的导游听讲终端，设备突破了传统导游设备在噪音控制、携带、解说范围等方面的限制，方便团客收听专业导游的人工讲解，实现远距离、无声导游。接着看到的手环设备采用了多媒体导览结合蓝牙、近场通信技术开发的一套运行在移动终端及智能穿戴设备上的导览系统，通过设备的定位、感知，能够实现在厦门市各景区范围内的高精度定位导航、移步换景、语音指路、电子门票等一系列旅游智能体验功能  </string>
+    <string name="txt_duo_gong_neng">场地总面积175平方米，设置72个会议座位，提供投影仪、音响设施等会议所需设备。可作为会议厅，视频会议厅，报告厅，学术讨论厅，培训厅等。</string>
+    <string name="txt_hun_sha_she_ying">环岛路观光自行车观音山站地处观音山梦幻海岸休闲区，为游客提供便利的双人或三人自行车租赁业务，游客可从观音山至胡里山全程14公里的自行车骑行车道上骑行，骑行途经观音山沙雕公园、奥林匹克博物馆、会展中心、椰风寨、音乐广场、珍珠湾等厦门新二十名景。</string>
+    <string name="txt_hu_jiao">厦门旅游集散服务中心呼叫系统集成了呼叫排队、智能路由、自动语音交互服务、人工电话服务及录音质检系统等全面的呼叫中心系统平台功能；系统以最新通讯技术服务为基础，以游客咨询、投诉、便民服务为中心, 是一个即时互动的综合性信息平台，肩负着企业内外部沟通桥梁的使命，在中心日常管理活动中发挥重要的作用。</string>
+    <string name="txt_jie_dai_fu_wu">游客接待服务区由前台客服人员提供面对面的温馨对客服务，为客人提供咨询、预定、邮政、失物招领、便民租借等综合服务。</string>
+    <string name="txt_lv_you_zhan_shi">您现在看到的互动触摸屏组成展示了包括旅游集散服务中心资讯网站、智慧导览手机APP客户端、微信公众平台在内的应用交互。</string>
+    <string name="txt_tiyan_3d">您现在所见的是通过多媒体互动信息墙、3D投影等设备为游客提供视觉、听觉、触觉体感互动的3D景区推介区。通过厦门市各大景区的3D虚拟影像投影及配套成像，给游客以三维立体的空间感觉，使观者犹如身在其中，自由游览，了解景点风光。</string>
+    <string name="txt_xin_xi_bo_fang">实时播放当前旅游产品信息及旅游宣传视频，帮忙游客、市民更进一步了解旅游信息化、智慧化为游客带来的便携帮助。</string>
+    <string name="txt_xing_li_ji_cun">配备自助行李寄存柜，游客可以根据需要自行操作，实现小件行李寄存。未来支持通过智慧导览APP联动，在移动终端实现寄存柜的开关控制。</string>
+    <string name="txt_yin_dao">厦门旅游集散服务中心是由政府主导的，具有公信力的旅游综合服务平台，被评为省市为民办实事重点工程。中心以旅游电子商务应用为基础，整合旅游咨询、预订、营销等传统服务功能，并以“厦门旅游集散服务”特许经营权，负责全市各服务网点的规划、布局、建设与运营。中心的主要功能包括：公共服务、旅游订制、营销推广、行业服务、信息指挥、智慧旅游、区域联动等；中心成立的愿景，是为了提升厦门城市旅游的公共服务水平，促进散客旅游有序、均衡、高效地发展，构建一个具有公信力的、线上线下一体化的、较为完善的旅游公共服务体系。</string>
+    <string name="txt_yiwu_shi">以接待大厅为中心开展医疗急救服务，做到文明、尽职、热情、便民。主要提供普通外伤包扎等工作，确保以高度的责任心：及时、严肃、快捷的开展医疗急救服务，对重症病人予以转诊。</string>
+    <string name="txt_yun_shu_ju">智慧旅游云数据中心，包含工程精装修、电气工程、通风工程、机房监控系统、防雷接地保护系统、以及数据服务器、一体化存储服务器、网络安全设备等。数据中心承载着企业的核心计算、信息资源管理、信息资源服务等功能，在信息化日益完善的今天，数据中心对企业可持续运营的重要性日益加强。数据中心较好地发挥着数据的集中存储保护、数据处理、支撑应用系统（如：智慧旅游资讯网、智能导览APP、自媒体/新媒体等）的业务系统应用，实现数据服务与运营能力。</string>
+    <string name="txt_yu_jin">通过市级各个信息归口单位与厦门旅游集散服务中心共同负责，并厦门市旅游局信息中心联网，实施资源共享。中心通过厦门旅游统一的物联网接入管理平台，实现旅游信息数据跨区域、跨时空的完整汇聚，最终转换为可视化、空间化、实时化数据（如景区热力图、当前客流量、景区路况、视频信息、空气质量等）对外发布和引导游客。厦门市内外普通的旅游者可以通过四种渠道咨询和了解相关旅游信息：旅游呼叫热线、互联网站、手机移动终端和旅游集散中心各网点。此外，预警中心还将与厦门旅游紧急救援中心，联合公安、交通等相关职能部门，建立厦门假日旅游的预警快速反应机制。</string>
+    <string name="txt_you_ke_shang_che">游客通过检票闸口，途经特别铺设遮阳顶棚的通道直达上车点，为特殊天气出行的游客提供贴心、细致的服务，免去上下车风吹日晒雨淋的烦恼。</string>
+    <string name="txt_zi_xing_che_zu_lin">环岛路观光自行车观音山站地处观音山梦幻海岸休闲区，为游客提供便利的双人或三人自行车租赁业务，游客可从观音山至胡里山全程14公里的自行车骑行车道上骑行，骑行途经观音山沙雕公园、奥林匹克博物馆、会展中心、椰风寨、音乐广场、珍珠湾等厦门新二十名景。</string>
+
+    
+
+</resources>
