@@ -326,23 +326,21 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 			if (MacMap.containsKey(address)) {
 				MacInfo macInfo = MacMap.get(address);
 				final int id = macInfo.getID();
-				// TODO
-				// if (beacon.rssi < macInfo.getPower()) {// 此处非功率
-				// return;
-				// }
-				long idLastTriggerTime = idTriggerTimeMap.get(id);
+				if (beacon.rssi < macInfo.getPower()) {// 此处非功率
+					return;
+				}
+				long idLastTriggerTime;
 				try {
 					idLastTriggerTime = idTriggerTimeMap.get(id);
 				} catch (Exception e) {
 					idLastTriggerTime = 0l;
+					idTriggerTimeMap.put(id, idLastTriggerTime);
 					CrashHandler.getInstance().logToFile(e);
 				}
-				// if (isAuto
-				// && System.currentTimeMillis() - idLastTriggerTime < 60 *
-				// 1000)
-				// {//
-				// return;
-				// }
+				if (isAuto
+						&& System.currentTimeMillis() - idLastTriggerTime < 60 * 1000) {
+					return;
+				}
 				runOnUiThread(new Runnable() {
 					public void run() {
 						if (ResMap.containsKey(id)) {
@@ -566,11 +564,11 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 			CrashHandler.getInstance().logStringToFile("uri not exist");
 			return;
 		}
-		updateHead(id, play);
-		isPlaying = true;
 		soundlay.setVisibility(View.VISIBLE);
 		// getSoundPathList()
 		audioBinder.audioPlay(uri);
+		isPlaying = true;
+		updateHead(id, play);
 	}
 
 	private Uri getUri(int id) {
@@ -622,6 +620,7 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 	protected void onDestroy() {
 		super.onDestroy();
 		unbindAllService();
+		sensorManager.unregisterListener(sensorEventListener);
 	}
 
 	private void unbindAllService() {
