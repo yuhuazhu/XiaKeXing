@@ -744,15 +744,20 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 					e1.printStackTrace();
 				}
 
+				// 卸载过的，他数据可能为0
 				if (cursorcount == 0 && maccount == 0) {
 
 					insertDB();
-					downloadlay.setVisibility(View.GONE);
+					
 				}
+				downloadlay.setVisibility(View.VISIBLE);
+				
 
 			} else {
 				finstate = true;
 				downloadlay.setVisibility(View.GONE);
+				
+				
 			}
 
 		}
