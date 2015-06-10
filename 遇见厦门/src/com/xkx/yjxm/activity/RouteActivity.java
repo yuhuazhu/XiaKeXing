@@ -177,6 +177,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		cursorRes.close();
 		Random random = new Random();
 		Random random2 = null;
+		
 		for (int i = 0; i < curcount; i++) {
 
 			img.add(i, R.drawable.route01 + i);
