@@ -7,10 +7,14 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
+import android.graphics.Picture;
+import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.RectF;
@@ -46,6 +50,7 @@ public class MainActivity extends Activity {
 	float dis2 = 0;
 	float dis3 = 0;
 	float dis4 = 0;
+	float dis5 = 0;
 
 	int scannedCount = 0;
 	private BleBinder binder;
@@ -77,6 +82,7 @@ public class MainActivity extends Activity {
 					dis2 = 0;
 					dis3 = 0;
 					dis4 = 0;
+					dis5 = 0;
 					for (int i = 0; i < scanResultList.size(); i++) {
 						float x = 0, y = 0, z = 0;
 						BRTBeacon beacon = scanResultList.get(i);
@@ -84,41 +90,56 @@ public class MainActivity extends Activity {
 								.equalsIgnoreCase("C6:30:73:33:B4:D1")) {// 墙角
 							x = 1;
 							y = 1;
-							z = 1;
 							dis1 = (float) Utils.altCalDis(beacon.rssi,
 									beacon.measuredPower);
-							Log.e("distance", "dis1=" + dis1);
-							Beacon4Loc object = new Beacon4Loc(x, y, z, dis1);
+							double sigma = getSigma(beacon.rssi,
+									beacon.measuredPower);
+							Beacon4Loc object = new Beacon4Loc(x, y, sigma,
+									dis1);
 							list.add(object);
 						} else if (beacon.macAddress
 								.equalsIgnoreCase("F7:ED:22:A4:91:D4")) {// 饮水机
 							x = 1;
 							y = 15;
-							z = 1.3f;
 							dis2 = (float) Utils.altCalDis(beacon.rssi,
 									beacon.measuredPower);
-							Log.e("distance", "dis2=" + dis2);
-							Beacon4Loc object = new Beacon4Loc(x, y, z, dis2);
+							double sigma = getSigma(beacon.rssi,
+									beacon.measuredPower);
+							Beacon4Loc object = new Beacon4Loc(x, y, sigma,
+									dis2);
 							list.add(object);
 						} else if (beacon.macAddress
 								.equalsIgnoreCase("DC:8B:BB:FC:F3:64")) {// 墙壁
 							x = 9;
 							y = 1;
-							z = 1.7f;
 							dis3 = (float) Utils.altCalDis(beacon.rssi,
 									beacon.measuredPower);
-							Log.e("distance", "dis3=" + dis3);
-							Beacon4Loc object = new Beacon4Loc(x, y, z, dis3);
+							double sigma = getSigma(beacon.rssi,
+									beacon.measuredPower);
+							Beacon4Loc object = new Beacon4Loc(x, y, sigma,
+									dis3);
 							list.add(object);
 						} else if (beacon.macAddress
 								.equalsIgnoreCase("C5:48:BD:AE:1A:F5")) {// 玻璃
 							x = 9;
 							y = 15;
-							z = 1.65f;
 							dis4 = (float) Utils.altCalDis(beacon.rssi,
 									beacon.measuredPower);
-							Log.e("distance", "dis4=" + dis4);
-							Beacon4Loc object = new Beacon4Loc(x, y, z, dis4);
+							double sigma = getSigma(beacon.rssi,
+									beacon.measuredPower);
+							Beacon4Loc object = new Beacon4Loc(x, y, sigma,
+									dis4);
+							list.add(object);
+						} else if (beacon.macAddress
+								.equalsIgnoreCase("EC:98:14:03:87:52")) {// 玻璃
+							x = 5.5f;
+							y = 6;
+							dis5 = (float) Utils.altCalDis(beacon.rssi,
+									beacon.measuredPower);
+							double sigma = getSigma(beacon.rssi,
+									beacon.measuredPower);
+							Beacon4Loc object = new Beacon4Loc(x, y, sigma,
+									dis4);
 							list.add(object);
 						}
 					}
@@ -151,6 +172,24 @@ public class MainActivity extends Activity {
 
 	ArrayList<Beacon4Loc> list = new ArrayList<Beacon4Loc>();
 
+	/**
+	 * 返回可能的最大误差,单位:米
+	 * 
+	 * @param rssi
+	 * @param txPower
+	 * @return
+	 */
+	// TODO 待优化
+	private double getSigma(int rssi, int txPower) {
+		if (rssi >= txPower) {
+			return 3;
+		} else if (txPower - rssi <= 10) {
+			return 5;
+		} else {
+			return 10;
+		}
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -178,6 +217,7 @@ public class MainActivity extends Activity {
 		bindService(service, conn, BIND_AUTO_CREATE);
 
 		view = (SurfaceView) findViewById(R.id.surfaceView1);
+		view.setZOrderOnTop(true);
 		holder = view.getHolder();
 		holder.addCallback(new SurfaceHolder.Callback() {
 
@@ -202,6 +242,7 @@ public class MainActivity extends Activity {
 						+ height);
 			}
 		});
+		holder.setFormat(PixelFormat.TRANSPARENT);
 	}
 
 	@Override
@@ -215,9 +256,9 @@ public class MainActivity extends Activity {
 		pointBR = new Point(800, 1200);
 	}
 
-	private float distance2px(float meters) {
+	private float distance2px(double meters) {
 		// TODO 算法待确定
-		return 80 * meters;
+		return (float) (80 * meters);
 	}
 
 	private void singleDraw(final ArrayList<Beacon4Loc> list) {
@@ -228,37 +269,56 @@ public class MainActivity extends Activity {
 		paint.setColor(Color.RED);
 		paint.setStyle(Style.STROKE);
 		canvas.drawRoundRect(rect, 10, 10, paint);
-		// 画四个蓝牙站点
+		// 画蓝牙站点
 		paint.setStyle(Style.FILL);
 		paint.setColor(Color.BLUE);
+		Bitmap bitmap = null;
+		int dstWidth = 0;
+		int dstHeight = 0;
+		if (list.size() > 0) {
+			bitmap = BitmapFactory.decodeResource(getResources(),
+					R.drawable.beacon_gray);
+			dstWidth = bitmap.getWidth() / 4;
+			dstHeight = bitmap.getHeight() / 4;
+			bitmap = Bitmap.createScaledBitmap(bitmap, dstWidth, dstHeight,
+					true);
+		}
 		for (int i = 0; i < list.size(); i++) {
 			Beacon4Loc beacon = list.get(i);
-			float xyz[] = new float[] { beacon.getX(), beacon.getY(),
-					beacon.getZ() };
-			try {
-				Location.setPoint(xyz, i + 1);
-				Location.setDistance(beacon.getDistance(), i + 1);
-			} catch (Exception e) {
-				e.printStackTrace();
+			// canvas.drawCircle(distance2px(beacon.x), distance2px(beacon.y),
+			// 10,
+			// paint);
+			canvas.drawBitmap(bitmap, distance2px(beacon.x) - dstWidth / 2,
+					distance2px(beacon.y) - dstHeight / 2, paint);
+			if (i==list.size()-1) {
+				bitmap.recycle();
 			}
-			Log.e("point", "x=" + distance2px(xyz[0]) + ",y="
-					+ distance2px(xyz[1]));
-			canvas.drawCircle(distance2px(xyz[0]), distance2px(xyz[1]), 10,
-					paint);
 		}
 		// 画手机位置
-		float x = 0;
-		float y = 0;
-		try {
-			float[] location = Location.location();
-			x = location[0];
-			y = location[1];
-			Log.e("location", "x:" + x + ",y:" + y);
-		} catch (Exception e1) {
-			Log.e("location", e1.toString());
+		if (list.size() >= 3) {
+			int n = list.size();
+			double[] pointX = new double[n];
+			double[] pointY = new double[n];
+			double[] distance = new double[n];
+			double[] sigma = new double[n];
+			for (int i = 0; i < list.size(); i++) {
+				Beacon4Loc beacon = list.get(i);
+				pointX[i] = beacon.x;
+				pointY[i] = beacon.y;
+				distance[i] = beacon.distance;
+				sigma[i] = beacon.sigma;
+			}
+
+			double[] solved = Multilaterator.multilaterate(pointX, pointY,
+					distance);
+			double[] delta = Multilaterator.correct(solved[0], solved[1],
+					pointX, pointY, distance, sigma);
+			solved[0] += delta[0];
+			solved[1] += delta[1];
+			paint.setColor(Color.RED);
+			canvas.drawCircle(distance2px(solved[0]), distance2px(solved[1]),
+					20, paint);
 		}
-		paint.setColor(Color.RED);
-		canvas.drawCircle(distance2px(x), distance2px(y), 20, paint);
 		holder.unlockCanvasAndPost(canvas);
 	}
 
