@@ -99,6 +99,8 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 	private String TAG = "RouteActivity";
 	private Boolean finstate = false;// 是否完成下载
 
+    protected static final int VISIABLE = 0;
+	protected static final int UNVIABLE = -1;
 	public void home(View v) {
 		Intent intent = null;
 
@@ -131,9 +133,10 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 	// 通知栏进度条
 	private NotificationManager mNotificationManager = null;
 	private Notification mNotification;
-	
+
 	private List<ResInfo> ResMap = new ArrayList<ResInfo>();// 资源
 	private List<Integer> img = new ArrayList<Integer>();
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -145,16 +148,16 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		stringExtra = intent.getStringExtra("name");
 		initData();
 		initUI();
-		
+
 	}
+
 	/**
 	 * 
 	 * 获取图片地址列表
 	 * 
 	 * @return list
 	 */
-	public void getData()
-	{
+	public void getData() {
 		String sql = "select * from ResInfo";
 
 		try {
@@ -193,11 +196,11 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 			}
 		}
 		cursorRes.close();
-		
+
 		Random random = new Random();
 		Random random2 = null;
 		for (int i = 0; i < curcount; i++) {
-			
+
 			img.add(i, R.drawable.route01 + i);
 		}
 		for (int i = 0; i < curcount; i++) {
@@ -214,7 +217,6 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		}
 	}
 
-	
 	private void initData() {
 		MySqlite mySqlite = new MySqlite(RouteActivity.this, "yjxm.db", null, 1);
 		mDB = mySqlite.getReadableDatabase();
@@ -279,7 +281,25 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		requestMacInfo();
 
 	}
-
+	/**
+	 * 使用Handler更新UI界面信息
+	 */
+	@SuppressLint("HandlerLeak")
+	Handler mHandler2 = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case VISIABLE:
+				downloadlay.setVisibility(View.VISIBLE);
+				// 设置progressBar初始化
+				mProgressbar.setProgress(0);
+				break;
+			case UNVIABLE:
+				downloadlay.setVisibility(View.GONE);
+			    break;
+			}
+		}
+	};
 	/**
 	 * 使用Handler更新UI界面信息
 	 */
@@ -315,6 +335,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 					e.printStackTrace();
 				}
 				downloadlay.setVisibility(View.GONE);
+				myAdapter.notifyDataSetChanged();
 			}
 			mMessageView.setText("下载进度:" + progress + " %");
 
@@ -705,9 +726,12 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 			}
 
 		}
-		downloadlay.setVisibility(View.VISIBLE);
-		// 设置progressBar初始化
-		mProgressbar.setProgress(0);
+		
+		// 通知handler去更新视图组件
+		Message msg = Message.obtain();
+		msg.what = VISIABLE;
+		mHandler2.sendMessage(msg);
+		
 
 	}
 
@@ -743,16 +767,18 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-
-				
-				downloadlay.setVisibility(View.VISIBLE);
-				
+				// 通知handler去更新视图组件
+				Message msg = Message.obtain();
+				msg.what = VISIABLE;
+				mHandler2.sendMessage(msg);
 
 			} else {
 				finstate = true;
-				downloadlay.setVisibility(View.GONE);
+				Message msg = Message.obtain();
+				msg.what = UNVIABLE;
+				mHandler2.sendMessage(msg);
 				
-				
+
 			}
 
 		}
@@ -863,12 +889,12 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 				holder = (ViewHolder) convertView.getTag();
 			}
 			// 获取SD卡路径
-//			String path = Environment.getExternalStorageDirectory()
-//					+ "/resource/map/";
-//			BitmapFactory.Options options = new BitmapFactory.Options();
-//			options.inSampleSize = 2;
-//			Bitmap bm = BitmapFactory.decodeFile(path
-//					+ ResMap.get(position).getBgname(), options);
+			// String path = Environment.getExternalStorageDirectory()
+			// + "/resource/map/";
+			// BitmapFactory.Options options = new BitmapFactory.Options();
+			// options.inSampleSize = 2;
+			// Bitmap bm = BitmapFactory.decodeFile(path
+			// + ResMap.get(position).getBgname(), options);
 			holder.imageView1.setBackgroundResource(img.get(position));
 			// Bitmap image =
 			// Bitmap.createBitmap(((BitmapDrawable)holder.imageView1.getDrawable()).getBitmap());
