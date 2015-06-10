@@ -4,48 +4,15 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Beacon4Loc implements Parcelable {
-	private float x;
-	private float y;
-	private float z;
-	private float distance;
+	double x;
+	double y;
+	double distance;
+	double sigma;
 
-	public Beacon4Loc(float x, float y, float z, float distance) {
-		super();
+	public Beacon4Loc(double x, double y, double sigma, double distance) {
 		this.x = x;
 		this.y = y;
-		this.z = z;
-		this.distance = distance;
-	}
-
-	public float getX() {
-		return x;
-	}
-
-	public void setX(float x) {
-		this.x = x;
-	}
-
-	public float getY() {
-		return y;
-	}
-
-	public void setY(float y) {
-		this.y = y;
-	}
-
-	public float getZ() {
-		return z;
-	}
-
-	public void setZ(float z) {
-		this.z = z;
-	}
-
-	public float getDistance() {
-		return distance;
-	}
-
-	public void setDistance(float distance) {
+		this.sigma = sigma;
 		this.distance = distance;
 	}
 
@@ -53,11 +20,11 @@ public class Beacon4Loc implements Parcelable {
 
 		@Override
 		public Beacon4Loc createFromParcel(Parcel source) {
-			float x = source.readFloat();
-			float y = source.readFloat();
-			float z = source.readFloat();
-			float distance = source.readFloat();
-			Beacon4Loc beacon = new Beacon4Loc(x, y, z, distance);
+			double x = source.readDouble();
+			double y = source.readDouble();
+			double sigma = source.readDouble();
+			double distance = source.readDouble();
+			Beacon4Loc beacon = new Beacon4Loc(x, y, sigma, distance);
 			return beacon;
 		}
 
@@ -74,9 +41,9 @@ public class Beacon4Loc implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeFloat(x);
-		dest.writeFloat(y);
-		dest.writeFloat(z);
-		dest.writeFloat(distance);
+		dest.writeDouble(x);
+		dest.writeDouble(y);
+		dest.writeDouble(sigma);
+		dest.writeDouble(distance);
 	}
 }

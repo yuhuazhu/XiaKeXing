@@ -45,7 +45,7 @@ public class BleScanService extends Service {
 	/**
 	 * 提取蓝牙是否使用优化过的算法
 	 */
-	private boolean fetchOptimized = true;
+	private boolean fetchOptimized = false;
 
 	public BleScanService() {
 	}
@@ -153,8 +153,8 @@ public class BleScanService extends Service {
 					if (currNearBeacon != freshBeacon) {
 						onBleScanListener.onNearBleChanged(freshBeacon,
 								currNearBeacon);
-						freshBeacon = currNearBeacon;
 					}
+					freshBeacon = currNearBeacon;
 				}
 			}
 
@@ -220,8 +220,8 @@ public class BleScanService extends Service {
 					data = allScannedList.get(index);
 					int averRssi = data.sumRssi / data.selfScanCount;
 					boolean rssiLower = rangedBeacon.rssi < averRssi;
-					// rangedBeacon.rssi = rssiLower ? averRssi
-					// : rangedBeacon.rssi;
+					rangedBeacon.rssi = rssiLower ? averRssi
+							: rangedBeacon.rssi;
 					if (!optimizedList.contains(rangedBeacon)) {
 						optimizedList.add(rangedBeacon);
 					}
