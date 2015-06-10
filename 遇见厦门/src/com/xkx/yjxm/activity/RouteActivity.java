@@ -38,6 +38,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -69,6 +71,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.xkx.yjxm.R;
 import com.xkx.yjxm.adpater.BaseListAdapter;
 import com.xkx.yjxm.base.Constants;
+import com.xkx.yjxm.bean.MacInfo;
+import com.xkx.yjxm.bean.ResInfo;
 import com.xkx.yjxm.db.MySqlite;
 import com.xkx.yjxm.utils.HttpUtil;
 
@@ -83,11 +87,6 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 	private MyAdapter myAdapter;
 	private LinearLayout downloadlay;
 	private ImageView imgmap;
-	private int img[] = new int[19];
-	private String title[] = { "智慧导览", "引导台", "感互动3D景区推介区", "智慧旅游应用展示区",
-			"综合服务区", "按摩免费体验区", "产品信息播放屏幕", "自助行李寄存柜", "医务室", "伴手礼超市",
-			"多功能会议厅", "机房", "预警指挥中心", "办公区", "智慧旅游视屏", "单车租赁", "旅客上车处", "呼叫中心",
-			"19" };
 	private String time[] = new String[19];
 	private int times = 10;
 	private int distances = 100;
@@ -97,7 +96,6 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 	private TextView txtdetail;
 	private ImageButton img_close;
 	private FrameLayout txtlay;
-	private Map<Integer, String> textMap;
 	private String TAG = "RouteActivity";
 	private Boolean finstate = false;// 是否完成下载
 
@@ -133,7 +131,9 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 	// 通知栏进度条
 	private NotificationManager mNotificationManager = null;
 	private Notification mNotification;
-
+	
+	private List<ResInfo> ResMap = new ArrayList<ResInfo>();// 资源
+	private List<Integer> img = new ArrayList<Integer>();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -145,27 +145,16 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		stringExtra = intent.getStringExtra("name");
 		initData();
 		initUI();
-		for (int i = 0; i < img.length; i++) {
-			img[i] = R.drawable.route01 + i;
-		}
-		Random random = new Random();
-		Random random2 = null;
-		for (int i = 0; i < img.length; i++) {
-			int nextInt = random.nextInt();
-			random2 = new Random(nextInt);
-			times = random2.nextInt(10) + 5;
-
-			time[i] = getResources().getString(R.string.R_time1) + times
-					+ getResources().getString(R.string.R_time2);
-		}
-		for (int i = 0; i < img.length; i++) {
-			distances += 10;
-			distance[i] = distances + "m";
-		}
+		
 	}
-
-	private List<Map<String, Object>> getData() {
-
+	/**
+	 * 
+	 * 获取图片地址列表
+	 * 
+	 * @return list
+	 */
+	public void getData()
+	{
 		String sql = "select * from ResInfo";
 
 		try {
@@ -183,48 +172,49 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 			e.printStackTrace();
 		}
 
-		// map.put(参数名字,参数值)
-		list = new ArrayList<Map<String, Object>>();
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("img", R.drawable.img_feng_qing);
-		map.put("title", getResources().getString(R.string.R_title1));
-		map.put("time", getResources().getString(R.string.R_time));
-		map.put("distance", getResources().getString(R.string.R_dis1));
-		list.add(map);
+		Cursor cursorRes = mDB.query("ResInfo", null, null, null, null, null,
+				" mid asc");
+		Log.e("cursor", cursorRes.getCount() + "");
+		int curcount = cursorRes.getCount();
+		if (cursorRes.getCount() > 0) {
+			boolean toResFirst = cursorRes.moveToFirst();
 
-		map = new HashMap<String, Object>();
-		map.put("img", R.drawable.img_ri_guang_yan);
-		map.put("title", getResources().getString(R.string.R_title2));
-		map.put("time", getResources().getString(R.string.R_time));
-		map.put("distance", getResources().getString(R.string.R_dis2));
-		list.add(map);
+			// Toast.makeText(getApplicationContext(),
+			// String.valueOf(cursor.getCount()), 3000).show();
+			while (toResFirst) {
+				ResInfo rs = new ResInfo(
+						cursorRes.getString(cursorRes.getColumnIndex("title")),
+						cursorRes.getString(cursorRes.getColumnIndex("content")),
+						cursorRes.getString(cursorRes.getColumnIndex("bgName")),
+						cursorRes.getString(cursorRes
+								.getColumnIndex("musicName")));
+				ResMap.add(rs);// 将资源文件添加到list中
+				toResFirst = cursorRes.moveToNext();
+			}
+		}
+		cursorRes.close();
+		
+		Random random = new Random();
+		Random random2 = null;
+		for (int i = 0; i < curcount; i++) {
+			
+			img.add(i, R.drawable.route01 + i);
+		}
+		for (int i = 0; i < curcount; i++) {
+			int nextInt = random.nextInt();
+			random2 = new Random(nextInt);
+			times = random2.nextInt(10) + 5;
 
-		map = new HashMap<String, Object>();
-
-		map.put("img", R.drawable.img_bai_niao_yuan);
-		map.put("title", getResources().getString(R.string.R_title3));
-		map.put("time", getResources().getString(R.string.R_time));
-		map.put("distance", getResources().getString(R.string.R_dis3));
-		list.add(map);
-
-		map = new HashMap<String, Object>();
-
-		map.put("img", R.drawable.img_shu_zhuang_hua_yuan);
-		map.put("title", getResources().getString(R.string.R_title4));
-		map.put("time", getResources().getString(R.string.R_time));
-		map.put("distance", getResources().getString(R.string.R_dis4));
-		list.add(map);
-
-		map = new HashMap<String, Object>();
-
-		map.put("img", R.drawable.img_hao_yue_yuan);
-		map.put("title", getResources().getString(R.string.R_title5));
-		map.put("time", getResources().getString(R.string.R_time));
-		map.put("distance", getResources().getString(R.string.R_dis5));
-		list.add(map);
-		return list;
+			time[i] = getResources().getString(R.string.R_time1) + times
+					+ getResources().getString(R.string.R_time2);
+		}
+		for (int i = 0; i < curcount; i++) {
+			distances += 10;
+			distance[i] = distances + "m";
+		}
 	}
 
+	
 	private void initData() {
 		MySqlite mySqlite = new MySqlite(RouteActivity.this, "yjxm.db", null, 1);
 		mDB = mySqlite.getReadableDatabase();
@@ -252,32 +242,6 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		img_close = (ImageButton) findViewById(R.id.img_close);
 
 		img_close.setOnClickListener(this);
-
-		textMap = new HashMap<Integer, String>();
-		textMap.put(0, getResources().getString(R.string.txt_dao_lan_she_bei));
-		textMap.put(1, getResources().getString(R.string.txt_yin_dao));
-
-		// mapBgMap.put(2, R.drawable.img_map)
-
-		textMap.put(2, getResources().getString(R.string.txt_tiyan_3d));
-
-		textMap.put(3, getResources().getString(R.string.txt_lv_you_zhan_shi));
-		textMap.put(4, getResources().getString(R.string.txt_zhi_hui_lv_you));
-		textMap.put(5, getResources().getString(R.string.txt_anmo));
-		textMap.put(6, getResources().getString(R.string.txt_xin_xi_bo_fang));
-
-		textMap.put(7, getResources().getString(R.string.txt_xing_li_ji_cun));
-		// mapBgMap.put(7, R.drawable.img_map);
-		textMap.put(8, getResources().getString(R.string.txt_yiwu_shi));
-		textMap.put(9, getResources().getString(R.string.txt_ban_shou_li));
-		textMap.put(10, getResources().getString(R.string.txt_duo_gong_neng));
-		textMap.put(11, getResources().getString(R.string.txt_yun_shu_ju));
-		textMap.put(12, getResources().getString(R.string.txt_yu_jin));
-		textMap.put(13, getResources().getString(R.string.txt_ban_gong_qu));
-		textMap.put(14, getResources().getString(R.string.txt_xin_xi_bo_fang));
-
-		textMap.put(16, getResources().getString(R.string.txt_hu_jiao));
-
 		btnback = (ImageButton) findViewById(R.id.btnback);
 		btnback.setOnClickListener(this);
 		btnlist = (ImageButton) findViewById(R.id.btnlist);
@@ -294,7 +258,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
-				txtdetail.setText(textMap.get(position));
+				txtdetail.setText(ResMap.get(position).getContent());
 				txtlay.setVisibility(View.VISIBLE);
 			}
 		});
@@ -763,7 +727,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 			int maccount = cursormac.getCount();
 			cursor.close();
 			cursormac.close();
-			String str = (cursorcount > 0 && maccount>0) ? strFileName : "";
+			String str = (cursorcount > 0 && maccount > 0) ? strFileName : "";
 			Resresponse = HttpUtil.queryStringForPost(Constants.RESOURCEREQURL
 					+ "?name=" + str);
 			if (!Resresponse.equals("false") && !Resresponse.equals("网络异常！")) {
@@ -779,10 +743,9 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				
-				if(cursorcount == 0 && maccount == 0)
-				{
-					
+
+				if (cursorcount == 0 && maccount == 0) {
+
 					insertDB();
 					downloadlay.setVisibility(View.GONE);
 				}
@@ -864,7 +827,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		@Override
 		public int getCount() {
 			// TODO Auto-generated method stub
-			return title.length;
+			return ResMap.size();
 		}
 
 		@SuppressLint("NewApi")
@@ -899,8 +862,14 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 			} else {
 				holder = (ViewHolder) convertView.getTag();
 			}
-
-			holder.imageView1.setBackgroundResource(img[position]);
+			// 获取SD卡路径
+//			String path = Environment.getExternalStorageDirectory()
+//					+ "/resource/map/";
+//			BitmapFactory.Options options = new BitmapFactory.Options();
+//			options.inSampleSize = 2;
+//			Bitmap bm = BitmapFactory.decodeFile(path
+//					+ ResMap.get(position).getBgname(), options);
+			holder.imageView1.setBackgroundResource(img.get(position));
 			// Bitmap image =
 			// Bitmap.createBitmap(((BitmapDrawable)holder.imageView1.getDrawable()).getBitmap());
 			// imgUtils.getRoundedCornerBitmap(image, 90);
