@@ -99,8 +99,9 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 	private String TAG = "RouteActivity";
 	private Boolean finstate = false;// 是否完成下载
 
-    protected static final int VISIABLE = 0;
+	protected static final int VISIABLE = 0;
 	protected static final int UNVIABLE = -1;
+
 	public void home(View v) {
 		Intent intent = null;
 
@@ -151,6 +152,49 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 
 	}
 
+	private void readDB() {
+		Cursor cursorRes = mDB.query("ResInfo", null, null, null, null, null,
+				" mid asc");
+		Log.e("cursor", cursorRes.getCount() + "");
+		int curcount = cursorRes.getCount();
+		if (cursorRes.getCount() > 0) {
+			boolean toResFirst = cursorRes.moveToFirst();
+			ResMap.clear();
+
+			// Toast.makeText(getApplicationContext(),
+			// String.valueOf(cursor.getCount()), 3000).show();
+			while (toResFirst) {
+				ResInfo rs = new ResInfo(
+						cursorRes.getString(cursorRes.getColumnIndex("title")),
+						cursorRes.getString(cursorRes.getColumnIndex("content")),
+						cursorRes.getString(cursorRes.getColumnIndex("bgName")),
+						cursorRes.getString(cursorRes
+								.getColumnIndex("musicName")));
+				ResMap.add(rs);// 将资源文件添加到list中
+				toResFirst = cursorRes.moveToNext();
+			}
+		}
+		cursorRes.close();
+		Random random = new Random();
+		Random random2 = null;
+		for (int i = 0; i < curcount; i++) {
+
+			img.add(i, R.drawable.route01 + i);
+		}
+		for (int i = 0; i < curcount; i++) {
+			int nextInt = random.nextInt();
+			random2 = new Random(nextInt);
+			times = random2.nextInt(10) + 5;
+
+			time[i] = getResources().getString(R.string.R_time1) + times
+					+ getResources().getString(R.string.R_time2);
+		}
+		for (int i = 0; i < curcount; i++) {
+			distances += 10;
+			distance[i] = distances + "m";
+		}
+	}
+
 	/**
 	 * 
 	 * 获取图片地址列表
@@ -175,46 +219,8 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 			e.printStackTrace();
 		}
 
-		Cursor cursorRes = mDB.query("ResInfo", null, null, null, null, null,
-				" mid asc");
-		Log.e("cursor", cursorRes.getCount() + "");
-		int curcount = cursorRes.getCount();
-		if (cursorRes.getCount() > 0) {
-			boolean toResFirst = cursorRes.moveToFirst();
+		readDB();
 
-			// Toast.makeText(getApplicationContext(),
-			// String.valueOf(cursor.getCount()), 3000).show();
-			while (toResFirst) {
-				ResInfo rs = new ResInfo(
-						cursorRes.getString(cursorRes.getColumnIndex("title")),
-						cursorRes.getString(cursorRes.getColumnIndex("content")),
-						cursorRes.getString(cursorRes.getColumnIndex("bgName")),
-						cursorRes.getString(cursorRes
-								.getColumnIndex("musicName")));
-				ResMap.add(rs);// 将资源文件添加到list中
-				toResFirst = cursorRes.moveToNext();
-			}
-		}
-		cursorRes.close();
-
-		Random random = new Random();
-		Random random2 = null;
-		for (int i = 0; i < curcount; i++) {
-
-			img.add(i, R.drawable.route01 + i);
-		}
-		for (int i = 0; i < curcount; i++) {
-			int nextInt = random.nextInt();
-			random2 = new Random(nextInt);
-			times = random2.nextInt(10) + 5;
-
-			time[i] = getResources().getString(R.string.R_time1) + times
-					+ getResources().getString(R.string.R_time2);
-		}
-		for (int i = 0; i < curcount; i++) {
-			distances += 10;
-			distance[i] = distances + "m";
-		}
 	}
 
 	private void initData() {
@@ -281,6 +287,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		requestMacInfo();
 
 	}
+
 	/**
 	 * 使用Handler更新UI界面信息
 	 */
@@ -296,7 +303,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 				break;
 			case UNVIABLE:
 				downloadlay.setVisibility(View.GONE);
-			    break;
+				break;
 			}
 		}
 	};
@@ -335,6 +342,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 					e.printStackTrace();
 				}
 				downloadlay.setVisibility(View.GONE);
+				readDB();
 				myAdapter.notifyDataSetChanged();
 			}
 			mMessageView.setText("下载进度:" + progress + " %");
@@ -726,12 +734,11 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 			}
 
 		}
-		
+
 		// 通知handler去更新视图组件
 		Message msg = Message.obtain();
 		msg.what = VISIABLE;
 		mHandler2.sendMessage(msg);
-		
 
 	}
 
@@ -777,7 +784,6 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 				Message msg = Message.obtain();
 				msg.what = UNVIABLE;
 				mHandler2.sendMessage(msg);
-				
 
 			}
 
