@@ -64,6 +64,7 @@ public class BleScanService extends Service {
 	private void enableBlueToothIfClosed() {
 		if (!adapter.isEnabled()) {
 			adapter.enable();
+
 		}
 	}
 
@@ -77,7 +78,8 @@ public class BleScanService extends Service {
 
 	@Override
 	public IBinder onBind(Intent intent) {
-		enableBlueToothIfClosed();
+
+		//enableBlueToothIfClosed();
 		setBeaconManager();
 		brtBeaconMgr.connect(new ServiceReadyCallback() {
 
@@ -93,6 +95,7 @@ public class BleScanService extends Service {
 				}
 			}
 		});
+
 		return bleBinder;
 	}
 
@@ -396,6 +399,8 @@ public class BleScanService extends Service {
 		adapter.disable();
 		return super.onUnbind(intent);
 	}
+
+	
 
 	/**
 	 * 扫描监听器，需要扫描的页面，绑定此服务，并实现这个接口。
