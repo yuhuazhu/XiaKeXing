@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import android.annotation.SuppressLint;
+import android.bluetooth.BluetoothAdapter;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -35,8 +36,10 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -122,6 +125,9 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 	private RelativeLayout soundlay;
 
 	private SQLiteDatabase mDB;
+	private LinearLayout bluetoothlay;
+	private Button open_btn;
+	private Button close_btn;
 
 	// /**
 	// * ¥Ê¥¢“Ù∆µµÿ÷∑
@@ -186,7 +192,11 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 		tvTitle = (TextView) findViewById(R.id.txt_ti);
 		btnback = (ImageButton) findViewById(R.id.btnback);
 		btnback.setOnClickListener(this);
-
+		bluetoothlay = (LinearLayout) findViewById(R.id.bluetoothlay);
+		open_btn = (Button) findViewById(R.id.open_btn);
+		open_btn.setOnClickListener(this);
+		close_btn = (Button) findViewById(R.id.close_btn);
+		close_btn.setOnClickListener(this);
 		initXYMap();
 		setIvMap();
 		adapter = new MyAdapter();
@@ -699,6 +709,13 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 			break;
 		case R.id.btnback:
 			finish();
+			break;
+		case R.id.open_btn:
+			BluetoothAdapter.getDefaultAdapter().enable();
+			bluetoothlay.setVisibility(View.GONE);
+			break;
+		case R.id.close_btn:
+			bluetoothlay.setVisibility(View.GONE);
 			break;
 		default:
 			break;
