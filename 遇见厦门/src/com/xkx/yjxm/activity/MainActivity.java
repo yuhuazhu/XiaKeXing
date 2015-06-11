@@ -25,15 +25,20 @@ import android.widget.RelativeLayout.LayoutParams;
 
 public class MainActivity extends BaseActivity {
 	private boolean isExit;
+	private ImageView im_paopao;
+	private ImageView im_paopao_x;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// 移除ActionBar，在setContent之前调用下面这句，保证没有ActionBar
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
+		im_paopao = (ImageView) findViewById(R.id.img_paopao);
+		im_paopao_x = (ImageView) findViewById(R.id.img_paopao_x);
 		StartPaoPao();
 	}
-	
+
 	@Override
 	protected void onNewIntent(Intent intent) {
 		if (intent.getAction() == null) {
@@ -51,12 +56,12 @@ public class MainActivity extends BaseActivity {
 	public void Backs(View v) {
 		finish();
 	}
-	
+
 	// 跳转到左侧界面
 	public void StartLeft(View v) {
 		Intent intent = new Intent(this, LeftActivity.class);
 		startActivity(intent);
-		overridePendingTransition(R.anim.anim_left_in, R.anim.anim_left_out); 
+		overridePendingTransition(R.anim.anim_left_in, R.anim.anim_left_out);
 	}
 
 	// 跳转到活动资讯
@@ -85,10 +90,10 @@ public class MainActivity extends BaseActivity {
 
 	// 跳转到导览(选择界面)
 	public void StartGuide(View v) {
-		
+
 		Intent intent = new Intent(this, ChoiceActivity.class);
 		intent.putExtra("列表", false);
-//		Intent intent = new Intent(this, GuideActivity.class);
+		// Intent intent = new Intent(this, GuideActivity.class);
 		startActivity(intent);
 	}
 
@@ -96,7 +101,7 @@ public class MainActivity extends BaseActivity {
 	public void StartRoute(View v) {
 		Intent intent = new Intent(this, ChoiceActivity.class);
 		intent.putExtra("列表", true);
-//		Intent intent = new Intent(this, RouteActivity.class);
+		// Intent intent = new Intent(this, RouteActivity.class);
 		startActivity(intent);
 	}
 
@@ -104,56 +109,72 @@ public class MainActivity extends BaseActivity {
 	public void StartPaoPao() {
 		DisplayMetrics dm = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
-		int iWidth  = dm.widthPixels;
+		int iWidth = dm.widthPixels;
 		int iHeight = dm.heightPixels;
 		final int runW;
 		final int runH;
-		runW = iWidth * 20 / 100 ;
+		runW = iWidth * 20 / 100;
 		runH = iHeight * 55 / 100 - 40;
-		final ImageView spaceshipImage = (ImageView)findViewById(R.id.img_paopao);
-		Animation hyperspaceJumpAnimation=AnimationUtils.loadAnimation(this, R.anim.anim_paopao);
-		hyperspaceJumpAnimation.setFillAfter(true);
-		hyperspaceJumpAnimation.setAnimationListener(new AnimationListener() {
-			
+		Animation anim = AnimationUtils.loadAnimation(this, R.anim.anim_paopao);
+		anim.setFillAfter(true);
+		anim.setAnimationListener(new AnimationListener() {
 
 			@Override
 			public void onAnimationStart(Animation animation) {
-				// TODO Auto-generated method stub
-				  
+				//移动到屏幕外，这样就不会出现图片跳动
+				RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(
+						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				param.setMargins(-100, 0, 0, 0);
+				im_paopao_x.setLayoutParams(param);
 			}
-			
+
 			@Override
 			public void onAnimationRepeat(Animation animation) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void onAnimationEnd(Animation animation) {
-				spaceshipImage.clearAnimation();
-				spaceshipImage.setBackgroundResource(R.drawable.ic_paopaos);
-				int left = spaceshipImage.getLeft();
+				im_paopao.clearAnimation();
+				im_paopao.setBackgroundResource(R.drawable.ic_paopao);
+				int left = im_paopao.getLeft();
 				left += runW;
-				int top = spaceshipImage.getTop();
+				int top = im_paopao.getTop();
 				top -= runH;
-				RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-				param.setMargins(left, top, 0, 0);
-				spaceshipImage.setLayoutParams(param);
-				spaceshipImage.setOnClickListener(new OnClickListener() {
+				RelativeLayout.LayoutParams param1 = new RelativeLayout.LayoutParams(
+						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				RelativeLayout.LayoutParams param2 = new RelativeLayout.LayoutParams(
+						LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+				param1.setMargins(left, top, 0, 0);
+				im_paopao.setLayoutParams(param1);
+				param2.setMargins(left + im_paopao.getWidth() / 3 * 2, top, 0, 0);
+				im_paopao_x.setLayoutParams(param2);
+				im_paopao_x.setVisibility(View.VISIBLE);
+				im_paopao.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						im_paopao.setVisibility(View.INVISIBLE);
+						im_paopao_x.setVisibility(View.INVISIBLE);
+						StartActivities(v);
+					}
+				});
+				im_paopao_x.setOnClickListener(new OnClickListener() {
 					
 					@Override
 					public void onClick(View v) {
-						spaceshipImage.setVisibility(View.INVISIBLE);
-						
+						im_paopao.setVisibility(View.INVISIBLE);
+						im_paopao_x.setVisibility(View.INVISIBLE);
 					}
 				});
 			}
 		});
-		spaceshipImage.startAnimation(hyperspaceJumpAnimation);
-		
-//		AnimationSet
-	} 
-	   
+		im_paopao.startAnimation(anim);
+
+		// AnimationSet
+	}
+
 	private void exitBy2Click() {
 		Timer tExit = null;
 		if (isExit == false) {

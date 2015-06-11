@@ -100,6 +100,15 @@
             android:layout_marginLeft="26dp"
             android:background="@drawable/ic_paopao" />
 
+        <ImageView
+            android:id="@+id/img_paopao_x"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:visibility="invisible"
+            android:background="@drawable/ic_paopao_x" />
+
     </RelativeLayout>
 
 </FrameLayout>
