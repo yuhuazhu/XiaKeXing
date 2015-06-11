@@ -3,70 +3,67 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/img_bg"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/iv_map"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/img_lou01por" />
 
         <RelativeLayout
+            android:id="@+id/laytop"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/img_bg"
-            android:orientation="vertical" >
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@color/ligwhite"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/margin_small"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/margin_small" >
 
-            <ImageView
-                android:id="@+id/iv_map"
+            <ImageButton
+                android:id="@+id/btnback"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:background="@drawable/img_lou01por" />
+                android:background="@drawable/ic_back" />
 
-            <RelativeLayout
-                android:id="@+id/laytop"
-                android:layout_width="match_parent"
+            <ImageButton
+                android:id="@+id/btnhome"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:background="@color/ligwhite"
-                android:orientation="horizontal"
-                android:paddingBottom="@dimen/margin_small"
-                android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/margin_small" >
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/btnback"
+                android:background="@drawable/ic_home"
+                android:onClick="home" />
 
-                <ImageButton
-                    android:id="@+id/btnback"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:background="@drawable/ic_back" />
-
-                <ImageButton
-                    android:id="@+id/btnhome"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_toRightOf="@+id/btnback"
-                    android:background="@drawable/ic_home"
-                    android:onClick="home" />
-
-                <TextView
-                    android:id="@+id/textView1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:layout_marginTop="@dimen/space_content_listview_vertical"
-                    android:text="@string/title_autoplay"
-                    android:textSize="@dimen/text_size_list" />
-            </RelativeLayout>
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="@dimen/space_content_listview_vertical"
+                android:text="@string/title_autoplay"
+                android:textSize="@dimen/text_size_list" />
         </RelativeLayout>
-    
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/soundlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingTop="60dp"
-        android:visibility="visible" >
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:visibility="gone" >
 
         <ImageButton
             android:id="@+id/imgbtn_head"
@@ -185,5 +182,53 @@
             android:text=""
             android:visibility="gone" />
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/bluetoothlay"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="160dp"
+        android:background="@drawable/img_downloadbg"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingTop="8dp" >
+
+        <TextView
+            android:id="@+id/bluetooth_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="是否打开蓝牙,享受自动讲解?"
+            android:textColor="#9ecfe6"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/open_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:layout_marginRight="5dp"
+                android:background="@drawable/img_btnbg"
+                android:text="确定"
+                android:textColor="#9ecfe6" />
+
+            <Button
+                android:id="@+id/close_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="30dp"
+                android:background="@drawable/img_btnbg"
+                android:text="取消"
+                android:textColor="#9ecfe6" />
+        </LinearLayout>
+    </LinearLayout>
 
 </FrameLayout>
