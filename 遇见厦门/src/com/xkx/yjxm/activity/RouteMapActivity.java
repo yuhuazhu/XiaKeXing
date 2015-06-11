@@ -651,10 +651,12 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 			isAuto = !isAuto;
 			if (isAuto) {
 				// 自动讲解
+				Toast.makeText(this, "下面将根据您所处的位置为您进行自动语音讲解服务。", Toast.LENGTH_SHORT).show();
 				imgswitch.setBackgroundResource(R.drawable.img_autoexplain);
 				sensorManager.unregisterListener(sensorEventListener);
 			} else {
 				// 摇一摇
+				Toast.makeText(this, "在不同位置摇一摇会有新的发现，快来试试吧。", Toast.LENGTH_SHORT).show();
 				imgswitch.setBackgroundResource(R.drawable.img_shake);
 				if (sensorManager != null) {// 注册监听器
 					sensorManager

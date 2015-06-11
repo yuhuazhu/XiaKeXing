@@ -65,8 +65,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:visibility="gone" >
+        android:paddingTop="60dp"
+        android:visibility="visible" >
 
         <ImageButton
             android:id="@+id/imgbtn_head"
