@@ -898,7 +898,7 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 							&& y >= Integer.parseInt(yMap.get(2)) - 20
 							&& y <= Integer.parseInt(yMap.get(2)) + 20) {
 
-						processPlay(2, true);
+						processPlay(5, true);
 						title = "引导台";
 					}
 					if (x >= Integer.parseInt(xMap.get(3)) - 20
@@ -906,6 +906,7 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 							&& y >= Integer.parseInt(yMap.get(3)) - 20
 							&& y <= Integer.parseInt(yMap.get(3)) + 20) {
 
+						processPlay(4, true);
 						title = "智慧旅游应用展示区";
 					}
 					if (x >= Integer.parseInt(xMap.get(4)) - 20
@@ -913,6 +914,7 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 							&& y >= Integer.parseInt(yMap.get(4)) - 20
 							&& y <= Integer.parseInt(yMap.get(4)) + 20) {
 
+						processPlay(17, true);
 						title = "产品信息播放屏幕";
 					}
 
@@ -921,6 +923,7 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 							&& y >= Integer.parseInt(yMap.get(5)) - 20
 							&& y <= Integer.parseInt(yMap.get(5)) + 20) {
 
+						processPlay(12, true);
 						title = "综合服务区";
 					}
 
@@ -929,6 +932,7 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 							&& y >= Integer.parseInt(yMap.get(6)) - 20
 							&& y <= Integer.parseInt(yMap.get(6)) + 20) {
 
+						processPlay(3, true);
 						title = "感互动3D景区推介区";
 					}
 
@@ -937,6 +941,7 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 							&& y >= Integer.parseInt(yMap.get(8)) - 20
 							&& y <= Integer.parseInt(yMap.get(8)) + 20) {
 
+						processPlay(2, true);
 						title = "自助行李寄存柜";
 					}
 
@@ -945,6 +950,7 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 							&& y >= Integer.parseInt(yMap.get(9)) - 20
 							&& y <= Integer.parseInt(yMap.get(9)) + 20) {
 
+						processPlay(9, true);
 						title = "按摩免费体验区";
 					}
 
@@ -953,6 +959,7 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 							&& y >= Integer.parseInt(yMap.get(10)) - 20
 							&& y <= Integer.parseInt(yMap.get(10)) + 20) {
 
+						processPlay(16, true);
 						title = "医务室";
 					}
 					if (x >= Integer.parseInt(xMap.get(11)) - 20
@@ -960,6 +967,7 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 							&& y >= Integer.parseInt(yMap.get(11)) - 20
 							&& y <= Integer.parseInt(yMap.get(11)) + 20) {
 
+						processPlay(10, true);
 						title = "伴手礼超市";
 					}
 					// if (event.getX() >= Integer.parseInt(xMap.get(2))
