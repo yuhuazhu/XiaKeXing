@@ -1,8 +1,10 @@
 package com.xiakexing.locate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -28,6 +30,10 @@ public class BleScanService extends Service {
 	private static final int timesForLoop = 4;
 	private final int SCAN_WAIT_MILLIS = 0;
 	private final int SCAN_PERIOD_MILLIS = 250;
+	private final int SAMPLE_SIZE = 10;
+
+	private HashMap<BRTBeacon, ArrayList<Integer>> everyRssimap = new HashMap<BRTBeacon, ArrayList<Integer>>();
+	private HashMap<BRTBeacon, Integer> lastRssiMap = new HashMap<BRTBeacon, Integer>();
 
 	private int scanCount;
 
@@ -97,6 +103,62 @@ public class BleScanService extends Service {
 		return bleBinder;
 	}
 
+	FilterMode mode;
+
+	private int getRssi(ArrayList<Integer> list, FilterMode mode) {
+		int rssi = 0;
+		if (mode == FilterMode.MODE_AVER) {
+			// 去除最大值和最小值。
+			if (list.size() >= 5) {
+				list.remove(0);
+				// list.remove(list.size() - 1);
+			}
+			int sum = 0;
+			for (int i = 0; i < list.size(); i++) {
+				sum += list.get(i);
+			}
+			rssi = sum / list.size();
+		} else if (mode == FilterMode.MODE_MEDIUM) {
+			Object[] arr = (Object[]) list.toArray();
+			Collections.sort(list);// 从小到大排列
+			// 去除最大值和最小值。
+			if (list.size() >= 5) {
+				list.remove(0);
+				// list.remove(list.size() - 1);
+			}
+			int size = list.size();
+			if (size % 2 == 0) {
+				rssi = (int) (list.get(size / 2 - 1) + list.get(size / 2)) / 2;
+			} else {
+				rssi = list.get(size / 2);
+			}
+			list.clear();
+			for (int i = 0; i < arr.length; i++) {
+				list.add((Integer) arr[i]);
+			}
+		} else if (mode == FilterMode.MODE_RECURSIVE) {
+
+		}
+		return rssi;
+	}
+
+	enum FilterMode {
+		/** 均值滤波 */
+		MODE_AVER,
+		/** 递推均值滤波 */
+		MODE_RECURSIVE,
+		/** 中位值滤波 */
+		MODE_MEDIUM,
+		/** 狄克逊检验法滤波 */
+		MODE_DIXON,
+		/** 高斯滤波 */
+		MODE_GAUSS,
+		/** 速度常量滤波 */
+		MODE_SPEED,
+		/** 卡尔曼滤波 */
+		MODE_KALMAN,
+	}
+
 	private void setBeaconManager() {
 		brtBeaconMgr = new BRTBeaconManager(this);
 		// brtBeaconMgr.setBackgroundScanPeriod(SCAN_PERIOD_MILLIS,
@@ -108,21 +170,62 @@ public class BleScanService extends Service {
 
 			@Override
 			public void onBeaconsDiscovered(RangingResult result) {
+				// oriProcess(result);
+				currProcess(result);
+			}
+
+			// 去除大波动,保留小波动.
+			private void currProcess(RangingResult result) {
+				singleLoopCount++;
+				for (int i = 0; i < result.beacons.size(); i++) {
+					BRTBeacon beacon = result.beacons.get(i);
+					if (everyRssimap.containsKey(beacon)) {
+						if (Math.abs(lastRssiMap.get(beacon) - beacon.rssi) <= 5) {
+							ArrayList<Integer> list = everyRssimap.get(beacon);
+							if (list.size() >= SAMPLE_SIZE) {
+								list.remove(0);
+								list.add(beacon.rssi);
+							} else {
+								list.add(beacon.rssi);
+							}
+							lastRssiMap.put(beacon, beacon.rssi);
+						}
+					} else {
+						ArrayList<Integer> list = new ArrayList<Integer>();
+						list.add(beacon.rssi);
+						everyRssimap.put(beacon, list);
+						lastRssiMap.put(beacon, beacon.rssi);
+					}
+				}
+				if (singleLoopCount % timesForLoop == 0) {
+					List<BRTBeacon> beacons = result.beacons;
+					for (int i = 0; i < beacons.size(); i++) {
+						BRTBeacon brtBeacon = beacons.get(i);
+						brtBeacon.rssi = getRssi(everyRssimap.get(brtBeacon),
+								FilterMode.MODE_AVER);
+					}
+					if (beacons.size() >= 1) {
+						onBleScanListener.onPeriodScan(beacons);
+						BRTBeacon brtBeacon = beacons.get(0);
+						onBleScanListener.onNearBeacon(brtBeacon);
+						if (freshBeacon == null
+								|| !brtBeacon.equals(freshBeacon)) {
+							onBleScanListener.onNearBleChanged(freshBeacon,
+									brtBeacon);
+						}
+						freshBeacon = brtBeacon;
+					}
+				}
+			}
+
+			// 用于精确提取最近一个蓝牙。
+			private void oriProcess(RangingResult result) {
 				singleLoopCount++;
 				List<BRTBeacon> beacons = result.beacons;
 				for (int i = 0; i < beacons.size(); i++) {
 					BRTBeacon beacon = beacons.get(i);
 					int index = saveList.indexOf(beacon);
 					if (index == -1) {
-						// if (!beacon.macAddress.equalsIgnoreCase("AB:9A")
-						// && !beacon.macAddress.endsWith("29:A5")
-						// && !beacon.macAddress.endsWith("02:EF")
-						// && !beacon.macAddress.endsWith("9B:21")
-						// && !beacon.macAddress.endsWith("8F:A8")) {
-						// saveList.add(beacon);
-						// } else if (beacon.name == null) {
-						// // saveList.add(beacon);
-						// }
 						saveList.add(beacon);
 					} else {
 						BRTBeacon savedBeacon = saveList.get(index);
@@ -272,15 +375,15 @@ public class BleScanService extends Service {
 						// onBleScanListener.onNearBeacon(brtBeacon);
 						if (freshBeacon == null
 								|| !brtBeacon.equals(freshBeacon)) {
-							// onBleScanListener.onNearBleChanged(freshBeacon,
-							// brtBeacon);
+							onBleScanListener.onNearBleChanged(freshBeacon,
+									brtBeacon);
 							// 蓝牙易主(信号强度最高的),清空掉被易的蓝牙信号总和,扫描次数.
 							if (!allFirst.beacon.equals(brtBeacon)) {
 								BeaconData data = new BeaconData(brtBeacon);
 								allScannedList.remove(data);
 							}
-							freshBeacon = brtBeacon;
 						}
+						freshBeacon = brtBeacon;
 					}
 				}
 			}

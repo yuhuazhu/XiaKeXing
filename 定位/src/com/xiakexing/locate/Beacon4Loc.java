@@ -1,5 +1,9 @@
 package com.xiakexing.locate;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -8,7 +12,13 @@ public class Beacon4Loc implements Parcelable {
 	double y;
 	double distance;
 	double sigma;
-
+	
+	class Stu{
+		List list;
+	}
+	
+	ArrayList<Stu> list = new ArrayList<Stu>();
+	
 	public Beacon4Loc(double x, double y, double sigma, double distance) {
 		this.x = x;
 		this.y = y;

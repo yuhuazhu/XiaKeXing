@@ -50,16 +50,24 @@ public class Utils {
 	 * @param rssi
 	 * @return
 	 */
+	// distance = Math.pow(ratio, 10.0D);
+	// distance = 0.42093 * Math.pow(ratio, 6.9476) + 0.54992;
 	public static double altCalDis(int rssi, int txPower) {
 		if (rssi == 0.0D) {
 			return -1.0D;
 		}
 		double ratio = rssi * 1.0D / txPower;
 		double distance;
+		// TODO
 		if (ratio < 1.0D) {
 			distance = Math.pow(ratio, 10.0D);
+			// double rssiCorrection = 0.96D + Math.pow(Math.abs(rssi), 3.0D) %
+			// 10.0D / 150.0D;
+			// distance = Math.pow(ratio, 9.98D) * rssiCorrection;
 		} else {
-			distance = 0.42093 * Math.pow(ratio, 6.9476) + 0.54992;
+			// distance = -32.65 * Math.pow(ratio, -1.119) + 32.71;
+			distance = 27.5 * Math.pow(ratio, 1.118) - 27.47;// 6.12 ÄâºÏ
+			// distance = 0.42093 * Math.pow(ratio, 6.9476) + 0.54992;
 		}
 		return distance;
 	}

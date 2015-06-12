@@ -1,5 +1,6 @@
 package com.xiakexing.locate;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,12 +47,6 @@ public class MainActivity extends Activity {
 	private Handler drawHandler;
 	private TextView tv;
 
-	float dis1 = 0;
-	float dis2 = 0;
-	float dis3 = 0;
-	float dis4 = 0;
-	float dis5 = 0;
-
 	int scannedCount = 0;
 	private BleBinder binder;
 	private ServiceConnection conn = new ServiceConnection() {
@@ -78,76 +73,56 @@ public class MainActivity extends Activity {
 						return;
 					}
 					list.clear();
-					dis1 = 0;
-					dis2 = 0;
-					dis3 = 0;
-					dis4 = 0;
-					dis5 = 0;
+					double x = 0, y = 0;
+					float dis = 0;
+					double sigma = 0;
+					Beacon4Loc ble = null;
+					final StringBuffer info = new StringBuffer();
+					String name = "";
+					// 构造方法的字符格式这里如果小数不足2位,会以0补足.
+					DecimalFormat decimalFormat = new DecimalFormat("0.00");
 					for (int i = 0; i < scanResultList.size(); i++) {
-						float x = 0, y = 0, z = 0;
 						BRTBeacon beacon = scanResultList.get(i);
 						if (beacon.macAddress
 								.equalsIgnoreCase("C6:30:73:33:B4:D1")) {// 墙角
 							x = 1;
 							y = 1;
-							dis1 = (float) Utils.altCalDis(beacon.rssi,
-									beacon.measuredPower);
-							double sigma = getSigma(beacon.rssi,
-									beacon.measuredPower);
-							Beacon4Loc object = new Beacon4Loc(x, y, sigma,
-									dis1);
-							list.add(object);
+							name = "墙角";
 						} else if (beacon.macAddress
 								.equalsIgnoreCase("F7:ED:22:A4:91:D4")) {// 饮水机
 							x = 1;
 							y = 15;
-							dis2 = (float) Utils.altCalDis(beacon.rssi,
-									beacon.measuredPower);
-							double sigma = getSigma(beacon.rssi,
-									beacon.measuredPower);
-							Beacon4Loc object = new Beacon4Loc(x, y, sigma,
-									dis2);
-							list.add(object);
+							name = "饮水机";
 						} else if (beacon.macAddress
 								.equalsIgnoreCase("DC:8B:BB:FC:F3:64")) {// 墙壁
 							x = 9;
 							y = 1;
-							dis3 = (float) Utils.altCalDis(beacon.rssi,
-									beacon.measuredPower);
-							double sigma = getSigma(beacon.rssi,
-									beacon.measuredPower);
-							Beacon4Loc object = new Beacon4Loc(x, y, sigma,
-									dis3);
-							list.add(object);
+							name = "墙壁";
 						} else if (beacon.macAddress
 								.equalsIgnoreCase("C5:48:BD:AE:1A:F5")) {// 玻璃
 							x = 9;
 							y = 15;
-							dis4 = (float) Utils.altCalDis(beacon.rssi,
-									beacon.measuredPower);
-							double sigma = getSigma(beacon.rssi,
-									beacon.measuredPower);
-							Beacon4Loc object = new Beacon4Loc(x, y, sigma,
-									dis4);
-							list.add(object);
+							name = "玻璃";
 						} else if (beacon.macAddress
-								.equalsIgnoreCase("EC:98:14:03:87:52")) {// 玻璃
+								.equalsIgnoreCase("EC:98:14:03:87:52")) {// 桌上
 							x = 5.5f;
 							y = 6;
-							dis5 = (float) Utils.altCalDis(beacon.rssi,
+							name = "桌上";
+						} else {
+							name = "";
+						}
+						if (!name.equals("")) {
+							dis = (float) Utils.altCalDis(beacon.rssi,
 									beacon.measuredPower);
-							double sigma = getSigma(beacon.rssi,
-									beacon.measuredPower);
-							Beacon4Loc object = new Beacon4Loc(x, y, sigma,
-									dis4);
-							list.add(object);
+							sigma = getSigma(beacon.rssi, beacon.measuredPower);
+							ble = new Beacon4Loc(x, y, sigma, dis);
+							list.add(ble);
+							info.append(name + ":" + beacon.rssi + "\t");
 						}
 					}
 					runOnUiThread(new Runnable() {
 						public void run() {
-							tv.setText("个数:" + list.size() + ",墙角:" + dis1
-									+ ",饮水机:" + dis2 + ",\n  墙壁:" + dis3
-									+ ",玻璃:" + dis4);
+							tv.setText(info.toString());
 						}
 					});
 					Message msg = drawHandler.obtainMessage();
@@ -155,7 +130,6 @@ public class MainActivity extends Activity {
 					data.putParcelableArrayList("beacons", list);
 					msg.setData(data);
 					drawHandler.sendMessage(msg);
-
 				}
 
 				@Override
@@ -290,7 +264,7 @@ public class MainActivity extends Activity {
 			// paint);
 			canvas.drawBitmap(bitmap, distance2px(beacon.x) - dstWidth / 2,
 					distance2px(beacon.y) - dstHeight / 2, paint);
-			if (i==list.size()-1) {
+			if (i == list.size() - 1) {
 				bitmap.recycle();
 			}
 		}
