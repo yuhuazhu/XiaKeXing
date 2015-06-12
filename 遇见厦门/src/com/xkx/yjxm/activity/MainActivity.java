@@ -12,6 +12,7 @@ import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -20,8 +21,11 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Toast;
 import android.widget.RelativeLayout.LayoutParams;
+
+import com.xkx.yjxm.R;
 
 public class MainActivity extends BaseActivity {
 	private boolean isExit;
@@ -164,6 +168,7 @@ public class MainActivity extends BaseActivity {
 					
 					@Override
 					public void onClick(View v) {
+						
 						im_paopao.setVisibility(View.INVISIBLE);
 						im_paopao_x.setVisibility(View.INVISIBLE);
 					}

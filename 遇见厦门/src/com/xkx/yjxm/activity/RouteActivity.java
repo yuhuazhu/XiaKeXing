@@ -30,11 +30,13 @@ import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -177,7 +179,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		cursorRes.close();
 		Random random = new Random();
 		Random random2 = null;
-		
+
 		for (int i = 0; i < curcount; i++) {
 
 			img.add(i, R.drawable.route01 + i);
@@ -277,7 +279,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		findViewById(R.id.download_btn).setEnabled(true);
 		mMessageView = (TextView) findViewById(R.id.download_message);
 		mProgressbar = (ProgressBar) findViewById(R.id.download_progress);
-
+		showDialog("");
 		sendRequest();
 		// 判断是否已经下载过了
 
@@ -668,6 +670,15 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 				requestRes();
 			}
 		}).start();
+	}
+
+	/* 显示Dialog的method */private void showDialog(String mess) {
+		new AlertDialog.Builder(RouteActivity.this).setTitle("点击地图可以进入自动讲解界面!")
+				.setNegativeButton("确定", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+
+					}
+				}).show();
 	}
 
 	// 资源请求
