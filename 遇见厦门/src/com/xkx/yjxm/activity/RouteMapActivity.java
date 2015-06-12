@@ -713,6 +713,8 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 		case R.id.open_btn:
 			BluetoothAdapter.getDefaultAdapter().enable();
 			bluetoothlay.setVisibility(View.GONE);
+			// 自动讲解
+			Toast.makeText(this, "下面将根据您所处的位置为您进行自动语音讲解服务。", Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.close_btn:
 			bluetoothlay.setVisibility(View.GONE);
