@@ -38,6 +38,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -672,11 +674,29 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		}).start();
 	}
 
-	/* 显示Dialog的method */private void showDialog(String mess) {
+	/* 显示Dialog的method */
+	private void showDialog(String mess) 
+	{
+		SharedPreferences sp = getSharedPreferences("不再提示", MODE_PRIVATE);
+		boolean isShow = sp.getBoolean("点击地图可以进入自动讲解界面", false);
+		if(isShow){
+			return;
+		}
 		new AlertDialog.Builder(RouteActivity.this).setTitle("点击地图可以进入自动讲解界面!")
-				.setNegativeButton("确定", new DialogInterface.OnClickListener() {
+				.setNegativeButton("不再提示", new DialogInterface.OnClickListener() 
+				{
+					public void onClick(DialogInterface dialog, int which) 
+					{
+						SharedPreferences sp = getSharedPreferences("不再提示", MODE_PRIVATE);
+						Editor edit = sp.edit();
+						edit.putBoolean("点击地图可以进入自动讲解界面", true);
+						edit.commit();
+					}
+				}).setNeutralButton("确定", new DialogInterface.OnClickListener() {
+					
+					@Override
 					public void onClick(DialogInterface dialog, int which) {
-
+						
 					}
 				}).show();
 	}
