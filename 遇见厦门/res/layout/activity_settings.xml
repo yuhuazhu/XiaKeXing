@@ -4,15 +4,26 @@
     android:layout_height="match_parent"
     tools:context=".SettingsActivity" >
 
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="30dp"
+        android:text="切换为中文" />
+
     <ToggleButton
         android:id="@+id/toggleButton1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"  
-        android:button="@drawable/toggle_btn"  
-        android:checked="false"
-        android:text=""
-        android:textOff=""
-        android:textOn=""  />
+        android:layout_alignBaseline="@+id/textView1"
+        android:layout_alignBottom="@+id/textView1"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="48dp"
+        android:background="@android:color/transparent"
+        android:button="@drawable/toggle_btn"
+        android:checked="false" />
 
 </RelativeLayout>
