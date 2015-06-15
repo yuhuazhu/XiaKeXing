@@ -43,6 +43,7 @@ public class PhotoWashActivity extends BaseActivity implements OnClickListener {
 		initData();
 		initUI();
 	}
+
 	public void home(View v) {
 		Intent intent = null;
 
@@ -50,6 +51,7 @@ public class PhotoWashActivity extends BaseActivity implements OnClickListener {
 
 		startActivity(intent);
 	}
+
 	private void initData() {
 
 	}
@@ -79,7 +81,7 @@ public class PhotoWashActivity extends BaseActivity implements OnClickListener {
 			startActivity(intent);
 			break;
 		case R.id.laybtn02:
-          
+
 			intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 			File photo = new File(Environment.getExternalStorageDirectory(),
 					"Pic.jpg");
@@ -99,8 +101,6 @@ public class PhotoWashActivity extends BaseActivity implements OnClickListener {
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
 
-		
-
 		if (resultCode == Activity.RESULT_OK) {
 			Uri selectedImage = imageUri;
 			String sdStatus = Environment.getExternalStorageState();
@@ -114,12 +114,12 @@ public class PhotoWashActivity extends BaseActivity implements OnClickListener {
 					Calendar.getInstance(Locale.CHINA))
 					+ ".jpg";
 			// Toast.makeText(this, name, Toast.LENGTH_LONG).show();
-			//Bundle bundle = data.getExtras();
+			// Bundle bundle = data.getExtras();
 			ContentResolver cr = getContentResolver();
 			Bitmap bitmap = null;
 			try {
-				bitmap = android.provider.MediaStore.Images.Media
-						.getBitmap(cr, selectedImage);
+				bitmap = android.provider.MediaStore.Images.Media.getBitmap(cr,
+						selectedImage);
 			} catch (FileNotFoundException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -128,23 +128,22 @@ public class PhotoWashActivity extends BaseActivity implements OnClickListener {
 				e1.printStackTrace();
 			}
 			// 获取相机返回的数据，并转换为Bitmap图片格式
-
 			FileOutputStream b = null;
 			// ???????????????????????????????为什么不能直接保存在系统相册位置呢？？？？？？？？？？？？
 			File file = new File("/sdcard/myImage/");
-			file.mkdirs();// 创建文件夹
-			fileName = "/sdcard/myImage/" + name;
-
-			try {
-				b = new FileOutputStream(selectedImage.getPath());
-				bitmap.compress(Bitmap.CompressFormat.JPEG, 100, b);// 把数据写入文件
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} finally {
+			if (!file.exists()) {
+				file.mkdir();// 创建文件夹
+			}
+			// fileName = "/sdcard/myImage/" + name;
+			File imagefile = new File(file, name);
+			if (!imagefile.exists()) {
 				try {
+					imagefile.createNewFile();
+					b = new FileOutputStream(imagefile);
+					bitmap.compress(Bitmap.CompressFormat.JPEG, 100, b);
 					b.flush();
 					b.close();
-				} catch (IOException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
