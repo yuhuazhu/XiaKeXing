@@ -14,7 +14,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
-import android.graphics.Picture;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
@@ -237,63 +236,68 @@ public class MainActivity extends Activity {
 
 	private void singleDraw(final ArrayList<Beacon4Loc> list) {
 		Canvas canvas = holder.lockCanvas();
-		canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-		// 画房间墙壁
-		RectF rect = new RectF(pointTL.x, pointTL.y, pointBR.x, pointBR.y);
-		paint.setColor(Color.RED);
-		paint.setStyle(Style.STROKE);
-		canvas.drawRoundRect(rect, 10, 10, paint);
-		// 画蓝牙站点
-		paint.setStyle(Style.FILL);
-		paint.setColor(Color.BLUE);
-		Bitmap bitmap = null;
-		int dstWidth = 0;
-		int dstHeight = 0;
-		if (list.size() > 0) {
-			bitmap = BitmapFactory.decodeResource(getResources(),
-					R.drawable.beacon_gray);
-			dstWidth = bitmap.getWidth() / 4;
-			dstHeight = bitmap.getHeight() / 4;
-			bitmap = Bitmap.createScaledBitmap(bitmap, dstWidth, dstHeight,
-					true);
-		}
-		for (int i = 0; i < list.size(); i++) {
-			Beacon4Loc beacon = list.get(i);
-			// canvas.drawCircle(distance2px(beacon.x), distance2px(beacon.y),
-			// 10,
-			// paint);
-			canvas.drawBitmap(bitmap, distance2px(beacon.x) - dstWidth / 2,
-					distance2px(beacon.y) - dstHeight / 2, paint);
-			if (i == list.size() - 1) {
-				bitmap.recycle();
+		try {
+			canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+			// 画房间墙壁
+			RectF rect = new RectF(pointTL.x, pointTL.y, pointBR.x, pointBR.y);
+			paint.setColor(Color.RED);
+			paint.setStyle(Style.STROKE);
+			canvas.drawRoundRect(rect, 10, 10, paint);
+			// 画蓝牙站点
+			paint.setStyle(Style.FILL);
+			paint.setColor(Color.BLUE);
+			Bitmap bitmap = null;
+			int dstWidth = 0;
+			int dstHeight = 0;
+			if (list.size() > 0) {
+				bitmap = BitmapFactory.decodeResource(getResources(),
+						R.drawable.beacon_gray);
+				dstWidth = bitmap.getWidth() / 4;
+				dstHeight = bitmap.getHeight() / 4;
+				bitmap = Bitmap.createScaledBitmap(bitmap, dstWidth, dstHeight,
+						true);
 			}
-		}
-		// 画手机位置
-		if (list.size() >= 3) {
-			int n = list.size();
-			double[] pointX = new double[n];
-			double[] pointY = new double[n];
-			double[] distance = new double[n];
-			double[] sigma = new double[n];
 			for (int i = 0; i < list.size(); i++) {
 				Beacon4Loc beacon = list.get(i);
-				pointX[i] = beacon.x;
-				pointY[i] = beacon.y;
-				distance[i] = beacon.distance;
-				sigma[i] = beacon.sigma;
+				// canvas.drawCircle(distance2px(beacon.x),
+				// distance2px(beacon.y),
+				// 10,
+				// paint);
+				canvas.drawBitmap(bitmap, distance2px(beacon.x) - dstWidth / 2,
+						distance2px(beacon.y) - dstHeight / 2, paint);
+				if (i == list.size() - 1) {
+					bitmap.recycle();
+				}
 			}
+			// 画手机位置
+			if (list.size() >= 3) {
+				int n = list.size();
+				double[] pointX = new double[n];
+				double[] pointY = new double[n];
+				double[] distance = new double[n];
+				double[] sigma = new double[n];
+				for (int i = 0; i < list.size(); i++) {
+					Beacon4Loc beacon = list.get(i);
+					pointX[i] = beacon.x;
+					pointY[i] = beacon.y;
+					distance[i] = beacon.distance;
+					sigma[i] = beacon.sigma;
+				}
 
-			double[] solved = Multilaterator.multilaterate(pointX, pointY,
-					distance);
-			double[] delta = Multilaterator.correct(solved[0], solved[1],
-					pointX, pointY, distance, sigma);
-			solved[0] += delta[0];
-			solved[1] += delta[1];
-			paint.setColor(Color.RED);
-			canvas.drawCircle(distance2px(solved[0]), distance2px(solved[1]),
-					20, paint);
+				double[] solved = Multilaterator.multilaterate(pointX, pointY,
+						distance);
+				double[] delta = Multilaterator.correct(solved[0], solved[1],
+						pointX, pointY, distance, sigma);
+				solved[0] += delta[0];
+				solved[1] += delta[1];
+				paint.setColor(Color.RED);
+				canvas.drawCircle(distance2px(solved[0]),
+						distance2px(solved[1]), 20, paint);
+			}
+			holder.unlockCanvasAndPost(canvas);
+		} catch (Exception e) {
+			holder.unlockCanvasAndPost(canvas);
 		}
-		holder.unlockCanvasAndPost(canvas);
 	}
 
 	class ScanData {
