@@ -1,13 +1,13 @@
 package com.xiakexing.locate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import android.app.IntentService;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
@@ -15,7 +15,6 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.brtbeacon.sdk.BRTBeacon;
 import com.brtbeacon.sdk.BRTBeaconManager;
@@ -30,7 +29,7 @@ public class BleScanService extends Service {
 	private static final int timesForLoop = 4;
 	private final int SCAN_WAIT_MILLIS = 0;
 	private final int SCAN_PERIOD_MILLIS = 250;
-	private final int SAMPLE_SIZE = 10;
+	private final int SAMPLE_SIZE = 8;
 
 	private HashMap<BRTBeacon, ArrayList<Integer>> everyRssimap = new HashMap<BRTBeacon, ArrayList<Integer>>();
 	private HashMap<BRTBeacon, Integer> lastRssiMap = new HashMap<BRTBeacon, Integer>();
@@ -103,9 +102,7 @@ public class BleScanService extends Service {
 		return bleBinder;
 	}
 
-	FilterMode mode;
-
-	private int getRssi(ArrayList<Integer> list, FilterMode mode) {
+	private int getRssiUsingFilter(ArrayList<Integer> list, FilterMode mode) {
 		int rssi = 0;
 		if (mode == FilterMode.MODE_AVER) {
 			// 去除最大值和最小值。
@@ -128,7 +125,8 @@ public class BleScanService extends Service {
 			}
 			int size = list.size();
 			if (size % 2 == 0) {
-				rssi = (int) (list.get(size / 2 - 1) + list.get(size / 2)) / 2;
+				rssi = Math
+						.round((list.get(size / 2 - 1) + list.get(size / 2)) / 2);
 			} else {
 				rssi = list.get(size / 2);
 			}
@@ -138,6 +136,11 @@ public class BleScanService extends Service {
 			}
 		} else if (mode == FilterMode.MODE_RECURSIVE) {
 
+		} else if (mode == FilterMode.MODE_MIN) {
+			rssi = list.get(0);
+			for (int i = 1; i < list.size(); i++) {
+				rssi = list.get(i) > rssi ? list.get(i) : rssi;
+			}
 		}
 		return rssi;
 	}
@@ -157,7 +160,11 @@ public class BleScanService extends Service {
 		MODE_SPEED,
 		/** 卡尔曼滤波 */
 		MODE_KALMAN,
+		/** 最小值 */
+		MODE_MIN
 	}
+
+	private HashMap<BRTBeacon, Kalman> kalmanMap = new HashMap<BRTBeacon, Kalman>();
 
 	private void setBeaconManager() {
 		brtBeaconMgr = new BRTBeaconManager(this);
@@ -171,7 +178,81 @@ public class BleScanService extends Service {
 			@Override
 			public void onBeaconsDiscovered(RangingResult result) {
 				// oriProcess(result);
-				currProcess(result);
+				// currProcess(result);
+				kalmanFilter(result.beacons);
+			}
+
+			private void kalmanFilter(List<BRTBeacon> beacons) {
+				singleLoopCount++;
+				for (int i = 0; i < beacons.size(); i++) {
+					BRTBeacon brtBeacon = beacons.get(i);
+					if (kalmanMap.containsKey(brtBeacon)) {
+						ArrayList<Integer> list = everyRssimap.get(brtBeacon);
+						if (list.size() >= SAMPLE_SIZE) {
+							list.remove(0);
+							list.add(brtBeacon.rssi);
+						} else {
+							list.add(brtBeacon.rssi);
+						}
+						Kalman kalman = kalmanMap.get(brtBeacon);
+						kalman.valMeas = brtBeacon.rssi;// 测量值
+						kalman.valEsti = getRssiUsingFilter(list, FilterMode.MODE_MEDIUM);// 估计值,取中位值
+						kalman.uncerMeas = Math.abs(kalman.valOpti
+								- brtBeacon.rssi);// 测量值不确定度,最优值和测量值的绝对值
+						kalman.uncerEsti = Math.abs(kalman.valOpti
+								- kalman.valEsti);// 估计值不确定度,最优值和估计值的绝对值
+						double uncerEsti = kalman.uncerEsti;
+						double uncerMeas = kalman.uncerMeas;
+						double devOpti = kalman.devOpti;
+						// 估计值偏差
+						kalman.devEsti = Math.pow(uncerEsti, 2)
+								+ Math.pow(devOpti, 2);
+						// 测量值偏差
+						kalman.devMeas = Math.pow(uncerMeas, 2)
+								+ Math.pow(devOpti, 2);
+						// 卡尔曼增益
+						double kalmanGain = Math.sqrt(kalman.devEsti
+								/ (kalman.devEsti + kalman.devMeas));
+						// 最优值
+						kalman.valOpti = kalman.valEsti + kalmanGain
+								* (kalman.valMeas - kalman.valEsti);
+						brtBeacon.rssi = Math.round((float) kalman.valOpti);
+						if (brtBeacon.macAddress.equals("EC:98:14:03:87:52")) {
+							Log.e("kalman", "卡尔曼增益:" + kalmanGain);
+						}
+						// 最优值偏差
+						kalman.devOpti = Math.sqrt((1 - kalmanGain)
+								* kalman.devEsti);
+					} else {
+						Kalman kalman = new Kalman();
+						// 放入最优偏差
+						kalman.devOpti = 0;
+						kalmanMap.put(brtBeacon, kalman);
+						ArrayList<Integer> list = new ArrayList<Integer>();
+						list.add(brtBeacon.rssi);
+						everyRssimap.put(brtBeacon, list);
+					}
+					if (brtBeacon.macAddress.equals("EC:98:14:03:87:52")) {
+						Kalman kalman = kalmanMap.get(brtBeacon);
+						Log.e("kalman", "测量:" + kalman.valMeas + ",估计:"
+								+ kalman.valEsti + ",最优:" + kalman.valOpti
+								// + "估值偏差:" + kalman.devEsti
+								+ ",最优偏差:" + kalman.devOpti);
+					}
+
+					if (singleLoopCount % timesForLoop == 0) {
+						if (beacons.size() >= 1) {
+							onBleScanListener.onPeriodScan(beacons);
+							onBleScanListener.onNearBeacon(beacons.get(0));
+							if (freshBeacon == null
+									|| !brtBeacon.equals(freshBeacon)) {
+								onBleScanListener.onNearBleChanged(freshBeacon,
+										brtBeacon);
+							}
+							freshBeacon = brtBeacon;
+						}
+					}
+				}
 			}
 
 			// 去除大波动,保留小波动.
@@ -201,7 +282,7 @@ public class BleScanService extends Service {
 					List<BRTBeacon> beacons = result.beacons;
 					for (int i = 0; i < beacons.size(); i++) {
 						BRTBeacon brtBeacon = beacons.get(i);
-						brtBeacon.rssi = getRssi(everyRssimap.get(brtBeacon),
+						brtBeacon.rssi = getRssiUsingFilter(everyRssimap.get(brtBeacon),
 								FilterMode.MODE_AVER);
 					}
 					if (beacons.size() >= 1) {

@@ -15,11 +15,11 @@ public class Kalman {
 	/** 估计值 */
 	int valEsti;
 	/** 最优值 */
-	int valOpti;
+	double valOpti;
 	/** 估计值不确定度 */
-	int uncerEsti;
+	double uncerEsti;
 	/** 测量值不确定度 */
-	int uncerMeas;
+	double uncerMeas;
 	/** 估计值偏差 */
 	double devEsti;
 	/** 测量值偏差 */
