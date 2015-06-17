@@ -3,12 +3,12 @@
     android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#00000000"
     android:orientation="horizontal"
     android:paddingTop="14dp"
     android:paddingBottom="14dp"
     android:paddingRight="8dp"
-    android:paddingLeft="8dp" >
+    android:paddingLeft="8dp"
+    android:background="@drawable/list_item_bg" >
 
     <ImageView
         android:id="@+id/left_img1"
