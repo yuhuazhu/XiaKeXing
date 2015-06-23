@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import android.app.IntentService;
+import android.app.Fragment;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
@@ -25,53 +25,54 @@ import com.brtbeacon.sdk.service.RangingResult;
 
 public class BleScanService extends Service {
 
-	private static final int TIMES_NO_SCANNED = 10;
-	private static final int timesForLoop = 4;
+	/** the number indicates the max count of rssi value in the stored list */
+	private final int SAMPLE_SIZE = 8;
 	private final int SCAN_WAIT_MILLIS = 0;
 	private final int SCAN_PERIOD_MILLIS = 250;
-	private final int SAMPLE_SIZE = 8;
+	/** the number indicates how often to do actions for UI logical. */
+	private static final int TIMES_FOR_LOOP = 4;
+	/**
+	 * the number indicates over which times the iBeacon will be removed from
+	 * scanned list.
+	 */
+	private static final int TIMES_NO_SCANNED = 10;
 
-	private HashMap<BRTBeacon, ArrayList<Integer>> everyRssimap = new HashMap<BRTBeacon, ArrayList<Integer>>();
-	private HashMap<BRTBeacon, Integer> lastRssiMap = new HashMap<BRTBeacon, Integer>();
+	/** 提取蓝牙是否使用优化过的算法 */
+	private boolean fetchComplex = false;
 
-	private int scanCount;
+	/**
+	 * fetchMultiBeacon is to use multi-iBeacon at one loop scan,true for
+	 * location etc,otherwise for fetching the nearest ibeacon.such as to find
+	 * the nearest interest thing.
+	 */
+	private Boolean fetchMultiBeacon;
+
+	/** 处理轮次,外层循环 */
+	private int processCount;
+	/** 扫描轮次,内层循环 */
+	private int loopCount = 0;
 
 	private BRTRegion region;
+	/** 当前信号最大的iBeacon */
 	private BRTBeacon freshBeacon;
 	private BRTBeaconManager brtBeaconMgr;
 	private OnBleScanListener onBleScanListener;
 	private BleBinder bleBinder = new BleBinder();
-	private BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
-	private ArrayList<BRTBeacon> rangedList = new ArrayList<BRTBeacon>();
-	private ArrayList<BRTBeacon> optimizedList = new ArrayList<BRTBeacon>();
-	private ArrayList<BeaconData> allScannedList = new ArrayList<BeaconData>();
-	private ArrayList<BRTBeacon> saveList = new ArrayList<BRTBeacon>();
-
 	/**
-	 * 提取蓝牙是否使用优化过的算法
+	 * to stored temporary scanned data at frequency of {@link TIMES_FOR_LOOP}
+	 * times
 	 */
-	private boolean fetchOptimized = false;
+	private ArrayList<BRTBeacon> tempList;
+	private ArrayList<BRTBeacon> rangedList;
+	private ArrayList<BRTBeacon> optimizedList;
+	private ArrayList<BeaconData> allScannedList;
 
-	public BleScanService() {
-	}
-
-	@Override
-	public void onCreate() {
-		super.onCreate();
-	}
-
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-	}
-
-	private void enableBlueToothIfClosed() {
-		if (!adapter.isEnabled()) {
-			adapter.enable();
-		}
-	}
-
-	private int singleLoopCount = 0;
+	/** 保存卡尔曼数据量,key:mac地址,value:卡尔曼滤波过程数据 */
+	private HashMap<String, Kalman> kalmanMap;
+	/** 保存上一次扫描到的信号强度 ,key:mac地址,value:上一次的信号强度 */
+	private HashMap<String, Integer> lastRssiMap;
+	/** 保存最近几次的信号数据 ,key:mac地址,value:此iBeacon最近几次的扫描信号 */
+	private HashMap<String, ArrayList<Integer>> everyRssimap;
 
 	private Comparator<? super BRTBeacon> rssiComparator = new Comparator<BRTBeacon>() {
 
@@ -95,34 +96,31 @@ public class BleScanService extends Service {
 				try {
 					brtBeaconMgr.startRanging(region);
 				} catch (RemoteException e) {
-					e.printStackTrace();
+					// noop.
 				}
 			}
 		});
 		return bleBinder;
 	}
 
-	private int getRssiUsingFilter(ArrayList<Integer> list, FilterMode mode) {
+	private void enableBlueToothIfClosed() {
+		BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
+		if (!adapter.isEnabled()) {
+			adapter.enable();
+		}
+	}
+
+	private int getRssiWithFilter(ArrayList<Integer> list, FilterMode mode) {
 		int rssi = 0;
-		if (mode == FilterMode.MODE_AVER) {
-			// 去除最大值和最小值。
-			if (list.size() >= 5) {
-				list.remove(0);
-				// list.remove(list.size() - 1);
-			}
+		if (mode == FilterMode.MODE_AVER) {// 平均值
 			int sum = 0;
 			for (int i = 0; i < list.size(); i++) {
 				sum += list.get(i);
 			}
 			rssi = sum / list.size();
-		} else if (mode == FilterMode.MODE_MEDIUM) {
+		} else if (mode == FilterMode.MODE_MEDIUM) {// 中位数
 			Object[] arr = (Object[]) list.toArray();
 			Collections.sort(list);// 从小到大排列
-			// 去除最大值和最小值。
-			if (list.size() >= 5) {
-				list.remove(0);
-				// list.remove(list.size() - 1);
-			}
 			int size = list.size();
 			if (size % 2 == 0) {
 				rssi = Math
@@ -134,9 +132,7 @@ public class BleScanService extends Service {
 			for (int i = 0; i < arr.length; i++) {
 				list.add((Integer) arr[i]);
 			}
-		} else if (mode == FilterMode.MODE_RECURSIVE) {
-
-		} else if (mode == FilterMode.MODE_MIN) {
+		} else if (mode == FilterMode.MODE_MAX) {
 			rssi = list.get(0);
 			for (int i = 1; i < list.size(); i++) {
 				rssi = list.get(i) > rssi ? list.get(i) : rssi;
@@ -144,27 +140,6 @@ public class BleScanService extends Service {
 		}
 		return rssi;
 	}
-
-	enum FilterMode {
-		/** 均值滤波 */
-		MODE_AVER,
-		/** 递推均值滤波 */
-		MODE_RECURSIVE,
-		/** 中位值滤波 */
-		MODE_MEDIUM,
-		/** 狄克逊检验法滤波 */
-		MODE_DIXON,
-		/** 高斯滤波 */
-		MODE_GAUSS,
-		/** 速度常量滤波 */
-		MODE_SPEED,
-		/** 卡尔曼滤波 */
-		MODE_KALMAN,
-		/** 最小值 */
-		MODE_MIN
-	}
-
-	private HashMap<BRTBeacon, Kalman> kalmanMap = new HashMap<BRTBeacon, Kalman>();
 
 	private void setBeaconManager() {
 		brtBeaconMgr = new BRTBeaconManager(this);
@@ -174,301 +149,152 @@ public class BleScanService extends Service {
 				SCAN_WAIT_MILLIS);
 
 		brtBeaconMgr.setRangingListener(new RangingListener() {
-
 			@Override
 			public void onBeaconsDiscovered(RangingResult result) {
-				// oriProcess(result);
-				// currProcess(result);
-				kalmanFilter(result.beacons);
-			}
-
-			private void kalmanFilter(List<BRTBeacon> beacons) {
-				singleLoopCount++;
-				for (int i = 0; i < beacons.size(); i++) {
-					BRTBeacon brtBeacon = beacons.get(i);
-					if (kalmanMap.containsKey(brtBeacon)) {
-						ArrayList<Integer> list = everyRssimap.get(brtBeacon);
-						if (list.size() >= SAMPLE_SIZE) {
-							list.remove(0);
-							list.add(brtBeacon.rssi);
-						} else {
-							list.add(brtBeacon.rssi);
-						}
-						Kalman kalman = kalmanMap.get(brtBeacon);
-						kalman.valMeas = brtBeacon.rssi;// 测量值
-						kalman.valEsti = getRssiUsingFilter(list, FilterMode.MODE_MEDIUM);// 估计值,取中位值
-						kalman.uncerMeas = Math.abs(kalman.valOpti
-								- brtBeacon.rssi);// 测量值不确定度,最优值和测量值的绝对值
-						kalman.uncerEsti = Math.abs(kalman.valOpti
-								- kalman.valEsti);// 估计值不确定度,最优值和估计值的绝对值
-						double uncerEsti = kalman.uncerEsti;
-						double uncerMeas = kalman.uncerMeas;
-						double devOpti = kalman.devOpti;
-						// 估计值偏差
-						kalman.devEsti = Math.pow(uncerEsti, 2)
-								+ Math.pow(devOpti, 2);
-						// 测量值偏差
-						kalman.devMeas = Math.pow(uncerMeas, 2)
-								+ Math.pow(devOpti, 2);
-						// 卡尔曼增益
-						double kalmanGain = Math.sqrt(kalman.devEsti
-								/ (kalman.devEsti + kalman.devMeas));
-						// 最优值
-						kalman.valOpti = kalman.valEsti + kalmanGain
-								* (kalman.valMeas - kalman.valEsti);
-						brtBeacon.rssi = Math.round((float) kalman.valOpti);
-						if (brtBeacon.macAddress.equals("EC:98:14:03:87:52")) {
-							Log.e("kalman", "卡尔曼增益:" + kalmanGain);
-						}
-						// 最优值偏差
-						kalman.devOpti = Math.sqrt((1 - kalmanGain)
-								* kalman.devEsti);
-					} else {
-						Kalman kalman = new Kalman();
-						// 放入最优偏差
-						kalman.devOpti = 0;
-						kalmanMap.put(brtBeacon, kalman);
-						ArrayList<Integer> list = new ArrayList<Integer>();
-						list.add(brtBeacon.rssi);
-						everyRssimap.put(brtBeacon, list);
-					}
-					if (brtBeacon.macAddress.equals("EC:98:14:03:87:52")) {
-						Kalman kalman = kalmanMap.get(brtBeacon);
-						Log.e("kalman", "测量:" + kalman.valMeas + ",估计:"
-								+ kalman.valEsti + ",最优:" + kalman.valOpti
-								// + "估值偏差:" + kalman.devEsti
-								+ ",最优偏差:" + kalman.devOpti);
-					}
-
-					if (singleLoopCount % timesForLoop == 0) {
-						if (beacons.size() >= 1) {
-							onBleScanListener.onPeriodScan(beacons);
-							onBleScanListener.onNearBeacon(beacons.get(0));
-							if (freshBeacon == null
-									|| !brtBeacon.equals(freshBeacon)) {
-								onBleScanListener.onNearBleChanged(freshBeacon,
-										brtBeacon);
-							}
-							freshBeacon = brtBeacon;
-						}
-					}
+				if (fetchMultiBeacon == null) {
+					throw new IllegalStateException(
+							"setTriggerMode() must be called after service connection established.");
 				}
-			}
-
-			// 去除大波动,保留小波动.
-			private void currProcess(RangingResult result) {
-				singleLoopCount++;
-				for (int i = 0; i < result.beacons.size(); i++) {
-					BRTBeacon beacon = result.beacons.get(i);
-					if (everyRssimap.containsKey(beacon)) {
-						if (Math.abs(lastRssiMap.get(beacon) - beacon.rssi) <= 5) {
-							ArrayList<Integer> list = everyRssimap.get(beacon);
-							if (list.size() >= SAMPLE_SIZE) {
-								list.remove(0);
-								list.add(beacon.rssi);
-							} else {
-								list.add(beacon.rssi);
-							}
-							lastRssiMap.put(beacon, beacon.rssi);
-						}
-					} else {
-						ArrayList<Integer> list = new ArrayList<Integer>();
-						list.add(beacon.rssi);
-						everyRssimap.put(beacon, list);
-						lastRssiMap.put(beacon, beacon.rssi);
-					}
+				if (onBleScanListener == null) {
+					throw new IllegalStateException(
+							"BleScanListener must be set after service connection established.");
 				}
-				if (singleLoopCount % timesForLoop == 0) {
-					List<BRTBeacon> beacons = result.beacons;
-					for (int i = 0; i < beacons.size(); i++) {
-						BRTBeacon brtBeacon = beacons.get(i);
-						brtBeacon.rssi = getRssiUsingFilter(everyRssimap.get(brtBeacon),
-								FilterMode.MODE_AVER);
-					}
-					if (beacons.size() >= 1) {
-						onBleScanListener.onPeriodScan(beacons);
-						BRTBeacon brtBeacon = beacons.get(0);
-						onBleScanListener.onNearBeacon(brtBeacon);
-						if (freshBeacon == null
-								|| !brtBeacon.equals(freshBeacon)) {
-							onBleScanListener.onNearBleChanged(freshBeacon,
-									brtBeacon);
-						}
-						freshBeacon = brtBeacon;
-					}
-				}
-			}
-
-			// 用于精确提取最近一个蓝牙。
-			private void oriProcess(RangingResult result) {
-				singleLoopCount++;
-				List<BRTBeacon> beacons = result.beacons;
-				for (int i = 0; i < beacons.size(); i++) {
-					BRTBeacon beacon = beacons.get(i);
-					int index = saveList.indexOf(beacon);
-					if (index == -1) {
-						saveList.add(beacon);
-					} else {
-						BRTBeacon savedBeacon = saveList.get(index);
-						boolean rssiLower = savedBeacon.rssi < beacon.rssi;
-						savedBeacon.rssi = rssiLower ? beacon.rssi
-								: savedBeacon.rssi;
-					}
-				}
-				if (singleLoopCount % timesForLoop == 0) {
-					scanCount++;
-					Collections.sort(saveList, rssiComparator);
-					rangedList.clear();
-					rangedList.addAll(saveList);
-					if (fetchOptimized) {
-						processOptimized();
-					} else {
-						processRaw();
-					}
-					saveList.clear();
-				}
-			}
-
-			private void processRaw() {
-				onBleScanListener.onPeriodScan(rangedList);
-				if (rangedList.size() >= 1) {
-					BRTBeacon currNearBeacon = rangedList.get(0);
-					onBleScanListener.onNearBeacon(currNearBeacon);
-					if (currNearBeacon != freshBeacon) {
-						onBleScanListener.onNearBleChanged(freshBeacon,
-								currNearBeacon);
-					}
-					freshBeacon = currNearBeacon;
-				}
-			}
-
-			private void processOptimized() {
-				optimizedList.clear();
-
-				for (int i = 0; i < rangedList.size(); i++) {
-					BRTBeacon rangedBeacon = rangedList.get(i);
-					BeaconData data = new BeaconData(rangedBeacon);
-					int index = allScannedList.indexOf(data);
-					if (index == -1) {
-						data.lastScanNum = scanCount;
-						data.selfScanCount = data.selfScanCount + 1;
-						data.sumRssi += rangedBeacon.rssi;
-						allScannedList.add(data);
-						Log.e("remove", "添加：" + rangedBeacon.macAddress);
-					} else {
-						BeaconData temp = allScannedList.get(index);
-						temp.lastScanNum = scanCount;
-						temp.selfScanCount = temp.selfScanCount + 1;
-						temp.sumRssi += rangedBeacon.rssi;
-					}
-				}
-
-				Iterator<BeaconData> iterator = allScannedList.iterator();
-				while (iterator.hasNext()) {
-					BeaconData next = iterator.next();
-					if (scanCount - next.lastScanNum > TIMES_NO_SCANNED) {
-						iterator.remove();
-					}
-				}
-
-				Collections.sort(allScannedList);
-				if (allScannedList.size() == 0 || rangedList.size() == 0) {
-					return;
-				}
-
-				BeaconData allFirst = allScannedList.get(0);
-				BRTBeacon rangedFirst = rangedList.get(0);
-				// 是否一样
-				boolean isEqual = allFirst.beacon.equals(rangedFirst);
-				// 信号强度均值比较第一个高
-				boolean isRssiHigerThanRanged = allFirst.beacon.rssi > rangedFirst.rssi;
-				// 最近一次是否被扫描到
-				boolean isLastScanned = scanCount == allFirst.lastScanNum;
-
-				final StringBuffer sb = new StringBuffer();
-
-				if (!isEqual && isRssiHigerThanRanged && isLastScanned) {
-					int index = rangedList.indexOf(allFirst.beacon);
-					BRTBeacon beacon = rangedList.get(index);
-					if (Math.abs(beacon.rssi - rangedFirst.rssi) <= 5) {
-						Log.e("remove", "" + beacon.macAddress + "挤进前列");
-						optimizedList.add(beacon);
-						sb.append(getTitle(beacon.macAddress) + "挤进前列\n");
-					}
-				}
-
-				for (int i = 0; i < rangedList.size(); i++) {
-					BRTBeacon rangedBeacon = rangedList.get(i);
-					BeaconData data = new BeaconData(rangedBeacon);
-					int index = allScannedList.indexOf(data);
-					data = allScannedList.get(index);
-					int averRssi = data.sumRssi / data.selfScanCount;
-					boolean rssiLower = rangedBeacon.rssi < averRssi;
-					rangedBeacon.rssi = rssiLower ? averRssi
-							: rangedBeacon.rssi;
-					if (!optimizedList.contains(rangedBeacon)) {
-						optimizedList.add(rangedBeacon);
-					}
-				}
-
-				if (optimizedList.size() >= 2) {
-					BRTBeacon brtBeacon = optimizedList.get(0);
-					int index = allScannedList
-							.indexOf(new BeaconData(brtBeacon));
-					BeaconData data = allScannedList.get(index);
-					if (!brtBeacon.equals(freshBeacon)) {
-						if (scanCount - data.previousFirstCount > 1) {
-							optimizedList.remove(0);
-							optimizedList.add(1, brtBeacon);
-						}
-						data.previousFirstCount = scanCount;
-					} else {
-						data.previousFirstCount = scanCount;
-					}
-				}
-
-				Collections.sort(optimizedList, rssiComparator);
-				if (optimizedList.size() >= 0) {
-					// sb.append("个数:" + optimizedList.size() + "\n");
-					// for (int i = 0; i < optimizedList.size() && i <= 2; i++)
-					// {
-					// BRTBeacon beacon = optimizedList.get(i);
-					// sb.append(getTitle(beacon.macAddress) + ","
-					// + beacon.rssi + "\n");
-					// }
-					// sb.append("----------------\n");
-					// for (int i = 0; i < allScannedList.size() && i <= 2; i++)
-					// {
-					// BeaconData data = allScannedList.get(i);
-					// sb.append(getTitle(data.beacon.macAddress) + ","
-					// + data.sumRssi / data.selfScanCount + "\n");
-					// }
-					// if (t == null) {
-					// t = Toast.makeText(BleScanService.this, "",
-					// Toast.LENGTH_LONG);
-					// }
-					// t.setText(sb.toString());
-					// t.show();
-					// TODO
-					if (optimizedList.size() >= 1) {
-						onBleScanListener.onPeriodScan(optimizedList);
-						BRTBeacon brtBeacon = optimizedList.get(0);
-						// onBleScanListener.onNearBeacon(brtBeacon);
-						if (freshBeacon == null
-								|| !brtBeacon.equals(freshBeacon)) {
-							onBleScanListener.onNearBleChanged(freshBeacon,
-									brtBeacon);
-							// 蓝牙易主(信号强度最高的),清空掉被易的蓝牙信号总和,扫描次数.
-							if (!allFirst.beacon.equals(brtBeacon)) {
-								BeaconData data = new BeaconData(brtBeacon);
-								allScannedList.remove(data);
-							}
-						}
-						freshBeacon = brtBeacon;
-					}
+				if (fetchMultiBeacon) {
+					// filterProcess(result);
+					kalmanFilter(result.beacons);
+				} else {
+					fetchNearOneiBeacon(result);
 				}
 			}
 		});
+	}
+
+	/**
+	 * 使用滤波处理扫描数据
+	 * 
+	 * @param result
+	 */
+	private void filterProcess(RangingResult result) {
+		loopCount++;
+		if (everyRssimap == null) {
+			everyRssimap = new HashMap<String, ArrayList<Integer>>();
+		}
+		if (lastRssiMap == null) {
+			lastRssiMap = new HashMap<String, Integer>();
+		}
+		// 信号数据队列递推
+		for (int i = 0; i < result.beacons.size(); i++) {
+			BRTBeacon beacon = result.beacons.get(i);
+			if (everyRssimap.containsKey(beacon.macAddress)) {
+				// 限幅
+				if (Math.abs(lastRssiMap.get(beacon.macAddress) - beacon.rssi) <= 5) {
+					ArrayList<Integer> list = everyRssimap
+							.get(beacon.macAddress);
+					if (list.size() >= SAMPLE_SIZE) {
+						list.remove(0);
+					}
+					list.add(beacon.rssi);
+					lastRssiMap.put(beacon.macAddress, beacon.rssi);
+				}
+			} else {
+				ArrayList<Integer> list = new ArrayList<Integer>();
+				list.add(beacon.rssi);
+				everyRssimap.put(beacon.macAddress, list);
+				lastRssiMap.put(beacon.macAddress, beacon.rssi);
+			}
+		}
+		if (loopCount % TIMES_FOR_LOOP == 0) {
+			// 滤波
+			List<BRTBeacon> beacons = result.beacons;
+			for (int i = 0; i < beacons.size(); i++) {
+				BRTBeacon brtBeacon = beacons.get(i);
+				brtBeacon.rssi = getRssiWithFilter(
+						everyRssimap.get(brtBeacon.macAddress),
+						FilterMode.MODE_AVER);
+			}
+			// 响应事件
+			if (beacons.size() >= 1) {
+				onBleScanListener.onPeriodScan(beacons);
+				BRTBeacon brtBeacon = beacons.get(0);
+				onBleScanListener.onNearBeacon(brtBeacon);
+				if (freshBeacon == null || !brtBeacon.equals(freshBeacon)) {
+					onBleScanListener.onNearBleChanged(freshBeacon, brtBeacon);
+				}
+				freshBeacon = brtBeacon;
+			}
+		}
+	}
+
+	private void kalmanFilter(List<BRTBeacon> beacons) {
+		loopCount++;
+		if (everyRssimap == null) {
+			everyRssimap = new HashMap<String, ArrayList<Integer>>();
+		}
+		if (kalmanMap == null) {
+			kalmanMap = new HashMap<String, Kalman>();
+		}
+		for (int i = 0; i < beacons.size(); i++) {
+			BRTBeacon brtBeacon = beacons.get(i);
+			if (kalmanMap.containsKey(brtBeacon.macAddress)) {
+				ArrayList<Integer> list = everyRssimap
+						.get(brtBeacon.macAddress);
+				if (list.size() >= SAMPLE_SIZE) {
+					list.remove(0);
+				}
+				list.add(brtBeacon.rssi);
+				Kalman kalman = kalmanMap.get(brtBeacon.macAddress);
+				kalman.valMeas = brtBeacon.rssi;// 测量值
+				kalman.valEsti = getRssiWithFilter(list, FilterMode.MODE_MEDIUM);// 估计值,取中位值
+				kalman.uncerMeas = Math.abs(kalman.valOpti - brtBeacon.rssi);// 测量值不确定度,最优值和测量值的绝对值
+				kalman.uncerEsti = Math.abs(kalman.valOpti - kalman.valEsti);// 估计值不确定度,最优值和估计值的绝对值
+				double uncerEsti = kalman.uncerEsti;
+				double uncerMeas = kalman.uncerMeas;
+				double devOpti = kalman.devOpti;
+				// 估计值偏差
+				kalman.devEsti = Math.pow(uncerEsti, 2) + Math.pow(devOpti, 2);
+				// 测量值偏差
+				kalman.devMeas = Math.pow(uncerMeas, 2) + Math.pow(devOpti, 2);
+				// 卡尔曼增益
+				double kalmanGain = Math.sqrt(kalman.devEsti
+						/ (kalman.devEsti + kalman.devMeas));
+				// 最优值
+				kalman.valOpti = kalman.valEsti + kalmanGain
+						* (kalman.valMeas - kalman.valEsti);
+				brtBeacon.rssi = Math.round((float) kalman.valOpti);
+				if (brtBeacon.macAddress.equals("EC:98:14:03:87:52")) {
+					Log.e("kalman", "卡尔曼增益:" + kalmanGain);
+				}
+				// 最优值偏差
+				kalman.devOpti = Math.sqrt((1 - kalmanGain) * kalman.devEsti);
+			} else {
+				Kalman kalman = new Kalman();
+				// 放入最优偏差
+				kalman.devOpti = 0;
+				kalmanMap.put(brtBeacon.macAddress, kalman);
+				ArrayList<Integer> list = new ArrayList<Integer>();
+				list.add(brtBeacon.rssi);
+				everyRssimap.put(brtBeacon.macAddress, list);
+			}
+			if (brtBeacon.macAddress.equals("EC:98:14:03:87:52")) {
+				Kalman kalman = kalmanMap.get(brtBeacon.macAddress);
+				Log.e("kalman", "测量:" + kalman.valMeas + ",估计:"
+						+ kalman.valEsti + ",最优:" + kalman.valOpti
+						// + "估值偏差:" + kalman.devEsti
+						+ ",最优偏差:" + kalman.devOpti);
+			}
+		}
+		if (loopCount % TIMES_FOR_LOOP == 0) {
+			if (beacons.size() >= 1) {
+				BRTBeacon firstBeacon = beacons.get(0);
+				onBleScanListener.onPeriodScan(beacons);
+				onBleScanListener.onNearBeacon(beacons.get(0));
+				if (freshBeacon == null || !firstBeacon.equals(freshBeacon)) {
+					onBleScanListener
+							.onNearBleChanged(freshBeacon, firstBeacon);
+				}
+				freshBeacon = firstBeacon;
+			}
+		}
 	}
 
 	class BeaconData implements Comparable<BeaconData> {
@@ -522,10 +348,168 @@ public class BleScanService extends Service {
 		try {
 			brtBeaconMgr.stopRanging(region);
 		} catch (RemoteException e) {
-			e.printStackTrace();
+			// noop
 		}
 		brtBeaconMgr.disconnect();
 		return super.onUnbind(intent);
+	}
+
+	/**
+	 * 用于精确提取最近一个蓝牙
+	 * 
+	 * @param result
+	 */
+	private void fetchNearOneiBeacon(RangingResult result) {
+		loopCount++;
+		if (tempList == null) {
+			tempList = new ArrayList<BRTBeacon>();
+		}
+		if (rangedList == null) {
+			rangedList = new ArrayList<BRTBeacon>();
+		}
+		List<BRTBeacon> beacons = result.beacons;
+		for (int i = 0; i < beacons.size(); i++) {
+			BRTBeacon beacon = beacons.get(i);
+			int index = tempList.indexOf(beacon);
+			if (index == -1) {
+				tempList.add(beacon);
+			} else {
+				BRTBeacon savedBeacon = tempList.get(index);
+				boolean rssiLower = savedBeacon.rssi < beacon.rssi;
+				savedBeacon.rssi = rssiLower ? beacon.rssi : savedBeacon.rssi;
+			}
+		}
+		if (loopCount % TIMES_FOR_LOOP == 0) {
+			processCount++;
+			Collections.sort(tempList, rssiComparator);
+			rangedList.clear();
+			rangedList.addAll(tempList);
+			if (fetchComplex) {
+				processOptimized();
+			} else {
+				processRaw();
+			}
+			tempList.clear();
+		}
+	}
+
+	/** 对这一轮扫描到的iBeacon直接触发,不做数据处理 */
+	private void processRaw() {
+		if (rangedList.size() >= 1) {
+			onBleScanListener.onPeriodScan(rangedList);
+			BRTBeacon currNearBeacon = rangedList.get(0);
+			onBleScanListener.onNearBeacon(currNearBeacon);
+			if (currNearBeacon != freshBeacon) {
+				onBleScanListener.onNearBleChanged(freshBeacon, currNearBeacon);
+			}
+			freshBeacon = currNearBeacon;
+		}
+	}
+	
+	/** 调整修改扫描到的信号数据,弃用 */
+	@Deprecated
+	private void processOptimized() {
+		optimizedList.clear();
+		if (optimizedList == null) {
+			optimizedList = new ArrayList<BRTBeacon>();
+		}
+		if (allScannedList == null) {
+			allScannedList = new ArrayList<BeaconData>();
+		}
+		for (int i = 0; i < rangedList.size(); i++) {
+			BRTBeacon rangedBeacon = rangedList.get(i);
+			BeaconData data = new BeaconData(rangedBeacon);
+			int index = allScannedList.indexOf(data);
+			if (index == -1) {
+				data.lastScanNum = processCount;
+				data.selfScanCount = data.selfScanCount + 1;
+				data.sumRssi += rangedBeacon.rssi;
+				allScannedList.add(data);
+			} else {
+				BeaconData temp = allScannedList.get(index);
+				temp.lastScanNum = processCount;
+				temp.selfScanCount = temp.selfScanCount + 1;
+				temp.sumRssi += rangedBeacon.rssi;
+			}
+		}
+
+		Iterator<BeaconData> iterator = allScannedList.iterator();
+		while (iterator.hasNext()) {
+			BeaconData next = iterator.next();
+			if (processCount - next.lastScanNum > TIMES_NO_SCANNED) {
+				iterator.remove();
+			}
+		}
+
+		Collections.sort(allScannedList);
+		if (allScannedList.size() == 0 || rangedList.size() == 0) {
+			return;
+		}
+
+		BeaconData allFirst = allScannedList.get(0);
+		BRTBeacon rangedFirst = rangedList.get(0);
+		// 是否一样
+		boolean isEqual = allFirst.beacon.equals(rangedFirst);
+		// 信号强度均值比较第一个高
+		boolean isRssiHigerThanRanged = allFirst.beacon.rssi > rangedFirst.rssi;
+		// 最近一次是否被扫描到
+		boolean isLastScanned = processCount == allFirst.lastScanNum;
+
+		final StringBuffer sb = new StringBuffer();
+
+		if (!isEqual && isRssiHigerThanRanged && isLastScanned) {
+			int index = rangedList.indexOf(allFirst.beacon);
+			BRTBeacon beacon = rangedList.get(index);
+			if (Math.abs(beacon.rssi - rangedFirst.rssi) <= 5) {
+				optimizedList.add(beacon);
+			}
+		}
+
+		for (int i = 0; i < rangedList.size(); i++) {
+			BRTBeacon rangedBeacon = rangedList.get(i);
+			BeaconData data = new BeaconData(rangedBeacon);
+			int index = allScannedList.indexOf(data);
+			data = allScannedList.get(index);
+			int averRssi = data.sumRssi / data.selfScanCount;
+			boolean rssiLower = rangedBeacon.rssi < averRssi;
+			rangedBeacon.rssi = rssiLower ? averRssi : rangedBeacon.rssi;
+			if (!optimizedList.contains(rangedBeacon)) {
+				optimizedList.add(rangedBeacon);
+			}
+		}
+
+		if (optimizedList.size() >= 2) {
+			BRTBeacon brtBeacon = optimizedList.get(0);
+			int index = allScannedList.indexOf(new BeaconData(brtBeacon));
+			BeaconData data = allScannedList.get(index);
+			if (!brtBeacon.equals(freshBeacon)) {
+				if (processCount - data.previousFirstCount > 1) {
+					optimizedList.remove(0);
+					optimizedList.add(1, brtBeacon);
+				}
+				data.previousFirstCount = processCount;
+			} else {
+				data.previousFirstCount = processCount;
+			}
+		}
+
+		Collections.sort(optimizedList, rssiComparator);
+		if (optimizedList.size() >= 0) {
+			if (optimizedList.size() >= 1) {
+				onBleScanListener.onPeriodScan(optimizedList);
+				BRTBeacon brtBeacon = optimizedList.get(0);
+				// onBleScanListener.onNearBeacon(brtBeacon);
+				if (freshBeacon == null || !brtBeacon.equals(freshBeacon)) {
+					onBleScanListener.onNearBleChanged(freshBeacon, brtBeacon);
+					// 蓝牙易主(信号强度最高的),清空掉被易的蓝牙信号总和,扫描次数.
+					if (!allFirst.beacon.equals(brtBeacon)) {
+						BeaconData data = new BeaconData(brtBeacon);
+						allScannedList.remove(data);
+					}
+				}
+				freshBeacon = brtBeacon;
+			}
+		}
 	}
 
 	/**
@@ -536,7 +520,7 @@ public class BleScanService extends Service {
 	 */
 	public interface OnBleScanListener {
 		/**
-		 * 扫描的最近一个beacon基站改变了，回调的方法。
+		 * 扫描的最近一个ibeacon基站改变了，回调的方法。
 		 * 
 		 * @param oriBeacon
 		 *            原来的最近的beacon
@@ -554,11 +538,36 @@ public class BleScanService extends Service {
 		public void onPeriodScan(List<BRTBeacon> scanResultList);
 
 		/**
-		 * 周期性扫描提取最近的一个beacon，回调方法
+		 * 周期性扫描提取最近的一个iBeacon,回调方法
 		 * 
 		 * @param brtBeacon
 		 */
 		public void onNearBeacon(BRTBeacon brtBeacon);
+	}
+
+	enum FilterMode {
+		// 这些滤波方式均针对于1个或多个数据样本进行滤波,样本容量不宜过大.否则滤波出来的数据不具有代表性.
+		// 在提取附近多个iBeacon时,适合使用下面滤波之一.提取最近一个iBeacon不要使用滤波.
+		/***************************************************
+		 * <pre>
+		 * 递推平均滤波法（又称滑动平均滤波法）
+		 * 说明：把连续N个采样值看成一个队列，队列长度固定为N。 每次采样到一个新数据放入队尾，并扔掉队首的一
+		 * 次数据。把队列中的N各数据进行平均运算，既获得 新的滤波结果。
+		 * 优点：对周期性干扰有良好的抑制作用，平滑度高；试用于高频振荡的系统
+		 * 缺点：灵敏度低；对偶然出现的脉冲性干扰的抑制作用较差，不适于脉冲干 扰较严重的场合
+		 * </pre>
+		 ****************************************************/
+		MODE_AVER,
+		/************************************************
+		 * <pre>
+		 * 中位值滤波
+		 * 优点：对于偶然出现的脉冲性干扰，可消除由其引起的采样值偏差。 对周期性干扰有良好的抑制作用，平滑度高；试用于高频振荡 的系统。
+		 * 缺点：测量速度慢
+		 * </pre>
+		 *************************************************/
+		MODE_MEDIUM,
+		/** 提取样本量中最大值 */
+		MODE_MAX
 	}
 
 	public class BleBinder extends Binder {
@@ -572,106 +581,45 @@ public class BleScanService extends Service {
 			region = new BRTRegion("xkx", uuid, null, null, null);
 		}
 
-		public BRTBeacon getProximityBeacon() {
-			if (fetchOptimized) {
-				if (optimizedList.size() >= 1) {
-					return optimizedList.get(0);
-				}
-			} else {
-				if (rangedList.size() >= 1) {
-					return rangedList.get(0);
-				}
-			}
-			return null;
+		/**
+		 * must be called,the intent the scan.
+		 * 
+		 * @param isFetchMultiOneTime
+		 */
+		public void setFetchMultiBeacon(boolean isFetchMultiOneTime) {
+			fetchMultiBeacon = isFetchMultiOneTime;
 		}
 
 		public void setOnBleScanListener(OnBleScanListener listener) {
 			onBleScanListener = listener;
 		}
-
-		/**
-		 * 获取附近指定个数的beacons
-		 * 
-		 * @param num
-		 *            要获取的个数
-		 * @return
-		 */
-		public List<BRTBeacon> getBRTBeacons(Integer num) {
-			if (rangedList.size() == 0) {
-				return null;
-			}
-
-			if (fetchOptimized) {
-				if (num == null || num < 0) {
-					return optimizedList;
-				} else {
-					List<BRTBeacon> temp = new ArrayList<BRTBeacon>();
-					int size = optimizedList.size();
-					num = num > size ? size : num;
-					for (int i = 0; i < num; i++) {
-						temp.add(optimizedList.get(i));
-					}
-					return temp;
-				}
-			} else {
-				if (num == null || num < 0) {
-					return rangedList;
-				} else {
-					List<BRTBeacon> temp = new ArrayList<BRTBeacon>();
-					int size = rangedList.size();
-					num = num > size ? size : num;
-					for (int i = 0; i < num; i++) {
-						temp.add(rangedList.get(i));
-					}
-					return temp;
-				}
-			}
-		}
 	}
+}
 
-	private String getTitle(String address) {
-		address = address.trim();
-		if (address.equalsIgnoreCase("CF:01:01:00:02:F0")) {
-			return "智慧导览";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F1")) {
-			return "行李寄存";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F2")) {
-			return "3D互动";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F3")) {
-			return "应用展示";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F4")) {
-			return "引导台";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:FB")) {
-			return "旅客上车处";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F6")) {
-			return "智慧旅游视屏";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F7")) {
-			return "自行车租赁";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F8")) {
-			return "休闲自助";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:FC")) {
-			return "伴手礼超市";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E1")) {
-			return "多功能厅";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E2")) {
-			return "综合服务区";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E4")) {
-			return "呼叫中心";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E7")) {
-			return "预警指挥中心";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E5")) {
-			return "办公区1";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E6")) {
-			return "医务室";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:F5")) {
-			return "信息视屏";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E8")) {
-			return "机房";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:FD")) {
-			return "婚纱摄影";
-		} else if (address.equalsIgnoreCase("CF:01:01:00:02:E3")) {
-			return "办公区2";
-		}
-		return address;
-	}
+/**
+ * <pre>
+ * 根据卡尔曼滤波算法写的类，用于保存每个时刻的数据信息。
+ * see at http://blog.chinaunix.net/uid-26694208-id-3184442.html
+ * </pre>
+ * 
+ * @author zhengtianbao
+ * 
+ */
+class Kalman {
+	/** 测量值 */
+	int valMeas;
+	/** 估计值 */
+	int valEsti;
+	/** 最优值 */
+	double valOpti;
+	/** 估计值不确定度 */
+	double uncerEsti;
+	/** 测量值不确定度 */
+	double uncerMeas;
+	/** 估计值偏差 */
+	double devEsti;
+	/** 测量值偏差 */
+	double devMeas;
+	/** 最优值偏差 */
+	double devOpti;
 }
