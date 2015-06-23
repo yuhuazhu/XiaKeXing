@@ -35,6 +35,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
 	}
 
 	public void logToFile(Throwable ex) {
+		Log.e("yjxm", ex.toString(), ex);
 		String log = exceptionToString(ex);
 		logStringToFile(log);
 	}
