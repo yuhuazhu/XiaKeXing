@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import android.app.Fragment;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
@@ -244,15 +243,15 @@ public class BleScanService extends Service {
 				list.add(brtBeacon.rssi);
 				Kalman kalman = kalmanMap.get(brtBeacon.macAddress);
 				kalman.valMeas = brtBeacon.rssi;// 测量值
-				kalman.valEsti = getRssiWithFilter(list, FilterMode.MODE_MEDIUM);// 估计值,取中位值
-				kalman.uncerMeas = Math.abs(kalman.valOpti - brtBeacon.rssi);// 测量值不确定度,最优值和测量值的绝对值
-				kalman.uncerEsti = Math.abs(kalman.valOpti - kalman.valEsti);// 估计值不确定度,最优值和估计值的绝对值
+				kalman.valEsti = getRssiWithFilter(list, FilterMode.MODE_MEDIUM);// 估计值(暂时以中位值为估计值,或其他估计值)
+				kalman.uncerMeas = Math.abs(kalman.valOpti - brtBeacon.rssi);// 测量值不确定度(最优值和测量值的绝对值,或其他值)
+				kalman.uncerEsti = Math.abs(kalman.valOpti - kalman.valEsti);// 估计值不确定度（最优值和估计值的绝对值,或其他值)
 				double uncerEsti = kalman.uncerEsti;
 				double uncerMeas = kalman.uncerMeas;
 				double devOpti = kalman.devOpti;
-				// 估计值偏差
+				// 估计值偏差(应该开平方,为了减少运算次数,不开方)
 				kalman.devEsti = Math.pow(uncerEsti, 2) + Math.pow(devOpti, 2);
-				// 测量值偏差
+				// 测量值偏差(应该开平方,为了减少运算次数,不开方)
 				kalman.devMeas = Math.pow(uncerMeas, 2) + Math.pow(devOpti, 2);
 				// 卡尔曼增益
 				double kalmanGain = Math.sqrt(kalman.devEsti
@@ -260,7 +259,7 @@ public class BleScanService extends Service {
 				// 最优值
 				kalman.valOpti = kalman.valEsti + kalmanGain
 						* (kalman.valMeas - kalman.valEsti);
-				brtBeacon.rssi = Math.round((float) kalman.valOpti);
+				brtBeacon.rssi = Math.round((float) kalman.valOpti);// 信号取整
 				if (brtBeacon.macAddress.equals("EC:98:14:03:87:52")) {
 					Log.e("kalman", "卡尔曼增益:" + kalmanGain);
 				}
@@ -268,8 +267,6 @@ public class BleScanService extends Service {
 				kalman.devOpti = Math.sqrt((1 - kalmanGain) * kalman.devEsti);
 			} else {
 				Kalman kalman = new Kalman();
-				// 放入最优偏差
-				kalman.devOpti = 0;
 				kalmanMap.put(brtBeacon.macAddress, kalman);
 				ArrayList<Integer> list = new ArrayList<Integer>();
 				list.add(brtBeacon.rssi);
@@ -454,8 +451,6 @@ public class BleScanService extends Service {
 		boolean isRssiHigerThanRanged = allFirst.beacon.rssi > rangedFirst.rssi;
 		// 最近一次是否被扫描到
 		boolean isLastScanned = processCount == allFirst.lastScanNum;
-
-		final StringBuffer sb = new StringBuffer();
 
 		if (!isEqual && isRssiHigerThanRanged && isLastScanned) {
 			int index = rangedList.indexOf(allFirst.beacon);
