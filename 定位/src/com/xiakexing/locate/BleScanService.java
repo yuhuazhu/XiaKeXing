@@ -405,7 +405,7 @@ public class BleScanService extends Service {
 			freshBeacon = currNearBeacon;
 		}
 	}
-	
+
 	/** 调整修改扫描到的信号数据,弃用 */
 	@Deprecated
 	private void processOptimized() {
@@ -582,7 +582,10 @@ public class BleScanService extends Service {
 		}
 
 		/**
-		 * must be called,the intent the scan.
+		 * <pre>
+		 * set to false if to trigger one ibeacon ,true to locate with multi-ibeacon. 
+		 * must be called to indicate the intent of scan.
+		 * </pre>
 		 * 
 		 * @param isFetchMultiOneTime
 		 */
