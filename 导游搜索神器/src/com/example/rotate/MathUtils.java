@@ -5,11 +5,12 @@ import java.util.List;
 
 import android.content.Context;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.WindowManager;
 
 public class MathUtils {
 
-	private static final int THRESHOLD_ACCURACY = 100;
+	private static final int THRESHOLD_ACCURACY = 500;
 	/**
 	 * 像素相差此值以内的无效
 	 */
@@ -25,16 +26,21 @@ public class MathUtils {
 			// 根据区间生成一个x值，保证这个值不和list里面重复。
 			int tempX;
 			int tempY;
+			int outCount = 0;
 			do {
+				int innerCount = 0;
 				do {
 					tempX = (int) (cx - radius + 2 * radius * Math.random());
-				} while (existValue(list, tempX, INTERVAL));
+					Log.e("solve", "inner(");
+					innerCount++;
+				} while (existValue(list, tempX, INTERVAL) && innerCount < 1000);
 				// 解y值
 				int solve = (int) Math.sqrt(Math.pow(radius, 2)
 						- Math.pow((tempX - cx), 2));
 				tempY = cy + (Math.random() > 0.5 ? solve : -solve);
+				Log.e("solve", "outer()");
 			} while (!checkAccuracy(cx, cy, tempX, tempY, radius,
-					THRESHOLD_ACCURACY));
+					THRESHOLD_ACCURACY) && outCount < 10);
 			list.add(new Point(tempX, tempY));
 		}
 		return list;
