@@ -30,6 +30,7 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.brtbeacon.sdk.BRTBeacon;
@@ -56,6 +57,10 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
+		ivHead = (ImageView) findViewById(R.id.imageView3);
+		tvName = (TextView) findViewById(R.id.textView2);
+		tvPhone = (TextView) findViewById(R.id.textView3);
+
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 		vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
 		m_im1 = (ImageView) findViewById(R.id.imageView1);
@@ -171,7 +176,7 @@ public class MainActivity extends Activity {
 			Log.e("scan", "onServiceConnected");
 			bleBinder = (BleBinder) service;
 
-			// bleBinder.setRegion("E2C56DB5-DFFB-48D2-B060-D0F5A71096E0");//
+			bleBinder.setRegion("FDA50693-A4E2-4FB1-AFCF-C6EB07647825", 10009);// 空代表扫描所有
 			// 空代表扫描所有
 			bleBinder.setOnBleScanListener(new OnBleScanListener() {
 
@@ -185,17 +190,94 @@ public class MainActivity extends Activity {
 				}
 
 				public void onNearBeacon(BRTBeacon brtBeacon) {
-					Log.e("beacon", brtBeacon.macAddress);
 					if (brtBeacon == null) {
 						Toast.makeText(MainActivity.this, "没有摇到噢,再摇一下",
 								Toast.LENGTH_LONG).show();
 					} else {
-						startGuide();
+						int id = getID(brtBeacon.macAddress);
+						if (id != -1) {
+							startGuide();
+							updateInfo(id);
+						} else {
+							Toast.makeText(MainActivity.this, "没有摇到噢,再摇一下",
+									Toast.LENGTH_LONG).show();
+						}
 					}
 				}
 			});
 		}
 	};
+
+	int[] heads = new int[] { R.drawable.img_lixiaohua, R.drawable.img_liuna,
+			R.drawable.img_zhangyang, R.drawable.img_zhoutongtong };
+
+	private void updateInfo(int id) {
+		String name = "李晓华", phone = "15805934402\t\t\t\t\t\t查看", type = "国导证", num = "D-3501-003469";
+		int head = heads[0];
+		if (id == -1) {
+			m_ll.setVisibility(View.INVISIBLE);
+			return;
+		}
+
+		// TODO 更改信息
+		if (id == 0) {
+			name = "李晓华";
+			phone = "15805934402\t\t\t\t\t\t查看";
+			type = "国导证";
+			num = "D-3501-003469";
+			head = heads[0];
+		} else if (id == 1) {
+			name = "刘娜";
+			phone = "15805934402\t\t\t\t\t\t查看";
+			type = "国导证";
+			num = "D-3501-003469";
+			head = heads[1];
+		} else if (id == 2) {
+			name = "张阳";
+			phone = "15805934402\t\t\t\t\t\t查看";
+			type = "国导证";
+			num = "D-3501-003469";
+			head = heads[2];
+		} else if (id == 3) {
+			name = "周彤彤";
+			phone = "15805934402\t\t\t\t\t\t查看";
+			type = "国导证";
+			num = "D-3501-003469";
+			head = heads[3];
+		} else {
+			name = "周彤彤";
+			phone = "15805934402\t\t\t\t\t\t查看";
+			type = "国导证";
+			num = "D-3501-003469";
+			head = heads[3];
+		}
+		tvName.setText(name);
+		tvPhone.setText(phone);
+		ivHead.setBackgroundResource(head);
+	}
+
+	private int getID(String mac) {
+		mac = mac.trim();
+		// TODO 蓝牙和导游匹配
+		if (mac.equalsIgnoreCase("54:4A:16:2D:B0:32")) {// 张阳6.25以前的mac
+														// 54:4A:16:2D:B0:7D
+			return 2;
+		} else if (mac.equalsIgnoreCase("54:4A:16:2D:B0:54")) {// 刘娜6.25以前的mac
+																// 54:4A:16:2D:A0:DC
+			return 1;
+		} else if (mac.equalsIgnoreCase("54:4A:16:2D:B0:45")) {// 周彤彤6.25以前的mac
+																// 54:4A:16:2D:AD:F9
+			return 3;
+		} else if (mac.equalsIgnoreCase("54:4A:16:2D:AD:E6")) {// 李晓华6.25以前的mac
+																// 54:4A:16:2D:AA:3C
+			return 0;
+		}
+		return -1;
+	}
+
+	private ImageView ivHead;
+	private TextView tvName;
+	private TextView tvPhone;
 
 	// 产生震动
 	public static void playVibator(Context context, long timelong) {
@@ -244,7 +326,7 @@ public class MainActivity extends Activity {
 			animationSet.setInterpolator(new LinearInterpolator());
 			m_im2.startAnimation(animationSet);
 			// 产生震动
-			playVibator(this,1000);
+			playVibator(this, 1000);
 			animationSet.setAnimationListener(new AnimationListener() {
 
 				@Override
