@@ -63,7 +63,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			Log.e("scan", "onServiceConnected");
 			bleBinder = (BleBinder) service;
 
-			bleBinder.setRegion("E2C56DB5-DFFB-48D2-B060-D0F5A71096E0");// 空代表扫描所有
+			bleBinder.setRegion("FDA50693-A4E2-4FB1-AFCF-C6EB07647825");// 空代表扫描所有
 			bleBinder.setOnBleScanListener(new OnBleScanListener() {
 
 				@Override
@@ -98,9 +98,9 @@ public class MainActivity extends Activity implements OnClickListener {
 	};
 
 	private void processScanResult(List<BRTBeacon> scanResultList) {
-		tvTip.setText("已搜索到附近" + scanResultList.size() + "位导游");
+		int count = scanResultList.size() >= 5 ? 4 : scanResultList.size();
+		tvTip.setText("已搜索到附近" + count + "位导游");
 		drawBeacons(scanResultList);
-
 	}
 
 	@Override
@@ -138,9 +138,13 @@ public class MainActivity extends Activity implements OnClickListener {
 		// 计算距离
 		int pxDistance[] = new int[list.size()];
 		for (int i = 0; i < list.size(); i++) {
-			int metersDistance = (int) Utils.computeAccuracy(list.get(i));
-			pxDistance[i] = MathUtils.meters2px(this, metersDistance,
-					MAX_METERS);
+			try {
+				int metersDistance = (int) Utils.computeAccuracy(list.get(i));
+				pxDistance[i] = MathUtils.meters2px(this, metersDistance,
+						MAX_METERS);
+			} catch (Exception e) {
+				Log.e("ex", "" + e.toString());
+			}
 		}
 		int cx = (left + right) / 2;
 		int cy = (top + bottom) / 2;
@@ -165,7 +169,11 @@ public class MainActivity extends Activity implements OnClickListener {
 			// lp.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 			cr[i] = new CircleImageView(this);
 			cr[i].setLayoutParams(lp);
-			cr[i].setBackgroundResource(heads[getID(list.get(i).macAddress)]);
+			int id = getID(list.get(i).macAddress);
+			if (id == -1) {
+				id = 0;
+			}
+			cr[i].setBackgroundResource(heads[id]);
 			final int index = i;
 			cr[i].setOnClickListener(new OnClickListener() {
 
@@ -209,14 +217,18 @@ public class MainActivity extends Activity implements OnClickListener {
 	private int getID(String mac) {
 		mac = mac.trim();
 		// TODO 蓝牙和导游匹配
-		if (mac.equalsIgnoreCase("54:4A:16:2D:B0:7D")) {// 李晓华
-			return 0;
-		} else if (mac.equalsIgnoreCase("54:4A:16:2D:A0:DC")) {// 刘娜
-			return 1;
-		} else if (mac.equalsIgnoreCase("54:4A:16:2D:AD:F9")) {// 张阳
+		if (mac.equalsIgnoreCase("54:4A:16:2D:B0:32")) {// 张阳6.25以前的mac
+														// 54:4A:16:2D:B0:7D
 			return 2;
-		} else if (mac.equalsIgnoreCase("54:4A:16:2D:AA:3C")) {// 周彤彤
+		} else if (mac.equalsIgnoreCase("54:4A:16:2D:B0:54")) {// 刘娜6.25以前的mac
+																// 54:4A:16:2D:A0:DC
+			return 1;
+		} else if (mac.equalsIgnoreCase("54:4A:16:2D:B0:45")) {// 周彤彤6.25以前的mac
+																// 54:4A:16:2D:AD:F9
 			return 3;
+		} else if (mac.equalsIgnoreCase("54:4A:16:2D:AD:E6")) {// 李晓华6.25以前的mac
+																// 54:4A:16:2D:AA:3C
+			return 0;
 		}
 		return -1;
 	}
@@ -257,7 +269,6 @@ public class MainActivity extends Activity implements OnClickListener {
 		tvCerNum.setText(num);
 		ivHead.setBackgroundResource(head);
 		rlDaoyouInfo.setVisibility(View.VISIBLE);
-
 	}
 
 	public void initUI() {
@@ -336,6 +347,9 @@ public class MainActivity extends Activity implements OnClickListener {
 					imgbtnScan.setBackgroundResource(R.drawable.bt1);
 					isScanning = false;
 					ivRadar.clearAnimation();
+					if (!tvTip.getText().toString().startsWith("已搜索到附近")) {
+						tvTip.setText("点击搜索");
+					}
 					ivRadar.setVisibility(View.INVISIBLE);
 					unbindService(conn);
 				} catch (Exception e) {
