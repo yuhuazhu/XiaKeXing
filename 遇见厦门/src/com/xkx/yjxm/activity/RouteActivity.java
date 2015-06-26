@@ -105,7 +105,8 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 
 	protected static final int VISIABLE = 0;
 	protected static final int UNVIABLE = -1;
-
+	protected static final int Wait = 1;
+	FileDownloadThread[] threads;
 	public void home(View v) {
 		Intent intent = null;
 
@@ -293,6 +294,28 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 
 	}
 
+	
+	/**
+	 * 使用Handler更新UI界面信息
+	 */
+	@SuppressLint("HandlerLeak")
+	Handler mHandler3 = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case Wait:
+				try {
+					threads.wait();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				break;
+			
+			}
+		}
+	};
+	
 	/**
 	 * 使用Handler更新UI界面信息
 	 */
@@ -466,7 +489,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		@Override
 		public void run() {
 
-			FileDownloadThread[] threads = new FileDownloadThread[threadNum];
+			threads = new FileDownloadThread[threadNum];
 			try {
 				URL url = new URL(downloadUrl);
 
@@ -595,7 +618,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		@Override
 		public void run() {
 
-			FileDownloadThread[] threads = new FileDownloadThread[threadNum];
+			threads = new FileDownloadThread[threadNum];
 			try {
 				URL url = new URL(downloadUrl);
 				Log.d(TAG, "download file http path:" + downloadUrl);
@@ -1083,6 +1106,10 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 			break;
 		case R.id.downcancel_btn:
 			downloadlay.setVisibility(View.GONE);
+			// 通知handler去更新视图组件
+//			Message msg = Message.obtain();
+//			msg.what = Wait;
+//			mHandler3.sendMessage(msg);
 			break;
 		case R.id.imgmap:
 			Intent intent = new Intent();
