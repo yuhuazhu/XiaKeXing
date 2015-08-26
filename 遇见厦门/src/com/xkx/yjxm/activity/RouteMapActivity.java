@@ -193,6 +193,15 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 		btnback = (ImageButton) findViewById(R.id.btnback);
 		btnback.setOnClickListener(this);
 		bluetoothlay = (LinearLayout) findViewById(R.id.bluetoothlay);
+		//蓝牙已开启则不显示弹窗
+		try {
+			if(BluetoothAdapter.getDefaultAdapter().isEnabled())
+			{
+				bluetoothlay.setVisibility(View.GONE);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		open_btn = (Button) findViewById(R.id.open_btn);
 		open_btn.setOnClickListener(this);
 		close_btn = (Button) findViewById(R.id.close_btn);
