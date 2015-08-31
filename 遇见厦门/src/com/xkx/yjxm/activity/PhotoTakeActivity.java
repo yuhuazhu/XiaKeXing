@@ -10,14 +10,15 @@ import java.util.HashMap;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -26,6 +27,11 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.xkx.yjxm.R;
 
 public class PhotoTakeActivity extends BaseActivity implements OnClickListener {
@@ -33,7 +39,6 @@ public class PhotoTakeActivity extends BaseActivity implements OnClickListener {
 	private RelativeLayout cancel;
 	private RelativeLayout progresslay;
 	private Bitmap bitmap;
-	private StringBuffer b;
 	private String QRCODE = "";
 	private ImageButton btnback;
 	private String newName = "image.jpg";
@@ -42,16 +47,37 @@ public class PhotoTakeActivity extends BaseActivity implements OnClickListener {
 	private Uri selectedImage;
 	private String actionUrl = "http://www.xmlyt.cn/ajax/Statistics.ashx?sn=addUserPic";
 
+	private DisplayImageOptions options; // 配置图片加载及显示选项
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// 移除ActionBar，在setContent之前调用下面这句，保证没有ActionBar
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_phototake);
+		initImageLoader(this);
 		initData();
 		initUI();
-
 	}
+
+	public void initImageLoader(Context context) {
+		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
+				context).threadPriority(Thread.NORM_PRIORITY - 2)
+				.denyCacheImageMultipleSizesInMemory()
+				.discCacheFileNameGenerator(new Md5FileNameGenerator())
+				.tasksProcessingOrder(QueueProcessingType.LIFO).build();
+		// Initialize ImageLoader with configuration.
+		ImageLoader.getInstance().init(config);
+		// 配置图片加载及显示选项（还有一些其他的配置，查阅doc文档吧）
+		options = new DisplayImageOptions.Builder()
+				.showStubImage(R.drawable.ic_launcher) // 在ImageView加载过程中显示图片
+				.showImageForEmptyUri(R.drawable.ic_launcher) // image连接地址为空时
+				.showImageOnFail(R.drawable.ic_launcher) // image加载失败
+				.cacheInMemory(false) // 加载图片时会在内存中加载缓存
+				.cacheOnDisc(false) // 加载图片时会在磁盘中加载缓存
+				.build();
+	}
+
 	public void home(View v) {
 		Intent intent = null;
 
@@ -59,12 +85,15 @@ public class PhotoTakeActivity extends BaseActivity implements OnClickListener {
 
 		startActivity(intent);
 	}
-	private void initData() {
-		selectedImage = (Uri) getIntent().getExtras().get("Uri");
-		fileName = (String) getIntent().getExtras().get("fileName");
-		((ImageView) findViewById(R.id.imageView1))
-		.setImageURI(selectedImage);// 将图片显示在ImageView里
 
+	private void initData() {
+		// selectedImage = (Uri) getIntent().getExtras().get("Uri");
+		ImageView iv = (ImageView) findViewById(R.id.imageView1);
+		String filename = getIntent().getStringExtra("fileName");
+		String path = "file:///mnt/sdcard/myImage/" + filename;
+		fileName = Environment.getExternalStorageDirectory().getAbsolutePath()
+				+ "/myImage/" + filename;
+		ImageLoader.getInstance().displayImage(path, iv, options);
 	}
 
 	private void initUI() {
@@ -92,7 +121,6 @@ public class PhotoTakeActivity extends BaseActivity implements OnClickListener {
 				HashMap<String, String> params = new HashMap<String, String>();
 				params.put("arg2", fileName);
 				LocationTask task = new LocationTask();
-
 				task.execute(params);
 			}
 			break;
@@ -103,59 +131,6 @@ public class PhotoTakeActivity extends BaseActivity implements OnClickListener {
 		default:
 			break;
 		}
-	}
-
-	/* 上传文件至Server的方法 */
-	private String uploadFile(String str) {
-		String end = "\r\n";
-		String twoHyphens = "--";
-		String boundary = "*****";
-
-		try {
-			URL url = new URL(actionUrl);
-			HttpURLConnection con = (HttpURLConnection) url.openConnection();
-			/* 允许Input、Output，不使用Cache */
-			con.setDoInput(true);
-			con.setDoOutput(true);
-			con.setUseCaches(false); /* 设置传送的method=POST */
-			con.setRequestMethod("POST"); /* setRequestProperty */
-			con.setRequestProperty("Connection", "Keep-Alive");
-			con.setRequestProperty("Charset", "UTF-8");
-			con.setRequestProperty("Content-Type",
-					"multipart/form-data;boundary=" + boundary); /* 设置DataOutputStream */
-			DataOutputStream ds = new DataOutputStream(con.getOutputStream());
-			ds.writeBytes(twoHyphens + boundary + end);
-			ds.writeBytes("Content-Disposition: form-data; "
-					+ "name=\"file1\";filename=\"" + newName + "\"" + end);
-			ds.writeBytes(end); /* 取得文件的FileInputStream */
-			FileInputStream fStream = new FileInputStream(str); /* 设置每次写入1024bytes */
-			int bufferSize = 1024;
-			byte[] buffer = new byte[bufferSize];
-			int length = -1; /* 从文件读取数据至缓冲区 */
-			while ((length = fStream.read(buffer)) != -1) { /* 将资料写入DataOutputStream中 */
-				ds.write(buffer, 0, length);
-			}
-			ds.writeBytes(end);
-			ds.writeBytes(twoHyphens + boundary + twoHyphens + end); /*
-																	 * close
-																	 * streams
-																	 */
-			fStream.close();
-			ds.flush();
-			/* 取得Response内容 */
-			InputStream is = con.getInputStream();
-			int ch;
-			b = new StringBuffer();
-			while ((ch = is.read()) != -1) {
-				b.append((char) ch);
-			} /* 将Response显示于Dialog */
-			// Toast.makeText(this, "上传成功", 3000).show();
-
-			ds.close();
-		} catch (Exception e) {
-			showDialog("上传失败" + e);
-		}
-		return b.toString();
 	}
 
 	/* 显示Dialog的method */private void showDialog(String mess) {
@@ -169,7 +144,6 @@ public class PhotoTakeActivity extends BaseActivity implements OnClickListener {
 								PhotoScanningActivity.class);
 						intent.putExtra("QRCODE", QRCODE);
 						QRCODE = "";
-
 						startActivity(intent);
 
 					}
@@ -182,70 +156,73 @@ public class PhotoTakeActivity extends BaseActivity implements OnClickListener {
 		// doInBackground方法内部执行后台任务,不可在此方法内修改UI
 		@Override
 		protected String doInBackground(HashMap<String, String>... params) {
-			// TODO Auto-generated method stub
-
-			String str = uploadFile(params[0].get("arg2").toString());
-			for (int i = 0; i < 10; i++)
-
-			{
-
-				try
-
-				{
-
-					Thread.sleep(1000);
-
-					publishProgress(i * 10);// 进度条每次更新10%,执行中创建新线程处理onProgressUpdate()
-
+			String filePath = params[0].get("arg2").toString();
+			String twoHyphens = "--";
+			String boundary = "*****";
+			String end = "\r\n";
+			try {
+				URL url = new URL(actionUrl);
+				HttpURLConnection con = (HttpURLConnection) url
+						.openConnection();
+				/* 允许Input、Output，不使用Cache */
+				con.setDoInput(true);
+				con.setDoOutput(true);
+				con.setUseCaches(false); /* 设置传送的method=POST */
+				con.setRequestMethod("POST"); /* setRequestProperty */
+				con.setRequestProperty("Connection", "Keep-Alive");
+				con.setRequestProperty("Charset", "UTF-8");
+				con.setRequestProperty("Content-Type",
+						"multipart/form-data;boundary=" + boundary); /* 设置DataOutputStream */
+				DataOutputStream dos = new DataOutputStream(
+						con.getOutputStream());
+				dos.writeBytes(twoHyphens + boundary + end);
+				dos.writeBytes("Content-Disposition: form-data; "
+						+ "name=\"file1\";filename=\"" + newName + "\"" + end);
+				dos.writeBytes(end); /* 取得文件的FileInputStream */
+				FileInputStream fis = new FileInputStream(filePath); /* 设置每次写入1024bytes */
+				int bufferSize = 1024;
+				byte[] buffer = new byte[bufferSize];
+				int length = -1; /* 从文件读取数据至缓冲区 */
+				while ((length = fis.read(buffer)) != -1) { /* 将资料写入DataOutputStream中 */
+					dos.write(buffer, 0, length);
 				}
-
-				catch (InterruptedException e)
-
-				{
-
-					e.printStackTrace();
-
+				dos.writeBytes(end);
+				dos.writeBytes(twoHyphens + boundary + twoHyphens + end);
+				fis.close();
+				dos.flush();
+				/* 取得Response内容 */
+				InputStream is = con.getInputStream();
+				int ch;
+				StringBuffer sbResponse = new StringBuffer();
+				while ((ch = is.read()) != -1) {
+					sbResponse.append((char) ch);
 				}
-
+				is.close();
+				dos.close();
+				return sbResponse.toString();
+			} catch (Exception e) {
+				showDialog("上传失败" + e);
 			}
-			return str;
+			return null;
 		}
 
 		// onProgressUpdate方法用于更新进度信息
 		@Override
 		protected void onProgressUpdate(Integer... progresses) {
-			// Log.i(TAG, "onProgressUpdate(Progress... progresses) called");
 			progress_horizontal.setProgress(progresses[0]);
-			// textView.setText("loading..." + progresses[0] + "%");
-
 		}
 
 		// onCancelled方法用于在取消执行中的任务时更改UI
 		@Override
 		protected void onCancelled() {
 
-			// Log.i(TAG, "onCancelled() called");
-			// textView.setText("cancelled");
-			// progressBar.setProgress(0);
-			//
-			// execute.setEnabled(true);
-			// cancel.setEnabled(false);
 		}
 
-		// / </summary>
-		// / <param name="json">JSON</param>
-		// / <returns>Dictionary`[string, object]</returns>
-
-		// onPostExecute方法用于在执行完后台任务后更新UI,显示结果
 		@Override
 		protected void onPostExecute(String Signinfo) {
-
-			//
-
 			try {
 				JSONObject jsonObject = new JSONObject(Signinfo);
 				if (jsonObject != null) {
-
 					if (jsonObject.getString("code").equals("0000")) {
 						QRCODE = jsonObject.getJSONObject("result").optString(
 								"QRCODE");
@@ -257,17 +234,10 @@ public class PhotoTakeActivity extends BaseActivity implements OnClickListener {
 							progresslay.setVisibility(View.GONE);
 						}
 					}
-
 				}
-
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
-			// showDialog("上传成功" + b.toString().trim()); /* 关闭DataOutputStream
-			// */
-
 		}
 	}
 }

@@ -67,7 +67,6 @@ public class PhotoWashActivity extends BaseActivity implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
 		Intent intent = new Intent();
 		switch (v.getId()) {
 		case R.id.btnback:
@@ -109,10 +108,6 @@ public class PhotoWashActivity extends BaseActivity implements OnClickListener {
 						"SD card is not avaiable/writeable right now.");
 				return;
 			}
-			new DateFormat();
-			String name = DateFormat.format("yyyyMMdd_hhmmss",
-					Calendar.getInstance(Locale.CHINA))
-					+ ".jpg";
 			// Toast.makeText(this, name, Toast.LENGTH_LONG).show();
 			// Bundle bundle = data.getExtras();
 			ContentResolver cr = getContentResolver();
@@ -130,12 +125,17 @@ public class PhotoWashActivity extends BaseActivity implements OnClickListener {
 			// 获取相机返回的数据，并转换为Bitmap图片格式
 			FileOutputStream b = null;
 			// ???????????????????????????????为什么不能直接保存在系统相册位置呢？？？？？？？？？？？？
-			File file = new File("/sdcard/myImage/");
-			if (!file.exists()) {
-				file.mkdir();// 创建文件夹
+			// File file = new File("/sdcard/myImage/");
+			File directory = new File(Environment.getExternalStorageDirectory()
+					.getAbsolutePath() + "/myImage/");
+			if (!directory.exists()) {
+				directory.mkdir();// 创建文件夹
 			}
+			String name = DateFormat.format("yyyyMMdd_hhmmss",
+					Calendar.getInstance(Locale.CHINA))
+					+ ".jpg";
 			// fileName = "/sdcard/myImage/" + name;
-			File imagefile = new File(file, name);
+			File imagefile = new File(directory, name);
 			if (!imagefile.exists()) {
 				try {
 					imagefile.createNewFile();
@@ -151,7 +151,7 @@ public class PhotoWashActivity extends BaseActivity implements OnClickListener {
 
 			intent.setClass(this, PhotoTakeActivity.class);
 			intent.putExtra("Uri", selectedImage);
-			intent.putExtra("fileName", selectedImage.getPath());
+			intent.putExtra("fileName", name);
 			startActivity(intent);
 			// ((ImageView)
 			// findViewById(R.id.imageView1)).setImageBitmap(bitmap);//
