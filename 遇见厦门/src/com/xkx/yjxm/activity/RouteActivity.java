@@ -152,7 +152,26 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		Intent intent = getIntent();
 		// stringExtra 得到的是（观音山or胡力山or鼓浪屿）
 		stringExtra = intent.getStringExtra("name");
-		initData();
+//		initData();
+		Random random = new Random();
+		Random random2 = null;
+
+		for (int i = 0; i < 19; i++) {
+
+			img.add(i, R.drawable.route01 + i);
+		}
+		for (int i = 0; i < 19; i++) {
+			int nextInt = random.nextInt();
+			random2 = new Random(nextInt);
+			times = random2.nextInt(10) + 5;
+
+			time[i] = getResources().getString(R.string.R_time1) + times
+					+ getResources().getString(R.string.R_time2);
+		}
+		for (int i = 0; i < 19; i++) {
+			distances += 10;
+			distance[i] = distances + "m";
+		}
 		initUI();
 
 	}
@@ -283,7 +302,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		mMessageView = (TextView) findViewById(R.id.download_message);
 		mProgressbar = (ProgressBar) findViewById(R.id.download_progress);
 		showDialog("");
-		sendRequest();
+//		sendRequest();
 		// 判断是否已经下载过了
 
 	}
@@ -896,6 +915,7 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		/**
 		 * 适配器
 		 */
+		
 		private class ViewHolder {
 
 			private ImageView imageView1;
@@ -914,7 +934,8 @@ public class RouteActivity extends BaseActivity implements OnClickListener {
 		@Override
 		public int getCount() {
 			// TODO Auto-generated method stub
-			return ResMap.size();
+			return img.size();
+//			return ResMap.size();
 		}
 
 		@SuppressLint("NewApi")
