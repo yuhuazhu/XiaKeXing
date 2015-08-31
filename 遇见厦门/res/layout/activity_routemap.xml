@@ -192,7 +192,7 @@
         android:layout_marginTop="160dp"
         android:background="@drawable/img_downloadbg"
         android:gravity="center_horizontal"
-        android:visibility="gone"
+        android:visibility="visible"
         android:orientation="vertical"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
