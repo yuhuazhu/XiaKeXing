@@ -12,10 +12,9 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.database.Cursor;
+import android.content.res.TypedArray;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -49,8 +48,6 @@ import com.brtbeacon.sdk.BRTBeacon;
 import com.xkx.yjxm.R;
 import com.xkx.yjxm.adpater.BaseListAdapter;
 import com.xkx.yjxm.bean.MacInfo;
-import com.xkx.yjxm.bean.ResInfo;
-import com.xkx.yjxm.db.MySqlite;
 import com.xkx.yjxm.service.AudioService;
 import com.xkx.yjxm.service.AudioService.AudioBinder;
 import com.xkx.yjxm.service.AudioService.OnPlayCompleteListener;
@@ -114,9 +111,9 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 	private Map<Integer, String> xMap = new HashMap<Integer, String>();
 	private Map<Integer, String> yMap = new HashMap<Integer, String>();
 
-	private HashMap<Integer, ResInfo> ResMap = new HashMap<Integer, ResInfo>();// 资源
+	private HashMap<Integer, InnerResInfo> resMap = new HashMap<Integer, InnerResInfo>();// 资源
 
-	private HashMap<String, MacInfo> MacMap = new HashMap<String, MacInfo>();// mac地址
+	private HashMap<String, MacInfo> macMap = new HashMap<String, MacInfo>();// mac地址
 	private CopyOnWriteArrayList<ItemData> titleList = new CopyOnWriteArrayList<ItemData>();
 	private HashMap<Integer, Long> idTriggerTimeMap = new HashMap<Integer, Long>();
 
@@ -220,45 +217,61 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 	 * @return list
 	 */
 	private void getResource() {
+		// Cursor resCursor = mDB.query("ResInfo", null, null, null, null, null,
+		// null);
+		// Cursor macCursor = mDB.query("MacInfo", null, null, null, null, null,
+		// null);
+		// boolean hasNext = resCursor.moveToFirst();
+		// TODO
+		// while (hasNext) {
+		// ResInfo rs = new ResInfo(resCursor.getString(resCursor
+		// .getColumnIndex("title")), resCursor.getString(resCursor
+		// .getColumnIndex("content")), resCursor.getString(resCursor
+		// .getColumnIndex("bgName")), resCursor.getString(resCursor
+		// .getColumnIndex("musicName")));
+		// // 将资源文件添加到list中
+		// resMap.put(resCursor.getInt(resCursor.getColumnIndex("mid")), rs);
+		// hasNext = resCursor.moveToNext();
+		// }
+		// resCursor.close();
+		//
+		// hasNext = macCursor.moveToFirst();
+		// TODO
+		// while (hasNext) {
+		// MacInfo rs = new MacInfo(macCursor.getInt(macCursor
+		// .getColumnIndex("ID")), macCursor.getString(macCursor
+		// .getColumnIndex("macName")), macCursor.getFloat(macCursor
+		// .getColumnIndex("power")), macCursor.getFloat(macCursor
+		// .getColumnIndex("distance")));
+		// // 将mac信息添加到list中
+		// macMap.put(
+		// macCursor.getString(macCursor.getColumnIndex("macName")),
+		// rs);
+		// hasNext = macCursor.moveToNext();
+		// }
+		// macCursor.close();
 
-		Cursor cursorRes = mDB.query("ResInfo", null, null, null, null, null,
-				null);
-		Log.e("cursor", cursorRes.getCount() + "");
-		if (cursorRes.getCount() > 0) {
-			boolean toResFirst = cursorRes.moveToFirst();
-
-			// Toast.makeText(getApplicationContext(),
-			// String.valueOf(cursor.getCount()), 3000).show();
-			while (toResFirst) {
-				ResInfo rs = new ResInfo(
-						cursorRes.getString(cursorRes.getColumnIndex("title")),
-						cursorRes.getString(cursorRes.getColumnIndex("content")),
-						cursorRes.getString(cursorRes.getColumnIndex("bgName")),
-						cursorRes.getString(cursorRes
-								.getColumnIndex("musicName")));
-				ResMap.put(cursorRes.getInt(cursorRes.getColumnIndex("mid")), rs);// 将资源文件添加到list中
-				toResFirst = cursorRes.moveToNext();
-			}
+		String[] titles = getResources().getStringArray(R.array.title);
+		String[] contents = getResources().getStringArray(R.array.content);
+		int[] bgnames = new int[titles.length];
+		int[] musics = new int[titles.length];
+		TypedArray tamap = getResources().obtainTypedArray(R.array.img_map_bg);
+		TypedArray tamusic = getResources().obtainTypedArray(R.array.musicid);
+		for (int i = 0; i < tamap.length(); i++) {
+			bgnames[i] = tamap.getResourceId(i, 0);
+			musics[i] = tamusic.getResourceId(i, 0);
 		}
-		cursorRes.close();
+		tamap.recycle();
+		tamusic.recycle();
 
-		Cursor cursorMac = mDB.query("MacInfo", null, null, null, null, null,
-				null);
-		Log.e("cursor", cursorMac.getCount() + "");
-		if (cursorMac.getCount() > 0) {
-			boolean toMacFirst = cursorMac.moveToFirst();
-			while (toMacFirst) {
-				MacInfo rs = new MacInfo(
-						cursorMac.getInt(cursorMac.getColumnIndex("ID")),
-						cursorMac.getString(cursorMac.getColumnIndex("macName")),
-						cursorMac.getFloat(cursorMac.getColumnIndex("power")),
-						cursorMac.getFloat(cursorMac.getColumnIndex("distance")));
-				MacMap.put(cursorMac.getString(cursorMac
-						.getColumnIndex("macName")), rs);// 将mac信息添加到list中
-				toMacFirst = cursorMac.moveToNext();
-			}
+		String[] macs = getResources().getStringArray(R.array.mac);
+		resMap.clear();
+		macMap.clear();
+		for (int j = 0; j < musics.length; j++) {
+			resMap.put(j, new InnerResInfo(titles[j], contents[j], bgnames[j],
+					musics[j]));
+			macMap.put(macs[j], new MacInfo(j, macs[j], -100f, 2.0f));
 		}
-		cursorMac.close();
 	}
 
 	/**
@@ -288,13 +301,12 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 	}
 
 	private void initData() {
-
 		// 扫描内存中图片并存入list
-		MySqlite mySqlite = new MySqlite(RouteMapActivity.this, "yjxm.db",
-				null, 1);
-		mDB = mySqlite.getReadableDatabase();
+		// MySqlite mySqlite = new MySqlite(RouteMapActivity.this, "yjxm.db",
+		// null, 1);
+		// mDB = mySqlite.getReadableDatabase();
 		getResource();
-		for (int id = 1; id <= ResMap.size(); id++) {
+		for (int id = 0; id < resMap.size(); id++) {
 			idTriggerTimeMap.put(id, 0l);
 		}
 	}
@@ -310,8 +322,8 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 	private void updateHead(final int id, final boolean play) {
 		runOnUiThread(new Runnable() {
 			public void run() {
-				String title = ResMap.get(id).getTitle();
-				String content = ResMap.get(id).getContent();
+				String title = resMap.get(id).title;
+				String content = resMap.get(id).content;
 				if (play) {
 					imgplay.setBackgroundResource(R.drawable.ic_pause);
 				} else {
@@ -323,14 +335,14 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 				tvContent.setVisibility(View.VISIBLE);
 
 				// 获取SD卡路径
-				String path = Environment.getExternalStorageDirectory()
-						+ "/resource/map/";
-				BitmapFactory.Options options = new BitmapFactory.Options();
-				options.inSampleSize = 2;
-				Bitmap bm = BitmapFactory.decodeFile(path
-						+ ResMap.get(id).getBgname(), options);
-				ivMap.setImageBitmap(bm);
-				// ivMap.setBackgroundResource(bgMap.get(id));
+				// String path = Environment.getExternalStorageDirectory()
+				// + "/resource/map/";
+				// BitmapFactory.Options options = new BitmapFactory.Options();
+				// options.inSampleSize = 2;
+				// Bitmap bm = BitmapFactory.decodeFile(path
+				// + resMap.get(id).getBgname(), options);
+				// ivMap.setImageBitmap(bm);
+				ivMap.setImageResource(resMap.get(id).bgname);
 				imgdownmouth.setVisibility(View.VISIBLE);
 			}
 		});
@@ -342,8 +354,8 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 		}
 		try {
 			String address = beacon.macAddress.trim();
-			if (MacMap.containsKey(address)) {
-				MacInfo macInfo = MacMap.get(address);
+			if (macMap.containsKey(address)) {
+				MacInfo macInfo = macMap.get(address);
 				final int id = macInfo.getID();
 				if (beacon.rssi < macInfo.getPower()) {// 此处非功率
 					return;
@@ -362,8 +374,8 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 				}
 				runOnUiThread(new Runnable() {
 					public void run() {
-						if (ResMap.containsKey(id)) {
-							String title = ResMap.get(id).getTitle();
+						if (resMap.containsKey(id)) {
+							String title = resMap.get(id).title;
 							ItemData data = new ItemData(title, id);
 							lastTriggerTime = System.currentTimeMillis();
 							idTriggerTimeMap.put(id, lastTriggerTime);
@@ -578,15 +590,17 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 		// 获取SD卡路径
 		String path = Environment.getExternalStorageDirectory()
 				+ "/resource/music/";
-		Uri uri = Uri.parse(path + ResMap.get(id).getMusicname());
+		// Uri uri = Uri.parse(path + resMap.get(id).getMusicname());
+		Uri uri = Uri.parse("android.resource://" + getPackageName() + "/"
+				+ resMap.get(id).musicname);
 		if (uri == null) {
 			CrashHandler.getInstance().logStringToFile("uri not exist");
 			return;
 		}
 		soundlay.setVisibility(View.VISIBLE);
 		// getSoundPathList()
-		audioBinder.audioPlay(uri);
 		isPlaying = true;
+		audioBinder.audioPlay(uri);
 		updateHead(id, play);
 	}
 
@@ -670,12 +684,14 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 			isAuto = !isAuto;
 			if (isAuto) {
 				// 自动讲解
-				Toast.makeText(this, "下面将根据您所处的位置为您进行自动语音讲解服务。", Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, "下面将根据您所处的位置为您进行自动语音讲解服务。",
+						Toast.LENGTH_SHORT).show();
 				imgswitch.setBackgroundResource(R.drawable.img_autoexplain);
 				sensorManager.unregisterListener(sensorEventListener);
 			} else {
 				// 摇一摇
-				Toast.makeText(this, "在不同位置摇一摇会有新的发现，快来试试吧。", Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, "在不同位置摇一摇会有新的发现，快来试试吧。",
+						Toast.LENGTH_SHORT).show();
 				imgswitch.setBackgroundResource(R.drawable.img_shake);
 				if (sensorManager != null) {// 注册监听器
 					sensorManager
@@ -723,7 +739,8 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 			BluetoothAdapter.getDefaultAdapter().enable();
 			bluetoothlay.setVisibility(View.GONE);
 			// 自动讲解
-			Toast.makeText(this, "下面将根据您所处的位置为您进行自动语音讲解服务。", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "下面将根据您所处的位置为您进行自动语音讲解服务。", Toast.LENGTH_SHORT)
+					.show();
 			break;
 		case R.id.close_btn:
 			bluetoothlay.setVisibility(View.GONE);
@@ -837,7 +854,7 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 			bleBinder = (BleBinder) service;
 
 			bleBinder.setRegion(null);// 空代表扫描所有
-			bleBinder.setMacMap(MacMap);
+			bleBinder.setMacMap(macMap);
 			bleBinder.setOnBleScanListener(new OnBleScanListener() {
 
 				@Override
@@ -993,5 +1010,20 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 				return true;
 			}
 		});
+	}
+
+	class InnerResInfo {
+		String title;
+		String content;
+		int bgname;
+		int musicname;
+
+		public InnerResInfo(String title, String content, int bgname,
+				int musicname) {
+			this.title = title;
+			this.content = content;
+			this.bgname = bgname;
+			this.musicname = musicname;
+		}
 	}
 }
