@@ -17,7 +17,6 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:background="@drawable/shake1" />
-
     </RelativeLayout>
 
     <RelativeLayout
@@ -30,17 +29,17 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:onClick="startPeople"
-            android:background="@drawable/people1" />
+            android:background="@drawable/people1"
+            android:onClick="startPeople" />
 
         <TextView
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_below="@+id/imageView2"
-            android:textColor="#ffffff"
-            android:text="快快摇出我的导游！" />
+            android:layout_centerHorizontal="true"
+            android:text="快快摇出我的导游！"
+            android:textColor="#ffffff" />
 
         <LinearLayout
             android:id="@+id/linearLayout"
@@ -48,8 +47,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/textView1"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp" 
-            android:background="@drawable/guide_bg">
+            android:layout_marginTop="20dp"
+            android:background="@drawable/guide_bg" >
 
             <ImageView
                 android:id="@+id/imageView3"
@@ -79,12 +78,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="11dp"
-                    android:text="\n13153267988						查看消息" />
-
+                    android:text="13153267988						查看" />
             </LinearLayout>
-
         </LinearLayout>
-
     </RelativeLayout>
 
 </FrameLayout>
