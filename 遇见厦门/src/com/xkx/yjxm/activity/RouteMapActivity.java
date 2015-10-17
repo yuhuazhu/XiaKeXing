@@ -142,6 +142,12 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 		bindAudioService();
 		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 		vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+		if (sensorManager != null) {// 注册监听器
+			sensorManager.registerListener(sensorEventListener,
+					sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+					SensorManager.SENSOR_DELAY_UI);
+			// 第一个参数是Listener，第二个参数是所得传感器类型，第三个参数值获取传感器信息的频率
+		}
 		try {
 			initData();
 		} catch (Exception e) {
@@ -190,10 +196,9 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 		btnback = (ImageButton) findViewById(R.id.btnback);
 		btnback.setOnClickListener(this);
 		bluetoothlay = (LinearLayout) findViewById(R.id.bluetoothlay);
-		//蓝牙已开启则不显示弹窗
+		// 蓝牙已开启则不显示弹窗
 		try {
-			if(BluetoothAdapter.getDefaultAdapter().isEnabled())
-			{
+			if (BluetoothAdapter.getDefaultAdapter().isEnabled()) {
 				bluetoothlay.setVisibility(View.GONE);
 			}
 		} catch (Exception e) {
@@ -270,7 +275,8 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 		for (int j = 0; j < musics.length; j++) {
 			resMap.put(j, new InnerResInfo(titles[j], contents[j], bgnames[j],
 					musics[j]));
-			macMap.put(macs[j], new MacInfo(j, macs[j], -100f, 2.0f));
+			//TODO
+			macMap.put(macs[j], new MacInfo(j, macs[j], -70f, 2.0f));
 		}
 	}
 
@@ -677,31 +683,37 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 		return resizeBmp;
 	}
 
+	private long btnLastClk;
+
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.imgswitch:
+			if (System.currentTimeMillis() - btnLastClk < 2000) {
+				return;
+			}
+			btnLastClk = System.currentTimeMillis();
 			isAuto = !isAuto;
 			if (isAuto) {
 				// 自动讲解
 				Toast.makeText(this, "下面将根据您所处的位置为您进行自动语音讲解服务。",
 						Toast.LENGTH_SHORT).show();
 				imgswitch.setBackgroundResource(R.drawable.img_autoexplain);
-				sensorManager.unregisterListener(sensorEventListener);
+				// sensorManager.unregisterListener(sensorEventListener);
 			} else {
 				// 摇一摇
 				Toast.makeText(this, "在不同位置摇一摇会有新的发现，快来试试吧。",
 						Toast.LENGTH_SHORT).show();
 				imgswitch.setBackgroundResource(R.drawable.img_shake);
-				if (sensorManager != null) {// 注册监听器
-					sensorManager
-							.registerListener(
-									sensorEventListener,
-									sensorManager
-											.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
-									SensorManager.SENSOR_DELAY_NORMAL);
-					// 第一个参数是Listener，第二个参数是所得传感器类型，第三个参数值获取传感器信息的频率
-				}
+				// if (sensorManager != null) {// 注册监听器
+				// sensorManager
+				// .registerListener(
+				// sensorEventListener,
+				// sensorManager
+				// .getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+				// SensorManager.SENSOR_DELAY_NORMAL);
+				// // 第一个参数是Listener，第二个参数是所得传感器类型，第三个参数值获取传感器信息的频率
+				// }
 			}
 			break;
 		case R.id.imgmouth:
@@ -764,15 +776,18 @@ public class RouteMapActivity extends BaseActivity implements OnClickListener {
 			float z = values[2]; // z轴方向的重力加速度，向上为正
 			// 一般在这三个方向的重力加速度达到40就达到了摇晃手机的状态。
 			if (Math.abs(x) > 15 || Math.abs(y) > 15 || Math.abs(z) > 15) {
-				Log.i(TAG, "x轴" + x + "；y轴" + y + "；z轴" + z);
+				Log.e(TAG, "x轴" + x + "；y轴" + y + "；z轴" + z);
 			}
+			Log.i(TAG, "x轴" + x + "；y轴" + y + "；z轴" + z);
 			int medumValue = 19;// 三星 i9250怎么晃都不会超过20，没办法，只设置19了
 			if (Math.abs(x) > medumValue || Math.abs(y) > medumValue
 					|| Math.abs(z) > medumValue) {
-				vibrator.vibrate(200);
-				Message msg = new Message();
-				msg.what = MSG_SENSOR_SHAKE;
-				handler.sendMessage(msg);
+				if (!isAuto) {
+					vibrator.vibrate(200);
+					Message msg = new Message();
+					msg.what = MSG_SENSOR_SHAKE;
+					handler.sendMessage(msg);
+				}
 			}
 		}
 

@@ -1,12 +1,14 @@
 package com.xkx.yjxm.activity;
 
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
 
+import org.apache.http.client.HttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,6 +21,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -27,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import com.loopj.android.http.AsyncHttpClient;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -42,7 +46,7 @@ public class PhotoTakeActivity extends BaseActivity implements OnClickListener {
 	private String QRCODE = "";
 	private ImageButton btnback;
 	private String newName = "image.jpg";
-	private ProgressBar progress_horizontal;
+	private ProgressBar uploadProgressBar;
 	private String fileName;
 	private Uri selectedImage;
 	private String actionUrl = "http://www.xmlyt.cn/ajax/Statistics.ashx?sn=addUserPic";
@@ -103,7 +107,7 @@ public class PhotoTakeActivity extends BaseActivity implements OnClickListener {
 		cancel.setOnClickListener(this);
 
 		progresslay = (RelativeLayout) findViewById(R.id.progresslay);
-		progress_horizontal = (ProgressBar) findViewById(R.id.progress_horizontal);
+		uploadProgressBar = (ProgressBar) findViewById(R.id.progress_horizontal);
 
 		btnback = (ImageButton) findViewById(R.id.btnback);
 		btnback.setOnClickListener(this);
@@ -150,6 +154,9 @@ public class PhotoTakeActivity extends BaseActivity implements OnClickListener {
 				}).show();
 	}
 
+	private void upload() {
+	}
+
 	private class LocationTask extends
 			AsyncTask<HashMap<String, String>, Integer, String> {
 
@@ -162,11 +169,14 @@ public class PhotoTakeActivity extends BaseActivity implements OnClickListener {
 			String end = "\r\n";
 			try {
 				URL url = new URL(actionUrl);
+				File f = new File(filePath);
+				long totalLength = f.length();
 				HttpURLConnection con = (HttpURLConnection) url
 						.openConnection();
 				/* 允许Input、Output，不使用Cache */
 				con.setDoInput(true);
 				con.setDoOutput(true);
+				con.setChunkedStreamingMode(0);
 				con.setUseCaches(false); /* 设置传送的method=POST */
 				con.setRequestMethod("POST"); /* setRequestProperty */
 				con.setRequestProperty("Connection", "Keep-Alive");
@@ -177,14 +187,24 @@ public class PhotoTakeActivity extends BaseActivity implements OnClickListener {
 						con.getOutputStream());
 				dos.writeBytes(twoHyphens + boundary + end);
 				dos.writeBytes("Content-Disposition: form-data; "
-						+ "name=\"file1\";filename=\"" + newName + "\"" + end);
+						+ "name=\"file\";filename=\"" + newName + "\"" + end);
 				dos.writeBytes(end); /* 取得文件的FileInputStream */
 				FileInputStream fis = new FileInputStream(filePath); /* 设置每次写入1024bytes */
+				long transmit = 0;
 				int bufferSize = 1024;
 				byte[] buffer = new byte[bufferSize];
 				int length = -1; /* 从文件读取数据至缓冲区 */
+				int progress = 0;
 				while ((length = fis.read(buffer)) != -1) { /* 将资料写入DataOutputStream中 */
 					dos.write(buffer, 0, length);
+					// dos.flush();
+					transmit += length;
+					int temp = (int) (transmit * 100 / totalLength);
+					if (temp != progress) {
+						Log.e("progress", "" + temp);
+						publishProgress(temp);
+					}
+					progress = temp;
 				}
 				dos.writeBytes(end);
 				dos.writeBytes(twoHyphens + boundary + twoHyphens + end);
@@ -208,14 +228,15 @@ public class PhotoTakeActivity extends BaseActivity implements OnClickListener {
 
 		// onProgressUpdate方法用于更新进度信息
 		@Override
-		protected void onProgressUpdate(Integer... progresses) {
-			progress_horizontal.setProgress(progresses[0]);
+		protected void onProgressUpdate(Integer... progress) {
+			if (uploadProgressBar != null) {
+				uploadProgressBar.setProgress(progress[0]);
+			}
 		}
 
 		// onCancelled方法用于在取消执行中的任务时更改UI
 		@Override
 		protected void onCancelled() {
-
 		}
 
 		@Override
@@ -230,7 +251,7 @@ public class PhotoTakeActivity extends BaseActivity implements OnClickListener {
 							return;
 						} else {
 							showDialog("上传成功");
-							progress_horizontal.setProgress(100);
+							uploadProgressBar.setProgress(100);
 							progresslay.setVisibility(View.GONE);
 						}
 					}

@@ -1,6 +1,7 @@
 package com.xkx.yjxm.activity;
 
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -48,7 +49,8 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
 
-public class PhotoUploadActivity extends BaseActivity implements OnClickListener {
+public class PhotoUploadActivity extends BaseActivity implements
+		OnClickListener {
 	private GridView gridphoto;
 	DisplayImageOptions options; // 配置图片加载及显示选项
 	private MyAdapter myAdapter;
@@ -87,6 +89,7 @@ public class PhotoUploadActivity extends BaseActivity implements OnClickListener
 		initData();
 		initUI();
 	}
+
 	public void home(View v) {
 		Intent intent = null;
 
@@ -94,6 +97,7 @@ public class PhotoUploadActivity extends BaseActivity implements OnClickListener
 
 		startActivity(intent);
 	}
+
 	private void initData() {
 
 		// 扫描内存中图片并存入list
@@ -267,67 +271,83 @@ public class PhotoUploadActivity extends BaseActivity implements OnClickListener
 		// doInBackground方法内部执行后台任务,不可在此方法内修改UI
 		@Override
 		protected String doInBackground(HashMap<String, String>... params) {
-			// TODO Auto-generated method stub
+			String filePath = imageUriArray[Integer.valueOf(params[0]
+					.get("arg2"))];
+			String end = "\r\n";
+			String twoHyphens = "--";
+			String boundary = "*****";
+			try {
+				File f = new File(filePath);
+				long fileLength = f.length();
 
-			String str = uploadFile(imageUriArray[Integer.valueOf(params[0]
-					.get("arg2"))]);
-			for (int i = 0; i < 10; i++)
-
-			{
-
-				try
-
-				{
-
-					Thread.sleep(1000);
-
-					publishProgress(i * 10);// 进度条每次更新10%,执行中创建新线程处理onProgressUpdate()
-
+				URL url = new URL(actionUrl);
+				HttpURLConnection con = (HttpURLConnection) url
+						.openConnection();
+				/* 允许Input、Output，不使用Cache */
+				con.setDoInput(true);
+				con.setDoOutput(true);
+				con.setChunkedStreamingMode(0);
+				con.setUseCaches(false); /* 设置传送的method=POST */
+				con.setRequestMethod("POST"); /* setRequestProperty */
+				con.setRequestProperty("Connection", "Keep-Alive");
+				con.setRequestProperty("Charset", "UTF-8");
+				con.setRequestProperty("Content-Type",
+						"multipart/form-data;boundary=" + boundary); /* 设置DataOutputStream */
+				DataOutputStream ds = new DataOutputStream(
+						con.getOutputStream());
+				ds.writeBytes(twoHyphens + boundary + end);
+				ds.writeBytes("Content-Disposition: form-data; "
+						+ "name=\"file1\";filename=\"" + newName + "\"" + end);
+				ds.writeBytes(end); /* 取得文件的FileInputStream */
+				FileInputStream fStream = new FileInputStream(filePath); /* 设置每次写入1024bytes */
+				int bufferSize = 1024;
+				byte[] buffer = new byte[bufferSize];
+				int length = -1; /* 从文件读取数据至缓冲区 */
+				long transmit = 0;
+				int progress = 0;
+				while ((length = fStream.read(buffer)) != -1) { /* 将资料写入DataOutputStream中 */
+					ds.write(buffer, 0, length);
+					transmit += length;
+					int temp = (int) (transmit * 100 / fileLength);
+					if (temp != progress) {
+						publishProgress(temp);
+					}
+					progress = temp;
 				}
+				ds.writeBytes(end);
+				ds.writeBytes(twoHyphens + boundary + twoHyphens + end);
+				fStream.close();
+				ds.flush();
+				/* 取得Response内容 */
+				InputStream is = con.getInputStream();
+				int ch;
+				b = new StringBuffer();
+				while ((ch = is.read()) != -1) {
+					b.append((char) ch);
+				} /* 将Response显示于Dialog */
+				// Toast.makeText(this, "上传成功", 3000).show();
 
-				catch (InterruptedException e)
-
-				{
-
-					e.printStackTrace();
-
-				}
-
+				ds.close();
+			} catch (Exception e) {
+				// showDialog("上传失败" + e);
 			}
-			return str;
+			return b.toString();
 		}
 
 		// onProgressUpdate方法用于更新进度信息
 		@Override
 		protected void onProgressUpdate(Integer... progresses) {
-			// Log.i(TAG, "onProgressUpdate(Progress... progresses) called");
 			progress_horizontal.setProgress(progresses[0]);
-			// textView.setText("loading..." + progresses[0] + "%");
-
 		}
 
 		// onCancelled方法用于在取消执行中的任务时更改UI
 		@Override
 		protected void onCancelled() {
-
-			// Log.i(TAG, "onCancelled() called");
-			// textView.setText("cancelled");
-			// progressBar.setProgress(0);
-			//
-			// execute.setEnabled(true);
-			// cancel.setEnabled(false);
+			// TODO
 		}
 
-		// / </summary>
-		// / <param name="json">JSON</param>
-		// / <returns>Dictionary`[string, object]</returns>
-
-		// onPostExecute方法用于在执行完后台任务后更新UI,显示结果
 		@Override
 		protected void onPostExecute(String Signinfo) {
-
-			//
-
 			try {
 				JSONObject jsonObject = new JSONObject(Signinfo);
 				if (jsonObject != null) {
@@ -337,25 +357,16 @@ public class PhotoUploadActivity extends BaseActivity implements OnClickListener
 								"QRCODE");
 						if (QRCODE.equals("")) {
 							return;
-						}
-						else
-						{
+						} else {
 							showDialog("上传成功");
 							progress_horizontal.setProgress(100);
 							progresslay.setVisibility(View.GONE);
-							
 						}
 					}
-
 				}
 			} catch (JSONException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			// showDialog("上传成功" + b.toString().trim()); /* 关闭DataOutputStream
-			// */
-
 		}
 	}
 
@@ -449,58 +460,6 @@ public class PhotoUploadActivity extends BaseActivity implements OnClickListener
 			return convertView;
 		}
 
-	}
-
-	/* 上传文件至Server的方法 */
-	private String uploadFile(String str) {
-		String end = "\r\n";
-		String twoHyphens = "--";
-		String boundary = "*****";
-		try {
-			URL url = new URL(actionUrl);
-			HttpURLConnection con = (HttpURLConnection) url.openConnection();
-			/* 允许Input、Output，不使用Cache */
-			con.setDoInput(true);
-			con.setDoOutput(true);
-			con.setUseCaches(false); /* 设置传送的method=POST */
-			con.setRequestMethod("POST"); /* setRequestProperty */
-			con.setRequestProperty("Connection", "Keep-Alive");
-			con.setRequestProperty("Charset", "UTF-8");
-			con.setRequestProperty("Content-Type",
-					"multipart/form-data;boundary=" + boundary); /* 设置DataOutputStream */
-			DataOutputStream ds = new DataOutputStream(con.getOutputStream());
-			ds.writeBytes(twoHyphens + boundary + end);
-			ds.writeBytes("Content-Disposition: form-data; "
-					+ "name=\"file1\";filename=\"" + newName + "\"" + end);
-			ds.writeBytes(end); /* 取得文件的FileInputStream */
-			FileInputStream fStream = new FileInputStream(str); /* 设置每次写入1024bytes */
-			int bufferSize = 1024;
-			byte[] buffer = new byte[bufferSize];
-			int length = -1; /* 从文件读取数据至缓冲区 */
-			while ((length = fStream.read(buffer)) != -1) { /* 将资料写入DataOutputStream中 */
-				ds.write(buffer, 0, length);
-			}
-			ds.writeBytes(end);
-			ds.writeBytes(twoHyphens + boundary + twoHyphens + end); /*
-																	 * close
-																	 * streams
-																	 */
-			fStream.close();
-			ds.flush();
-			/* 取得Response内容 */
-			InputStream is = con.getInputStream();
-			int ch;
-			b = new StringBuffer();
-			while ((ch = is.read()) != -1) {
-				b.append((char) ch);
-			} /* 将Response显示于Dialog */
-			// Toast.makeText(this, "上传成功", 3000).show();
-
-			ds.close();
-		} catch (Exception e) {
-			// showDialog("上传失败" + e);
-		}
-		return b.toString();
 	}
 
 	/* 显示Dialog的method */private void showDialog(String mess) {
