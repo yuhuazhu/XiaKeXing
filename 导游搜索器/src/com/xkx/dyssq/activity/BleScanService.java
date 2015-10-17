@@ -50,7 +50,7 @@ public class BleScanService extends Service {
 	/**
 	 * 提取蓝牙是否使用优化过的算法
 	 */
-	private boolean fetchOptimized = true;
+	private boolean fetchOptimized = false;
 
 	public BleScanService() {
 	}
@@ -91,6 +91,7 @@ public class BleScanService extends Service {
 			public void onServiceReady() {
 				if (region == null) {
 					region = new BRTRegion("xkx", null, null, null, null);
+					Log.e("region", "region null");
 				}
 				try {
 					brtBeaconMgr.startRanging(region);
@@ -110,7 +111,6 @@ public class BleScanService extends Service {
 		// SCAN_WAIT_MILLIS);
 		brtBeaconMgr.setForegroundScanPeriod(SCAN_PERIOD_MILLIS,
 				SCAN_WAIT_MILLIS);
-
 		brtBeaconMgr.setRangingListener(new RangingListener() {
 
 			@Override
@@ -121,15 +121,16 @@ public class BleScanService extends Service {
 					BRTBeacon beacon = beacons.get(i);
 					int index = saveList.indexOf(beacon);
 					if (index == -1) {
-						if (!beacon.macAddress.equalsIgnoreCase("AB:9A")
-								&& !beacon.macAddress.endsWith("29:A5")
-								&& !beacon.macAddress.endsWith("02:EF")
-								&& !beacon.macAddress.endsWith("9B:21")
-								&& !beacon.macAddress.endsWith("8F:A8")) {
-							saveList.add(beacon);
-						} else if (beacon.name == null) {
-							// saveList.add(beacon);
-						}
+						saveList.add(beacon);
+						// if (!beacon.macAddress.equalsIgnoreCase("AB:9A")
+						// && !beacon.macAddress.endsWith("29:A5")
+						// && !beacon.macAddress.endsWith("02:EF")
+						// && !beacon.macAddress.endsWith("9B:21")
+						// && !beacon.macAddress.endsWith("8F:A8")) {
+						// saveList.add(beacon);
+						// } else if (beacon.name == null) {
+						// // saveList.add(beacon);
+						// }
 					} else {
 						BRTBeacon savedBeacon = saveList.get(index);
 						boolean rssiLower = savedBeacon.rssi < beacon.rssi;
@@ -156,12 +157,16 @@ public class BleScanService extends Service {
 				onBleScanListener.onPeriodScan(rangedList);
 				if (rangedList.size() >= 1) {
 					BRTBeacon currNearBeacon = rangedList.get(0);
+					Log.e("beacon", "uuid" + currNearBeacon.uuid);
 					onBleScanListener.onNearBeacon(currNearBeacon);
 					if (currNearBeacon != freshBeacon) {
 						onBleScanListener.onNearBleChanged(freshBeacon,
 								currNearBeacon);
 						freshBeacon = currNearBeacon;
 					}
+				} else {
+					onBleScanListener.onNearBeacon(null);
+					onBleScanListener.onNearBleChanged(null, null);
 				}
 			}
 
@@ -394,8 +399,8 @@ public class BleScanService extends Service {
 		 * 
 		 * @param uuid
 		 */
-		public void setRegion(String uuid) {
-			region = new BRTRegion("xkx", uuid, null, null, null);
+		public void setRegion(String uuid, Integer major) {
+			region = new BRTRegion("xkx", uuid, null, major, null);
 		}
 
 		public BRTBeacon getProximityBeacon() {
